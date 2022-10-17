@@ -1,3 +1,0 @@
-[RSW::ERR]
-[RSW::NAME] :~> wasm-qrcode
-[RSW::BUILD] :~> wasm-pack build .\wasm-qrcode --out-dir pkg --target web --dev
