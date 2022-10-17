@@ -1,0 +1,11 @@
+name="rsw"
+version="0.1.0"
+cli = "cnpm"
+
+[new]
+using = "wasm-pack"
+dir = "my-template"
+
+[[crates]]
+name = "wasm-qrcode"
+link = true

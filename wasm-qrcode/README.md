@@ -1,0 +1,1 @@
+# Qrcode for rust wasm.
