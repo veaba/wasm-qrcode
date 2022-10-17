@@ -2,6 +2,9 @@
 name = "wasm-qrcode"
 version = "0.1.0"
 authors = ['veaba< Godpu@outlook.com>']
+description = "QRcode for rust wasm."
+repository = "https://github.com/veaba/wasm-qrcode"
+license = "MIT"
 edition  = '2021'
 
 [lib]
