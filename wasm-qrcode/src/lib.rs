@@ -27,6 +27,6 @@ pub fn echo(s: &str) {
 
 #[wasm_bindgen]
 pub fn version() -> String {
-    let ver:String = String::from("v0.0.1");
+    let ver: String = String::from("v0.0.1");
     ver
 }
