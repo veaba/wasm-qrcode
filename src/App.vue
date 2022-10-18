@@ -18,9 +18,9 @@ runWasm()
 //     text: refText,
 //     width: 100,
 //     height: 100,
-//     colorDark: '#000000',
+//     color_dark: '#000000',
 //     colorLight: '#ffffff',
-//     correctLevel: QRCode.CorrectLevel.h,
+//     correct_level: QRCode.CorrectLevel.h,
 //   })
 //   console.log('qrcode=>', qrCode)
 // })
