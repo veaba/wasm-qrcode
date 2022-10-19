@@ -4,13 +4,13 @@
 fn xx (){
 
 }
-// use crate::shared::QRErrorCorrectLevel::H;
-//
+
 // pub struct Code {
 //     width: i32,
 //     height: i32,
 //     type_number: i32,
-//     color_dark: String,
+//
+// : String,
 //     color_light: String,
 //     correct_level: H,
 // }
