@@ -1,12 +1,12 @@
 use std::{str::Bytes, vec};
 
-// use std::str::Bytes;
 use crate::shared;
 
 pub struct QR8BitByte {
     mode: u32,
-    parsed_data: Vec<Vec<u32>>, // 存储数组
-    parsed_data_u32: Vec<u32>,  // 存储数字
+    parsed_data: Vec<Vec<u32>>,     // 存储数组
+    parsed_data_u32: Vec<u32>,      // 存储数字
+    parsed_data_buffer: Vec<Bytes>, // 存储 byte
     // parsed_data: Vec<u32, Vec<u32>>,
     // (u32, Vec<u32>)
     data: String,
@@ -52,9 +52,11 @@ impl QR8BitByte {
         return self.parsed_data.len();
     }
     // TODO rust byte
-    // pub fn write(&self, buffer: vec!<Bytes>) {
-    //     for buf in self.parsed_data {
-    //         buffer.push(buf, 8)
+    // TODO 因为数组里不能同时有多个类型，需要区分一下
+    // pub fn write(&self, buffer: &mut Vec<Bytes>) {
+    //     for buf in self.parsed_data_buffer {
+    //         // TODO 数字转buffer
+    //         buffer.push(buf, 8 as Bytes)
     //     }
     // }
 }
