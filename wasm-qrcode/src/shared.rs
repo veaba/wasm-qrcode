@@ -77,42 +77,33 @@ pub struct Code {
 // [6, 30, 58, 86, 114, 142, 170],
 // ];
 
-const G15: i32 = (1 << 10) |
-    (1 << 8) |
-    (1 << 5) |
-    (1 << 4) |
-    (1 << 2) |
-    (1 << 1) |
-    (1 << 0);
+const G15: i32 = (1 << 10) | (1 << 8) | (1 << 5) | (1 << 4) | (1 << 2) | (1 << 1) | (1 << 0);
 const G15_MASK: i32 = (1 << 14) | (1 << 12) | (1 << 10) | (1 << 4) | (1 << 1);
 
 struct StructUtils {
     pattern_position_table: [[i32; 0]; 40],
     g15: i32,
     g15_mask: i32,
-    get_bchtype_info: (i32),
-    get_bchtype_number: (i32),
-    get_pattern_position: (i32),
-    get_mask: (i32),
-    get_error_correct_polynomial: (i32),
-    get_length_in_bits: (i32),
-    get_lost_point: (i32),
+    get_bchtype_info: i32,
+    get_bchtype_number: i32,
+    get_pattern_position: i32,
+    get_mask: i32,
+    get_error_correct_polynomial: i32,
+    get_length_in_bits: i32,
+    get_lost_point: i32,
 }
 
 struct StructQRMath {
-    glog: (i32),
-    gexp: (i32),
+    glog: i32,
+    gexp: i32,
     exp_table: [i32; 256],
     log_table: [i32; 256],
 }
 
-struct StructRSBlock {
-    a: (i32),
-}
 
 pub enum QRMode {
-    MODE_NUMBER = 1 << 0,
-    MODE_ALPHA_NUM = 1 << 1,
-    MODE_8BIT_BYTE = 1 << 2,
-    MODE_KANJI = 1 << 3,
+    ModeNumber = 1 << 0,
+    ModeAlphaNum = 1 << 1,
+    Mode8bitByte = 1 << 2,
+    ModeKanji = 1 << 3,
 }

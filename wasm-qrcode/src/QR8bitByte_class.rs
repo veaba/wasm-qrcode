@@ -1,17 +1,23 @@
-use std::str::Bytes;
+use std::{str::Bytes, vec};
+
+// use std::str::Bytes;
 use crate::shared;
 
 pub struct QR8BitByte {
-    mode: shared::QRMode::MODE_8BIT_BYTE,
-    parsed_data: Vec<Vec<i32>>,
-    data: Vec<i32>,
+    mode: u32,
+    parsed_data: Vec<Vec<u32>>, // 存储数组
+    parsed_data_u32: Vec<u32>,  // 存储数字
+    // parsed_data: Vec<u32, Vec<u32>>,
+    // (u32, Vec<u32>)
+    data: String,
 }
 
 impl QR8BitByte {
     pub fn new(&mut self) {
-        for i in self.data.len() {
-            let mut byte_array: vec<usize> = [];
-            let code = self.data.charCodeAt(i);
+        let data_len = self.data.len();
+        for i in 1..data_len {
+            let mut byte_array = vec![];
+            let code = self.data.chars().nth(i).unwrap() as u32; // TODO==?
 
             // TODO 和 JS >>> 区别？
             if code > 0x10000 {
@@ -29,13 +35,15 @@ impl QR8BitByte {
             } else {
                 byte_array[0] = code
             }
-            self.parsed_data.push(byte_array)
+            self.parsed_data.push(byte_array);
         }
 
+        // TODO：怎么让 parsed_data 支持 u32，又支持数组 push，即作为二维数组
+        // a = [ [322],112 ]
         if self.parsed_data.len() != self.data.len() {
-            self.parsedData.insert(0, 191);
-            self.parsedData.insert(0, 0187);
-            self.parsedData.insert(0, 239);
+            self.parsed_data_u32.insert(0, 191);
+            self.parsed_data_u32.insert(0, 187);
+            self.parsed_data_u32.insert(0, 239);
         }
     }
 
@@ -43,8 +51,8 @@ impl QR8BitByte {
     pub fn get_length(&self) -> usize {
         return self.parsed_data.len();
     }
-    // TODO？？
-    // pub fn write(&self, buffer: vec<Bytes>) {
+    // TODO rust byte
+    // pub fn write(&self, buffer: vec!<Bytes>) {
     //     for buf in self.parsed_data {
     //         buffer.push(buf, 8)
     //     }
