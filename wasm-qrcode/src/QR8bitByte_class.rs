@@ -1,5 +1,5 @@
-use std::{str::Bytes, vec};
-
+use std::{vec};
+use bytes::{BufMut, BytesMut};
 use crate::shared;
 
 pub struct QR8BitByte {
@@ -53,10 +53,10 @@ impl QR8BitByte {
     }
     // TODO rust byte
     // TODO 因为数组里不能同时有多个类型，需要区分一下
-    // pub fn write(&self, buffer: &mut Vec<Bytes>) {
-    //     for buf in self.parsed_data_buffer {
-    //         // TODO 数字转buffer
-    //         buffer.push(buf, 8 as Bytes)
-    //     }
-    // }
+    pub fn write(&self, buffer: &mut QRBitBuffer) {
+        for buf in self.parsed_data_buffer {
+            // TODO 数字转buffer
+            buffer.put(buf, 8); // num,len
+        }
+    }
 }

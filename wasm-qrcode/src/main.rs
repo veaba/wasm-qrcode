@@ -1,6 +1,7 @@
 use crate::rs_block::Tweet;
 use crate::QR8bitByte_class::QR8BitByte;
 
+mod QRBitBuffer_class;
 mod QR8bitByte_class;
 mod drawing_class;
 mod rs_block;
