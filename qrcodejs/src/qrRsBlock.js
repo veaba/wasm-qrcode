@@ -1,3 +1,5 @@
+import { QRErrorCorrectLevel } from './shared/constants';
+
 function QRRSBlock(totalCount, dataCount) {
   this.totalCount = totalCount;
   this.dataCount = dataCount;

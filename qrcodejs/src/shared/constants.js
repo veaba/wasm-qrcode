@@ -1,11 +1,15 @@
-let QRMode = {
+import QRPolynomial from '../qrpolynomial';
+
+export const QRMode = {
   MODE_NUMBER: 1 << 0,
   MODE_ALPHA_NUM: 1 << 1,
   MODE_8BIT_BYTE: 1 << 2,
   MODE_KANJI: 1 << 3,
 };
-const QRErrorCorrectLevel = { L: 1, M: 0, Q: 3, H: 2 };
-const QRMaskPattern = {
+
+export const QRErrorCorrectLevel = { L: 1, M: 0, Q: 3, H: 2 };
+
+export const QRMaskPattern = {
   PATTERN000: 0,
   PATTERN001: 1,
   PATTERN010: 2,
@@ -15,7 +19,7 @@ const QRMaskPattern = {
   PATTERN110: 6,
   PATTERN111: 7,
 };
-const QRUtil = {
+export const QRUtil = {
   PATTERN_POSITION_TABLE: [
     [],
     [6, 18],
@@ -59,13 +63,7 @@ const QRUtil = {
     [6, 30, 58, 86, 114, 142, 170],
   ],
   G15:
-    (1 << 10) |
-    (1 << 8) |
-    (1 << 5) |
-    (1 << 4) |
-    (1 << 2) |
-    (1 << 1) |
-    (1 << 0),
+    (1 << 10) | (1 << 8) | (1 << 5) | (1 << 4) | (1 << 2) | (1 << 1) | (1 << 0),
   G18:
     (1 << 12) |
     (1 << 11) |
@@ -80,8 +78,7 @@ const QRUtil = {
     let d = data << 10;
     while (QRUtil.getBCHDigit(d) - QRUtil.getBCHDigit(QRUtil.G15) >= 0) {
       d ^=
-        QRUtil.G15 <<
-        (QRUtil.getBCHDigit(d) - QRUtil.getBCHDigit(QRUtil.G15));
+        QRUtil.G15 << (QRUtil.getBCHDigit(d) - QRUtil.getBCHDigit(QRUtil.G15));
     }
     return ((data << 10) | d) ^ QRUtil.G15_MASK;
   },
@@ -89,8 +86,7 @@ const QRUtil = {
     let d = data << 12;
     while (QRUtil.getBCHDigit(d) - QRUtil.getBCHDigit(QRUtil.G18) >= 0) {
       d ^=
-        QRUtil.G18 <<
-        (QRUtil.getBCHDigit(d) - QRUtil.getBCHDigit(QRUtil.G18));
+        QRUtil.G18 << (QRUtil.getBCHDigit(d) - QRUtil.getBCHDigit(QRUtil.G18));
     }
     return (data << 12) | d;
   },
@@ -262,7 +258,8 @@ const QRUtil = {
     return lostPoint;
   },
 };
-const QRMath = {
+
+export const QRMath = {
   glog: function (n) {
     if (n < 1) {
       throw new Error('glog(' + n + ')');

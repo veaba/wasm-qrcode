@@ -8,23 +8,18 @@
  * @see <a href="http://www.d-project.com/" target="_blank">http://www.d-project.com/</a>
  * @see <a href="http://jeromeetienne.github.com/jquery-qrcode/" target="_blank">http://jeromeetienne.github.com/jquery-qrcode/</a>
  */
-import QRBitBuffer from 'qrBitBuffer';
+
 import QRCodeModel from './qrCodeModel';
-import QR8bitByte from './qr8bitByte';
-import QRPolynomial from './qrpolynomial';
 import Drawing from './qr-drawing';
-import NoDrawing from './qr-no-canvas';
-import svgDrawer from './qr-svg';
 import {
   _getAndroid,
   _getUTF8Length,
   _isSupportCanvas,
   _getTypeNumber,
 } from './shared/utils';
+import { QRMath, QRErrorCorrectLevel } from './shared/constants';
 
-let QRCode;
-
-(function () {
+const App = function () {
   //---------------------------------------------------------------------
   // QRCode for JavaScript
   //
@@ -58,16 +53,7 @@ let QRCode;
   let useSVG = document.documentElement.tagName.toLowerCase() === 'svg';
 
   // Drawing in DOM by using Table tag
-  let Drawing = useSVG
-    ? svgDrawer
-    : !_isSupportCanvas()
-    ? (function () {
-        return NoDrawing;
-      })()
-    : (function () {
-        return useCanvas;
-      })();
-
+  
   /**
    * @class QRCode
    * @constructor
@@ -118,10 +104,6 @@ let QRCode;
 
     if (typeof el === 'string') {
       el = document.getElementById(el);
-    }
-
-    if (this._htOption.useSVG) {
-      Drawing = svgDrawer;
     }
 
     this._android = _getAndroid();
@@ -178,4 +160,8 @@ let QRCode;
    * @name QRCode.CorrectLevel
    */
   QRCode.CorrectLevel = QRErrorCorrectLevel;
-})();
+
+  return QRCode;
+};
+
+export default App;

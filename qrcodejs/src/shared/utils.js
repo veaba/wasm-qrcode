@@ -1,3 +1,5 @@
+import { QRErrorCorrectLevel } from './constants';
+
 /**
  * Get the type by string length
  *
@@ -7,7 +9,8 @@
  * @return {Number} type
  */
 
- let QRCodeLimitLength = [
+
+let QRCodeLimitLength = [
   [17, 14, 11, 7],
   [32, 26, 20, 14],
   [53, 42, 32, 24],
@@ -56,7 +59,6 @@ export function _getTypeNumber(sText, nCorrectLevel) {
 
   for (let i = 0, len = QRCodeLimitLength.length; i <= len; i++) {
     let nLimit = 0;
-
     switch (nCorrectLevel) {
       case QRErrorCorrectLevel.L:
         nLimit = QRCodeLimitLength[i][0];

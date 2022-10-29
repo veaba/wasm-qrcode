@@ -1,3 +1,5 @@
+import { QRMath } from './shared/constants';
+
 function QRPolynomial(num, shift) {
   if (num.length === undefined) {
     throw new Error(num.length + '/' + shift);
@@ -44,4 +46,4 @@ QRPolynomial.prototype = {
     return new QRPolynomial(num, 0).mod(e);
   },
 };
-export default QRPolynomial 
+export default QRPolynomial;

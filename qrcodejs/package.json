@@ -1,0 +1,21 @@
+{
+  "name": "qrcodejs",
+  "version": "1.0.0",
+  "description": "A test Qrcode refactor the folders",
+  "source": "src/index.js",
+  "main": "dist/index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "watch": "parcel watch",
+    "build": "parcel build",
+    "dev": "vite"
+  },
+  "author": "veaba",
+  "license": "MIT",
+  "devDependencies": {
+    "parcel": "^2.7.0"
+  },
+  "dependencies": {
+    "vite": "^3.2.1"
+  }
+}

@@ -12,3 +12,6 @@ node_modules
 /.rsw/
 .vscode
 .idea
+
+.parcel-cache
+dist

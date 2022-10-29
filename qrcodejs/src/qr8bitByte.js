@@ -1,3 +1,5 @@
+import { QRMode } from './shared/constants';
+
 function QR8bitByte(data) {
   this.mode = QRMode.MODE_8BIT_BYTE;
   this.data = data;
@@ -47,4 +49,4 @@ QR8bitByte.prototype = {
   },
 };
 
-export default QR8bitByte
+export default QR8bitByte;

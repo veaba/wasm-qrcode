@@ -1,3 +1,9 @@
+import QRBitBuffer from './qrBitBuffer';
+import QR8bitByte from './qr8bitByte';
+import { QRUtil } from './shared/constants';
+import QRRSBlock from './qrRsBlock';
+import QRPolynomial from './qrpolynomial';
+
 function QRCodeModel(typeNumber, errorCorrectLevel) {
   this.typeNumber = typeNumber;
   this.errorCorrectLevel = errorCorrectLevel;
@@ -149,13 +155,11 @@ QRCodeModel.prototype = {
     let bits = QRUtil.getBCHTypeNumber(this.typeNumber);
     for (let i = 0; i < 18; i++) {
       mod = !test && ((bits >> i) & 1) === 1;
-      this.modules[Math.floor(i / 3)][(i % 3) + this.moduleCount - 8 - 3] =
-        mod;
+      this.modules[Math.floor(i / 3)][(i % 3) + this.moduleCount - 8 - 3] = mod;
     }
     for (let i = 0; i < 18; i++) {
       mod = !test && ((bits >> i) & 1) === 1;
-      this.modules[(i % 3) + this.moduleCount - 8 - 3][Math.floor(i / 3)] =
-        mod;
+      this.modules[(i % 3) + this.moduleCount - 8 - 3][Math.floor(i / 3)] = mod;
     }
   },
   setupTypeInfo: function (test, maskPattern) {
@@ -227,10 +231,7 @@ QRCodeModel.createData = function (typeNumber, errorCorrectLevel, dataList) {
   for (let i = 0; i < dataList.length; i++) {
     const data = dataList[i];
     buffer.put(data.mode, 4);
-    buffer.put(
-      data.getLength(),
-      QRUtil.getLengthInBits(data.mode, typeNumber)
-    );
+    buffer.put(data.getLength(), QRUtil.getLengthInBits(data.mode, typeNumber));
     data.write(buffer);
   }
   let totalDataCount = 0;
@@ -311,4 +312,4 @@ QRCodeModel.createBytes = function (buffer, rsBlocks) {
   }
   return data;
 };
-export default QRCodeModel
+export default QRCodeModel;
