@@ -8,7 +8,9 @@ function QR8bitByte(data) {
   // Added to support UTF-8 Characters
   for (let i = 0, l = this.data.length; i < l; i++) {
     let byteArray = [];
+
     let code = this.data.charCodeAt(i);
+    console.log('字符串=>', this.data[i], code);
 
     if (code > 0x10000) {
       byteArray[0] = 0xf0 | ((code & 0x1c0000) >>> 18);
@@ -31,6 +33,7 @@ function QR8bitByte(data) {
 
   this.parsedData = Array.prototype.concat.apply([], this.parsedData);
 
+  // why？
   if (this.parsedData.length !== this.data.length) {
     this.parsedData.unshift(191);
     this.parsedData.unshift(187);

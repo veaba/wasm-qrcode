@@ -16,6 +16,7 @@ function QRCodeModel(typeNumber, errorCorrectLevel) {
 QRCodeModel.prototype = {
   addData: function (data) {
     let newData = new QR8bitByte(data);
+    console.log('QR8bitByte 实例=>', data, newData);
     this.dataList.push(newData);
     this.dataCache = null;
   },

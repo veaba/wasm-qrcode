@@ -20,7 +20,6 @@ import {
 import { QRMath, QRErrorCorrectLevel } from './shared/constants';
 
 const App = function () {
-  console.log('app=>');
   //---------------------------------------------------------------------
   // QRCode for JavaScript
   //
@@ -130,7 +129,6 @@ const App = function () {
     this._oQRCode.addData(sText);
     this._oQRCode.make();
     this._el.title = sText;
-    console.log('需要绘制的_oQRCode=>', this._oQRCode.isDark);
     this._oDrawing.draw(this._oQRCode);
     this.makeImage();
   };
