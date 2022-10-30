@@ -20,6 +20,7 @@ import {
 import { QRMath, QRErrorCorrectLevel } from './shared/constants';
 
 const App = function () {
+  console.log('app=>');
   //---------------------------------------------------------------------
   // QRCode for JavaScript
   //
@@ -50,10 +51,8 @@ const App = function () {
     QRMath.LOG_TABLE[QRMath.EXP_TABLE[i]] = i;
   }
 
-  let useSVG = document.documentElement.tagName.toLowerCase() === 'svg';
-
   // Drawing in DOM by using Table tag
-  
+
   /**
    * @class QRCode
    * @constructor
@@ -126,9 +125,12 @@ const App = function () {
       _getTypeNumber(sText, this._htOption.correctLevel),
       this._htOption.correctLevel
     );
+    console.log('_oQRCode=>', this._oQRCode);
+    console.log('sText=>', sText);
     this._oQRCode.addData(sText);
     this._oQRCode.make();
     this._el.title = sText;
+    console.log('需要绘制的_oQRCode=>', this._oQRCode.isDark);
     this._oDrawing.draw(this._oQRCode);
     this.makeImage();
   };

@@ -45,11 +45,13 @@ Drawing.prototype.draw = function (oQRCode) {
   _elImage.style.display = 'none';
   this.clear();
 
+  console.log('nCount=>',nCount)
   for (let row = 0; row < nCount; row++) {
     for (let col = 0; col < nCount; col++) {
       let bIsDark = oQRCode.isDark(row, col);
       let nLeft = col * nWidth;
       let nTop = row * nHeight;
+    
       _oContext.strokeStyle = bIsDark
         ? _htOption.colorDark
         : _htOption.colorLight;
@@ -57,6 +59,15 @@ Drawing.prototype.draw = function (oQRCode) {
       _oContext.fillStyle = bIsDark
         ? _htOption.colorDark
         : _htOption.colorLight;
+      // console.log('_oContext.strokeStyle=>',_oContext.strokeStyle)
+      // console.log('_oContext.fillStyle=>',_oContext.fillStyle)
+      // console.log(
+      //   // 'nLeft, nTop, nWidth, nHeight=>',
+      //   nLeft,
+      //   nTop,
+      //   nWidth,
+      //   nHeight
+      // );
       _oContext.fillRect(nLeft, nTop, nWidth, nHeight);
 
       // 안티 앨리어싱 방지 처리
