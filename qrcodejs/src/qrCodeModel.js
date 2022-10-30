@@ -38,7 +38,10 @@ QRCodeModel.prototype = {
     this.makeImpl(false, this.getBestMaskPattern());
   },
   makeImpl: function (test, maskPattern) {
-    this.moduleCount = this.typeNumber * 4 + 17;
+    this.moduleCount = this.typeNumber * 4 + 17; // this.typeNumber = 2
+    // console.log('this.moduleCount=>', this.typeNumber, this.moduleCount);
+
+    // 生成 null 的二维数组 25 x 25
     this.modules = new Array(this.moduleCount);
     for (let row = 0; row < this.moduleCount; row++) {
       this.modules[row] = new Array(this.moduleCount);
@@ -46,15 +49,18 @@ QRCodeModel.prototype = {
         this.modules[row][col] = null;
       }
     }
-    this.setupPositionProbePattern(0, 0);
-    this.setupPositionProbePattern(this.moduleCount - 7, 0);
-    this.setupPositionProbePattern(0, this.moduleCount - 7);
-    this.setupPositionAdjustPattern();
-    this.setupTimingPattern();
-    this.setupTypeInfo(test, maskPattern);
+    this.setupPositionProbePattern(0, 0); // 左上角图案
+    this.setupPositionProbePattern(this.moduleCount - 7, 0); // 左下角的定位图案
+    this.setupPositionProbePattern(0, this.moduleCount - 7); // 右上角定位图案
+    this.setupPositionAdjustPattern(); // 设置位置调整模式 TODO ？
+    this.setupTimingPattern(); // 时序图案
+    this.setupTypeInfo(test, maskPattern); // 设置类型信息
+
     if (this.typeNumber >= 7) {
-      this.setupTypeNumber(test);
+      this.setupTypeNumber(test); // 设置类型编号
     }
+
+    // TODO ??
     if (this.dataCache === null) {
       this.dataCache = QRCodeModel.createData(
         this.typeNumber,
@@ -62,6 +68,7 @@ QRCodeModel.prototype = {
         this.dataList
       );
     }
+    // console.log(this.modules);
     this.mapData(this.dataCache, maskPattern);
   },
   setupPositionProbePattern: function (row, col) {
@@ -229,6 +236,8 @@ QRCodeModel.PAD1 = 0x11;
 QRCodeModel.createData = function (typeNumber, errorCorrectLevel, dataList) {
   const rsBlocks = QRRSBlock.getRSBlocks(typeNumber, errorCorrectLevel);
   const buffer = new QRBitBuffer();
+  // ====> buffer = {buffer:{},length:0}
+  console.log('buffer=> 实例=>',buffer)
   for (let i = 0; i < dataList.length; i++) {
     const data = dataList[i];
     buffer.put(data.mode, 4);

@@ -125,7 +125,6 @@ const App = function () {
       this._htOption.correctLevel
     );
     console.log('_oQRCode=>', this._oQRCode);
-    console.log('sText=>', sText);
     this._oQRCode.addData(sText);
     this._oQRCode.make();
     this._el.title = sText;

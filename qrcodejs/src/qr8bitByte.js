@@ -10,8 +10,6 @@ function QR8bitByte(data) {
     let byteArray = [];
 
     let code = this.data.charCodeAt(i);
-    console.log('字符串=>', this.data[i], code);
-
     if (code > 0x10000) {
       byteArray[0] = 0xf0 | ((code & 0x1c0000) >>> 18);
       byteArray[1] = 0x80 | ((code & 0x3f000) >>> 12);
@@ -45,7 +43,13 @@ QR8bitByte.prototype = {
   getLength: function (buffer) {
     return this.parsedData.length;
   },
+  /**
+   *  @params buffer = {buffer: [number],length:128}
+   *
+   */
   write: function (buffer) {
+    console.log('buffer=>', Object.keys(buffer));
+    console.log('buffer 1=>', buffer);
     for (let i = 0, l = this.parsedData.length; i < l; i++) {
       buffer.put(this.parsedData[i], 8);
     }
