@@ -33,8 +33,7 @@ features:
 
 ## 快速安装
 
-:::code-group
-
+````md
 ```bash [npm]
 npm install @veaba/qrcode-wasm
 ```
@@ -46,8 +45,7 @@ pnpm add @veaba/qrcode-wasm
 ```bash [yarn]
 yarn add @veaba/qrcode-wasm
 ```
-
-:::
+````
 
 ## 简单使用
 
@@ -59,7 +57,7 @@ await init();
 
 // 创建 QRCode
 const qr = new QRCodeWasm();
-qr.make_code('https://example.com');
+qr.make_code('https://github.com/veaba/wasm-qrcode');
 
 // 获取 SVG
 const svg = qr.get_svg();

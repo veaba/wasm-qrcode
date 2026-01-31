@@ -49,7 +49,7 @@ document.getElementById('qrcode').innerHTML = svg;
   <script type="module">
     import { QRCode } from './dist/index.js';
     
-    const qr = new QRCode('https://example.com');
+    const qr = new QRCode('https://github.com/veaba/wasm-qrcode');
     document.getElementById('qrcode').innerHTML = qr.toSVG(256);
   </script>
 </head>

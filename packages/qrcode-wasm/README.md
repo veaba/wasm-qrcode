@@ -45,7 +45,7 @@ const svg = generate_qrcode('Hello World');
   
   async function run() {
     await init();
-    const svg = generate_qrcode('https://example.com');
+    const svg = generate_qrcode('https://github.com/veaba/wasm-qrcode');
     document.getElementById('qrcode').innerHTML = svg;
   }
   

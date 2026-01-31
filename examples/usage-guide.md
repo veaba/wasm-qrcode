@@ -20,7 +20,7 @@ await init()
 
 // 每次创建新实例（适合单次生成）
 const qr = new QRCodeWasm()
-qr.make_code('https://example.com')
+qr.make_code('https://github.com/veaba/wasm-qrcode')
 
 const svg = qr.get_svg()
 document.body.innerHTML = svg
@@ -44,14 +44,14 @@ await init()
 const gen = new QRCodeGenerator()
 
 // 场景 1：单个生成
-gen.generate('https://example.com')
+gen.generate('https://github.com/veaba/wasm-qrcode')
 const svg1 = gen.get_svg()
 
 // 场景 2：批量生成（性能最优）
 const texts = [
-  'https://example.com/1',
-  'https://example.com/2',
-  'https://example.com/3',
+  'https://github.com/veaba/wasm-qrcode/1',
+  'https://github.com/veaba/wasm-qrcode/2',
+  'https://github.com/veaba/wasm-qrcode/3',
   // ... 几千个
 ]
 const svgs = gen.generate_batch(texts)
@@ -82,7 +82,7 @@ const douyinSvg = generate_douyin_style_qrcode('https://douyin.com', 256)
 
 // 自定义渐变
 const gradientSvg = generate_gradient_qrcode(
-  'https://example.com', 
+  'https://github.com/veaba/wasm-qrcode', 
   256, 
   '#667eea',  // 起始色
   '#764ba2'   // 结束色
@@ -131,7 +131,7 @@ const gradientSvg = generate_gradient_qrcode(
       }
     }
     
-    document.getElementById('qrcode').innerHTML = generateQR('https://example.com')
+    document.getElementById('qrcode').innerHTML = generateQR('https://github.com/veaba/wasm-qrcode')
   </script>
 </body>
 </html>
@@ -150,7 +150,7 @@ const gen = new QRCodeGenerator()
 
 // 批量生成 1000 个
 console.time('WASM')
-const texts = Array(1000).fill(0).map((_, i) => `https://example.com/${i}`)
+const texts = Array(1000).fill(0).map((_, i) => `https://github.com/veaba/wasm-qrcode/${i}`)
 const wasmSvgs = gen.generate_batch(texts)
 console.timeEnd('WASM') // ~60ms
 

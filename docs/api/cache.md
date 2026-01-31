@@ -18,8 +18,8 @@ function getCacheKey(text: string, correctLevel: QRErrorCorrectLevel): string {
 }
 
 // 示例
-getCacheKey('https://example.com', QRErrorCorrectLevel.H);
-// "https://example.com:2"
+getCacheKey('https://github.com/veaba/wasm-qrcode', QRErrorCorrectLevel.H);
+// "https://github.com/veaba/wasm-qrcode:2"
 ```
 
 ## API 参考
@@ -52,11 +52,11 @@ function getCachedQRCode(
 import { getCachedQRCode, QRErrorCorrectLevel } from '@veaba/shared';
 
 // 第一次调用：创建并缓存
-const qr1 = getCachedQRCode('https://example.com', QRErrorCorrectLevel.H);
+const qr1 = getCachedQRCode('https://github.com/veaba/wasm-qrcode', QRErrorCorrectLevel.H);
 const svg1 = qr1.toSVG(256);
 
 // 第二次调用：从缓存获取（快 10-100 倍）
-const qr2 = getCachedQRCode('https://example.com', QRErrorCorrectLevel.H);
+const qr2 = getCachedQRCode('https://github.com/veaba/wasm-qrcode', QRErrorCorrectLevel.H);
 const svg2 = qr2.toSVG(256);
 
 // qr1 和 qr2 是同一个实例
@@ -77,13 +77,13 @@ function clearQRCodeCache(): void
 import { clearQRCodeCache, getCachedQRCode } from '@veaba/shared';
 
 // 使用缓存
-const qr = getCachedQRCode('https://example.com');
+const qr = getCachedQRCode('https://github.com/veaba/wasm-qrcode');
 
 // 清空缓存
 clearQRCodeCache();
 
 // 下次调用将重新创建
-const qr2 = getCachedQRCode('https://example.com');
+const qr2 = getCachedQRCode('https://github.com/veaba/wasm-qrcode');
 console.log(qr === qr2); // false
 ```
 
@@ -113,9 +113,9 @@ function getCacheStats(): {
 import { getCacheStats, getCachedQRCode } from '@veaba/shared';
 
 // 生成一些 QRCode
-getCachedQRCode('https://example.com/1');
-getCachedQRCode('https://example.com/2');
-getCachedQRCode('https://example.com/3');
+getCachedQRCode('https://github.com/veaba/wasm-qrcode/1');
+getCachedQRCode('https://github.com/veaba/wasm-qrcode/2');
+getCachedQRCode('https://github.com/veaba/wasm-qrcode/3');
 
 // 查看统计
 const stats = getCacheStats();
@@ -123,7 +123,7 @@ console.log(stats);
 // {
 //   size: 3,
 //   maxSize: 100,
-//   keys: ['https://example.com/1:2', 'https://example.com/2:2', 'https://example.com/3:2']
+//   keys: ['https://github.com/veaba/wasm-qrcode/1:2', 'https://github.com/veaba/wasm-qrcode/2:2', 'https://github.com/veaba/wasm-qrcode/3:2']
 // }
 ```
 
@@ -154,7 +154,7 @@ configureCache({ maxSize: 500 });
 configureCache({ enabled: false });
 
 // 此时 getCachedQRCode 总是返回新实例
-const qr = getCachedQRCode('https://example.com');
+const qr = getCachedQRCode('https://github.com/veaba/wasm-qrcode');
 
 // 重新启用
 configureCache({ enabled: true });
@@ -179,8 +179,8 @@ import {
 } from '@veaba/shared';
 
 // 使用缓存版本
-const svg1 = generateRoundedQRCodeCached('https://example.com', 256, 8);
-const svg2 = generateRoundedQRCodeCached('https://example.com', 256, 8); // 从缓存获取
+const svg1 = generateRoundedQRCodeCached('https://github.com/veaba/wasm-qrcode', 256, 8);
+const svg2 = generateRoundedQRCodeCached('https://github.com/veaba/wasm-qrcode', 256, 8); // 从缓存获取
 ```
 
 ## 批量缓存生成

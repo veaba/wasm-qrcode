@@ -61,8 +61,7 @@ export default defineConfig({
       { icon: 'github', mode: 'link', content: 'https://github.com/veaba/wasm-qrcode' },
     ],
     footer: {
-      message: 'Released under the MIT License.',
-      copyright: 'Copyright © 2024-present veaba',
+      message: 'Copyright © 2024-present veaba.',
     },
   },
 });

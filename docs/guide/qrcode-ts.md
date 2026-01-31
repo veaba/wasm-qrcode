@@ -40,7 +40,7 @@ console.log(svg);
 ```typescript
 import { QRCode, QRErrorCorrectLevel } from '@veaba/qrcode-ts';
 
-const qr = new QRCode('https://example.com', QRErrorCorrectLevel.H);
+const qr = new QRCode('https://github.com/veaba/wasm-qrcode', QRErrorCorrectLevel.H);
 
 // Bun 的文件写入 API
 await Bun.write('qrcode.svg', qr.toSVG());
@@ -63,7 +63,7 @@ Bun.serve({
     const url = new URL(req.url);
     
     if (url.pathname === '/qrcode') {
-      const text = url.searchParams.get('text') || 'https://example.com';
+      const text = url.searchParams.get('text') || 'https://github.com/veaba/wasm-qrcode';
       const size = parseInt(url.searchParams.get('size') || '256');
       
       const qr = new QRCode(text, QRErrorCorrectLevel.H);
@@ -90,7 +90,7 @@ Bun 的并发性能特别适合批量生成：
 import { QRCode, QRErrorCorrectLevel } from '@veaba/qrcode-ts';
 
 // 生成 10000 个 QRCode
-const texts = Array.from({ length: 10000 }, (_, i) => `https://example.com/${i}`);
+const texts = Array.from({ length: 10000 }, (_, i) => `https://github.com/veaba/wasm-qrcode/${i}`);
 
 console.time('generate');
 
@@ -162,7 +162,7 @@ async function generateWithWorkers(texts: string[], size: number = 256) {
 }
 
 // 使用
-const texts = Array.from({ length: 1000 }, (_, i) => `https://example.com/${i}`);
+const texts = Array.from({ length: 1000 }, (_, i) => `https://github.com/veaba/wasm-qrcode/${i}`);
 const results = await generateWithWorkers(texts, 256);
 ```
 
@@ -177,7 +177,7 @@ import { QRCode, QRErrorCorrectLevel } from '@veaba/qrcode-ts';
 export default {
   async fetch(request: Request): Promise<Response> {
     const url = new URL(request.url);
-    const text = url.searchParams.get('text') || 'https://example.com';
+    const text = url.searchParams.get('text') || 'https://github.com/veaba/wasm-qrcode';
     const size = parseInt(url.searchParams.get('size') || '256');
     
     const qr = new QRCode(text, QRErrorCorrectLevel.H);
@@ -201,7 +201,7 @@ import { QRCode, QRErrorCorrectLevel } from '@veaba/qrcode-ts';
 import type { VercelRequest, VercelResponse } from '@vercel/node';
 
 export default function handler(req: VercelRequest, res: VercelResponse) {
-  const { text = 'https://example.com', size = '256' } = req.query;
+  const { text = 'https://github.com/veaba/wasm-qrcode', size = '256' } = req.query;
   
   const qr = new QRCode(text as string, QRErrorCorrectLevel.H);
   const svg = qr.toSVG(parseInt(size as string));
@@ -223,7 +223,7 @@ export const config = {
 ```typescript
 import { QRCode, QRErrorCorrectLevel } from '@veaba/qrcode-ts';
 
-const qr = new QRCode('https://example.com', QRErrorCorrectLevel.H);
+const qr = new QRCode('https://github.com/veaba/wasm-qrcode', QRErrorCorrectLevel.H);
 
 // Bun 原生 API（推荐）
 await Bun.write('qrcode.svg', qr.toSVG());
@@ -317,18 +317,21 @@ import { QRCode, QRErrorCorrectLevel } from '@veaba/qrcode-ts';
 从 Node.js 迁移到 Bun：
 
 1. 替换包名：
+
 ```diff
 - import { QRCode } from '@veaba/qrcode-node';
 + import { QRCode } from '@veaba/qrcode-ts';
 ```
 
-2. 文件写入（可选优化）：
+1. 文件写入（可选优化）：
+
 ```diff
 - fs.writeFileSync('file.svg', svg);
 + await Bun.write('file.svg', svg);
 ```
 
-3. 服务器（可选优化）：
+1. 服务器（可选优化）：
+
 ```diff
 - app.listen(3000);
 + Bun.serve({ port: 3000, fetch: handler });

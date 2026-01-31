@@ -48,7 +48,7 @@ fn main() {
     
     // 设置纠错级别
     qr.options.correct_level = QRErrorCorrectLevel::H;
-    qr.make_code("https://example.com");
+    qr.make_code("https://github.com/veaba/wasm-qrcode");
     
     let svg = qr.get_svg();
     println!("{}", svg);
@@ -64,7 +64,7 @@ use qrcode_rust::{QRCode, QRErrorCorrectLevel};
 
 fn main() {
     let mut qr = QRCode::new();
-    qr.make_code("https://example.com");
+    qr.make_code("https://github.com/veaba/wasm-qrcode");
     
     // 获取 SVG 字符串
     let svg = qr.get_svg();
@@ -81,7 +81,7 @@ use qrcode_rust::QRCode;
 
 fn main() {
     let mut qr = QRCode::new();
-    qr.make_code("https://example.com");
+    qr.make_code("https://github.com/veaba/wasm-qrcode");
     
     // 获取模块数量
     let count = qr.get_module_count();
@@ -137,7 +137,7 @@ use qrcode_rust::QRCode;
 
 fn main() {
     let texts: Vec<String> = (0..100)
-        .map(|i| format!("https://example.com/{}", i))
+        .map(|i| format!("https://github.com/veaba/wasm-qrcode/{}", i))
         .collect();
     
     let mut results = Vec::new();
@@ -160,7 +160,7 @@ use rayon::prelude::*;
 
 fn main() {
     let texts: Vec<String> = (0..10000)
-        .map(|i| format!("https://example.com/{}", i))
+        .map(|i| format!("https://github.com/veaba/wasm-qrcode/{}", i))
         .collect();
     
     // 并行生成
@@ -187,7 +187,7 @@ use qrcode_rust::{QRCode, QRErrorCorrectLevel};
 
 #[get("/qrcode")]
 async fn generate_qrcode(query: web::Query<QRCodeQuery>) -> HttpResponse {
-    let text = query.text.clone().unwrap_or_else(|| "https://example.com".to_string());
+    let text = query.text.clone().unwrap_or_else(|| "https://github.com/veaba/wasm-qrcode".to_string());
     
     let mut qr = QRCode::new();
     qr.options.correct_level = QRErrorCorrectLevel::H;
@@ -235,7 +235,7 @@ struct QRCodeParams {
 }
 
 async fn generate_qrcode(Query(params): Query<QRCodeParams>) -> Html<String> {
-    let text = params.text.unwrap_or_else(|| "https://example.com".to_string());
+    let text = params.text.unwrap_or_else(|| "https://github.com/veaba/wasm-qrcode".to_string());
     
     let mut qr = QRCode::new();
     qr.options.correct_level = QRErrorCorrectLevel::H;
@@ -273,7 +273,7 @@ fn main() {
     qr.options.color_light = "#FFFFFF".to_string();
     qr.options.correct_level = QRErrorCorrectLevel::H;
     
-    qr.make_code("https://example.com");
+    qr.make_code("https://github.com/veaba/wasm-qrcode");
     
     let svg = qr.get_svg();
     std::fs::write("red-qrcode.svg", svg).unwrap();
@@ -292,9 +292,9 @@ fn main() {
     let mut qr = QRCode::new();
     
     let texts = vec![
-        "https://example.com/1",
-        "https://example.com/2",
-        "https://example.com/3",
+        "https://github.com/veaba/wasm-qrcode/1",
+        "https://github.com/veaba/wasm-qrcode/2",
+        "https://github.com/veaba/wasm-qrcode/3",
     ];
     
     for text in &texts {
@@ -315,7 +315,7 @@ use std::sync::mpsc;
 fn main() {
     let (tx, rx) = mpsc::channel();
     let texts: Vec<String> = (0..100)
-        .map(|i| format!("https://example.com/{}", i))
+        .map(|i| format!("https://github.com/veaba/wasm-qrcode/{}", i))
         .collect();
     
     // 创建工作线程
@@ -433,5 +433,6 @@ Rust 源码 (packages/qrcode-rust/src/)
 ```
 
 同一份 Rust 代码，编译为两种目标：
+
 - **原生库**：最高性能，无 WASM 开销
 - **WASM**：浏览器运行，跨平台

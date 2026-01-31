@@ -198,7 +198,7 @@ error_level_H:         8.877 µs   8.914 µs   8.954 µs
 import { getCachedQRCode } from '@veaba/shared';
 
 // 重复文本性能提升 10-100 倍
-const qr = getCachedQRCode('https://example.com');
+const qr = getCachedQRCode('https://github.com/veaba/wasm-qrcode');
 ```
 
 ### 2. 批量生成

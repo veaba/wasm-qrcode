@@ -195,9 +195,9 @@ const CONFIG = {
 
 ### 测试文本
 
-- **短文本**: `https://example.com`
+- **短文本**: `https://github.com/veaba/wasm-qrcode`
 - **中文本**: `https://github.com/veaba/wasm-qrcode`
-- **长文本**: `https://example.com/very/long/path?foo=bar&baz=qux`
+- **长文本**: `https://github.com/veaba/wasm-qrcode/very/long/path?foo=bar&baz=qux`
 - **Unicode**: `https://例子.com/测试路径`
 
 ### 纠错级别

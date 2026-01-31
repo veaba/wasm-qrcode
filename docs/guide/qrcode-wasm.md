@@ -52,7 +52,7 @@ await init();
 
 // 使用高纠错级别
 const qr = QRCodeWasm.with_options(256, 256, CorrectLevel.H);
-qr.make_code('https://example.com');
+qr.make_code('https://github.com/veaba/wasm-qrcode');
 ```
 
 纠错级别说明：
@@ -80,11 +80,11 @@ const gen = new QRCodeGenerator();
 gen.set_options(256, 256, CorrectLevel.H);
 
 // 生成单个 QRCode
-gen.generate('https://example.com/1');
+gen.generate('https://github.com/veaba/wasm-qrcode/1');
 const svg1 = gen.get_svg();
 
 // 复用同一实例生成另一个（性能更好）
-gen.generate('https://example.com/2');
+gen.generate('https://github.com/veaba/wasm-qrcode/2');
 const svg2 = gen.get_svg();
 
 // 批量生成
@@ -108,7 +108,7 @@ style.set_quiet_zone(2);
 
 // 创建带样式的 QRCode
 const qr = StyledQRCode.with_style(style);
-qr.generate('https://example.com', CorrectLevel.H);
+qr.generate('https://github.com/veaba/wasm-qrcode', CorrectLevel.H);
 
 const svg = qr.get_styled_svg();
 ```
@@ -127,24 +127,24 @@ import init, {
 await init();
 
 // 微信风格（绿色）
-const wechatSvg = generate_wechat_style_qrcode('https://example.com', 256);
+const wechatSvg = generate_wechat_style_qrcode('https://github.com/veaba/wasm-qrcode', 256);
 
 // 抖音风格（渐变色）
-const douyinSvg = generate_douyin_style_qrcode('https://example.com', 256);
+const douyinSvg = generate_douyin_style_qrcode('https://github.com/veaba/wasm-qrcode', 256);
 
 // 赛博朋克风格
-const cyberpunkSvg = generate_cyberpunk_style_qrcode('https://example.com', 256);
+const cyberpunkSvg = generate_cyberpunk_style_qrcode('https://github.com/veaba/wasm-qrcode', 256);
 
 // 渐变背景
 const gradientSvg = generate_gradient_qrcode(
-  'https://example.com', 
+  'https://github.com/veaba/wasm-qrcode', 
   256, 
   '#667eea',  // 起始色
   '#764ba2'   // 结束色
 );
 
 // 圆角 QRCode
-const roundedSvg = generate_rounded_qrcode('https://example.com', 256, 8);
+const roundedSvg = generate_rounded_qrcode('https://github.com/veaba/wasm-qrcode', 256, 8);
 ```
 
 ## Canvas 渲染
@@ -166,7 +166,7 @@ renderer.set_colors(
 );
 
 // 渲染 QRCode
-const pixelData = renderer.render('https://example.com', CorrectLevel.H);
+const pixelData = renderer.render('https://github.com/veaba/wasm-qrcode', CorrectLevel.H);
 
 // 使用 ImageData 显示
 const canvas = document.getElementById('canvas');

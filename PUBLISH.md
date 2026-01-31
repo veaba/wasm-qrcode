@@ -343,12 +343,12 @@ node scripts/publish.js
 
 访问以下链接确认包已发布：
 
-- https://www.npmjs.com/package/@veaba/shared
-- https://www.npmjs.com/package/@veaba/qrcode-wasm
-- https://www.npmjs.com/package/@veaba/qrcode-node
-- https://www.npmjs.com/package/@veaba/qrcode-ts
-- https://www.npmjs.com/package/@veaba/qrcodejs
-- https://www.npmjs.com/package/@veaba/qrcode-rust
+- <https://www.npmjs.com/package/@veaba/shared>
+- <https://www.npmjs.com/package/@veaba/qrcode-wasm>
+- <https://www.npmjs.com/package/@veaba/qrcode-node>
+- <https://www.npmjs.com/package/@veaba/qrcode-ts>
+- <https://www.npmjs.com/package/@veaba/qrcodejs>
+- <https://www.npmjs.com/package/@veaba/qrcode-rust>
 
 ### 2. 安装测试
 
@@ -372,7 +372,7 @@ ls node_modules/@veaba/
 // test.js
 import { QRCode } from '@veaba/qrcode-node';
 
-const qr = new QRCode('https://example.com');
+const qr = new QRCode('https://github.com/veaba/wasm-qrcode');
 console.log(qr.toSVG());
 ```
 
@@ -385,6 +385,7 @@ console.log(qr.toSVG());
 **原因**: 你不是该包的维护者
 
 **解决**:
+
 ```bash
 # 如果是组织包，确保在组织中有发布权限
 npm org ls @veaba
@@ -398,6 +399,7 @@ npm owner add <your-username> @veaba/<package-name>
 **原因**: 包名已被占用
 
 **解决**:
+
 - 更换包名
 - 或者联系包所有者获取权限
 
@@ -406,6 +408,7 @@ npm owner add <your-username> @veaba/<package-name>
 **原因**: `pkg` 目录未正确生成
 
 **解决**:
+
 ```bash
 cd packages/qrcode-wasm
 wasm-pack build --target web
@@ -419,6 +422,7 @@ cat pkg/package.json
 **原因**: 依赖包需要先发布
 
 **解决**: 按照依赖顺序发布：
+
 1. `@veaba/shared` (最先)
 2. `@veaba/qrcode-wasm`
 3. `@veaba/qrcode-node`
@@ -430,6 +434,7 @@ cat pkg/package.json
 **原因**: 远程版本比本地新
 
 **解决**:
+
 ```bash
 # 更新版本号
 pnpm version patch
@@ -443,6 +448,7 @@ npm publish --force
 **原因**: npm 账号启用了双因素认证
 
 **解决**:
+
 ```bash
 # 方法1: 使用 --otp 参数
 npm publish --otp 123456
@@ -501,8 +507,8 @@ npm view @veaba/qrcode-wasm time
 
 如有问题，请联系：
 
-- 📧 Email: godpu@outlook.com
-- 🐙 GitHub: https://github.com/veaba/wasm-qrcode/issues
+- 📧 Email: <godpu@outlook.com>
+- 🐙 GitHub: <https://github.com/veaba/wasm-qrcode/issues>
 
 ---
 

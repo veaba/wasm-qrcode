@@ -1,5 +1,7 @@
 # 介绍
 
+import { PackageManagerTabs } from '@rspress/core/theme';
+
 Wasm QRCode 是一个高性能、跨平台的 QRCode 生成库，采用 Rust 编写核心算法，支持编译为 WebAssembly 在浏览器运行，或作为原生库在 Node.js、Bun 和 Rust 环境中使用。
 
 ## 为什么选 Wasm QRCode？
@@ -19,22 +21,38 @@ JS:      ███████████████████████�
 
 无论你使用哪个包，API 设计保持一致，轻松切换运行环境：
 
+import { Tab, Tabs } from '@rspress/core/theme';
+
+<Tabs>
+<Tab label="浏览器 (WASM)">
+
 ```typescript
 // 浏览器 (WASM)
 import { QRCodeWasm } from '@veaba/qrcode-wasm';
 const qr = new QRCodeWasm();
 qr.make_code('text');
+```
 
+</Tab>
+<Tab label="Node.js">
+```js
 // Node.js
 import { QRCode } from '@veaba/qrcode-node';
 const qr = new QRCode();
 qr.make_code('text');
+```
 
+</Tab>
+<Tab label="Bun">
+```typescript
 // Bun
 import { QRCode } from '@veaba/qrcode-ts';
 const qr = new QRCode();
 qr.make_code('text');
 ```
+</Tab>
+
+</Tabs>
 
 ### 3. 智能缓存
 
@@ -83,21 +101,15 @@ const qr2 = getCachedQRCode('https://example.com');
 
 ### 浏览器（推荐 WASM）
 
-```bash
-npm install @veaba/qrcode-wasm
-```
+<PackageManagerTabs command='install @veaba/qrcode-wasm' />
 
 ### 浏览器（纯 JS，无需 WASM）
 
-```bash
-npm install @veaba/qrcodejs
-```
+<PackageManagerTabs command='install @veaba/qrcodejs' />
 
 ### Node.js
 
-```bash
-npm install @veaba/qrcode-node
-```
+<PackageManagerTabs command='install @veaba/qrcode-node' />
 
 ### Bun
 

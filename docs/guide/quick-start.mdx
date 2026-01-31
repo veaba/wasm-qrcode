@@ -1,14 +1,14 @@
 # 快速开始
 
+import { PackageManagerTabs } from '@rspress/core/theme';
+
 本指南将帮助你在 5 分钟内开始使用 Wasm QRCode。
 
 ## 浏览器环境（WASM）
 
 ### 1. 安装
 
-```bash
-npm install @veaba/qrcode-wasm
-```
+<PackageManagerTabs command='install @veaba/qrcode-wasm' />
 
 ### 2. 基础使用
 
@@ -33,7 +33,10 @@ document.getElementById('qrcode').innerHTML = svg;
 
 ### 3. 在框架中使用
 
-:::code-group
+import { Tab, Tabs } from '@rspress/core/theme';
+
+<Tabs>
+<Tab label="React">
 
 ```tsx [React]
 import { useEffect, useState } from 'react';
@@ -54,28 +57,37 @@ function QRCode({ text }) {
 }
 ```
 
-```vue [Vue]
+</Tab>
+
+<Tab label="Vue">
+
+```html [Vue]
 <template>
-  <div v-html="svg" />
+  <div v-html="svg"></div>
 </template>
 
 <script setup>
-import { ref, watch } from 'vue';
-import init, { QRCodeWasm } from '@veaba/qrcode-wasm';
+  import { ref, watch } from 'vue';
+  import init, { QRCodeWasm } from '@veaba/qrcode-wasm';
 
-const props = defineProps({ text: String });
-const svg = ref('');
+  const props = defineProps({ text: String });
+  const svg = ref('');
 
-watch(() => props.text, async (text) => {
-  await init();
-  const qr = new QRCodeWasm();
-  qr.make_code(text);
-  svg.value = qr.get_svg();
-}, { immediate: true });
+  watch(
+    () => props.text,
+    async (text) => {
+      await init();
+      const qr = new QRCodeWasm();
+      qr.make_code(text);
+      svg.value = qr.get_svg();
+    },
+    { immediate: true },
+  );
 </script>
 ```
 
-:::
+</Tab>
+</Tabs>
 
 ## Node.js 环境
 
@@ -113,10 +125,10 @@ const app = express();
 
 app.get('/qrcode', (req, res) => {
   const { text = 'https://example.com', size = 256 } = req.query;
-  
+
   const qr = new QRCode(text, QRErrorCorrectLevel.H);
   const svg = qr.toStyledSVG({ size: parseInt(size) });
-  
+
   res.setHeader('Content-Type', 'image/svg+xml');
   res.send(svg);
 });
@@ -146,7 +158,7 @@ console.log(svg);
 
 // 批量生成（Bun 的并发性能更优）
 const texts = Array.from({ length: 1000 }, (_, i) => `https://example.com/${i}`);
-const results = texts.map(t => {
+const results = texts.map((t) => {
   const q = new QRCode(t, QRErrorCorrectLevel.H);
   return q.toSVG();
 });
@@ -170,11 +182,11 @@ fn main() {
     // 创建 QRCode
     let mut qr = QRCode::new();
     qr.make_code("https://example.com");
-    
+
     // 获取 SVG
     let svg = qr.get_svg();
     println!("{}", svg);
-    
+
     // 获取模块数据
     let modules = qr.get_modules();
     println!("Module count: {}", qr.get_module_count());

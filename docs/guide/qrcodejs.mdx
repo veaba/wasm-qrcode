@@ -10,13 +10,13 @@ npm install @veaba/qrcodejs
 
 ## 与 WASM 版本的区别
 
-| 特性 | @veaba/qrcodejs | @veaba/qrcode-wasm |
-|------|-----------------|-------------------|
-| 依赖 | 无 | 需要加载 .wasm 文件 |
-| 兼容性 | IE11+ | 现代浏览器 |
-| 性能 | 快 | 更快（2-5倍）|
-| 包大小 | ~15KB | ~45KB (含 wasm) |
-| 启动时间 | 即时 | 需要异步初始化 |
+| 特性     | @veaba/qrcodejs | @veaba/qrcode-wasm  |
+| -------- | --------------- | ------------------- |
+| 依赖     | 无              | 需要加载 .wasm 文件 |
+| 兼容性   | IE11+           | 现代浏览器          |
+| 性能     | 快              | 更快（2-5倍）       |
+| 包大小   | ~15KB           | ~45KB (含 wasm)     |
+| 启动时间 | 即时            | 需要异步初始化      |
 
 ## 基础使用
 
@@ -26,10 +26,7 @@ npm install @veaba/qrcodejs
 import { QRCodeCore, QRErrorCorrectLevel } from '@veaba/qrcodejs';
 
 // 创建 QRCode 实例（构造函数直接传入文本）
-const qr = new QRCodeCore(
-  'https://github.com/veaba/wasm-qrcode',
-  QRErrorCorrectLevel.H
-);
+const qr = new QRCodeCore('https://github.com/veaba/wasm-qrcode', QRErrorCorrectLevel.H);
 
 // 获取 SVG
 const svg = qr.toSVG();
@@ -41,7 +38,7 @@ document.getElementById('qrcode').innerHTML = svg;
 ```typescript
 import { QRCodeCore, QRErrorCorrectLevel } from '@veaba/qrcodejs';
 
-const qr = new QRCodeCore('https://example.com', QRErrorCorrectLevel.H);
+const qr = new QRCodeCore('https://github.com/veaba/wasm-qrcode', QRErrorCorrectLevel.H);
 
 // 生成 512x512 的 SVG
 const svg = qr.toSVG(512);
@@ -54,7 +51,7 @@ const svg = qr.toSVG(512);
 ```typescript
 import { QRCodeCore, QRErrorCorrectLevel } from '@veaba/qrcodejs';
 
-const qr = new QRCodeCore('https://example.com', QRErrorCorrectLevel.H);
+const qr = new QRCodeCore('https://github.com/veaba/wasm-qrcode', QRErrorCorrectLevel.H);
 
 // 样式化 SVG
 const styledSvg = qr.toStyledSVG({
@@ -62,7 +59,7 @@ const styledSvg = qr.toStyledSVG({
   colorDark: '#000000',
   colorLight: '#ffffff',
   borderRadius: 8,
-  quietZone: 2
+  quietZone: 2,
 });
 ```
 
@@ -73,9 +70,9 @@ const gradientSvg = qr.toStyledSVG({
   size: 256,
   gradient: {
     color1: '#667eea',
-    color2: '#764ba2'
+    color2: '#764ba2',
   },
-  quietZone: 2
+  quietZone: 2,
 });
 ```
 
@@ -84,8 +81,8 @@ const gradientSvg = qr.toStyledSVG({
 ```typescript
 const roundedSvg = qr.toStyledSVG({
   size: 256,
-  borderRadius: 12,  // 圆角半径
-  quietZone: 2
+  borderRadius: 12, // 圆角半径
+  quietZone: 2,
 });
 ```
 
@@ -96,8 +93,8 @@ const logoSvg = qr.toStyledSVG({
   size: 256,
   quietZone: 2,
   logoRegions: [
-    { row: 8, col: 8, size: 5 }  // 中心 5x5 区域留白
-  ]
+    { row: 8, col: 8, size: 5 }, // 中心 5x5 区域留白
+  ],
 });
 ```
 
@@ -114,23 +111,23 @@ import {
   generateCyberpunkStyleQRCode,
   generateRetroStyleQRCode,
   generateMinimalStyleQRCode,
-  generateXiaohongshuStyleQRCode
+  generateXiaohongshuStyleQRCode,
 } from '@veaba/qrcodejs';
 
 // 圆角
-const svg1 = generateRoundedQRCode('https://example.com', 256, 8);
+const svg1 = generateRoundedQRCode('https://github.com/veaba/wasm-qrcode', 256, 8);
 
 // 渐变
-const svg2 = generateGradientQRCode('https://example.com', 256, '#667eea', '#764ba2');
+const svg2 = generateGradientQRCode('https://github.com/veaba/wasm-qrcode', 256, '#667eea', '#764ba2');
 
 // Logo 区域
-const svg3 = generateQRCodeWithLogoArea('https://example.com', 256, 0.2);
+const svg3 = generateQRCodeWithLogoArea('https://github.com/veaba/wasm-qrcode', 256, 0.2);
 
 // 各种主题风格
-const wechat = generateWechatStyleQRCode('https://example.com');
-const douyin = generateDouyinStyleQRCode('https://example.com');
-const alipay = generateAlipayStyleQRCode('https://example.com');
-const cyberpunk = generateCyberpunkStyleQRCode('https://example.com');
+const wechat = generateWechatStyleQRCode('https://github.com/veaba/wasm-qrcode');
+const douyin = generateDouyinStyleQRCode('https://github.com/veaba/wasm-qrcode');
+const alipay = generateAlipayStyleQRCode('https://github.com/veaba/wasm-qrcode');
+const cyberpunk = generateCyberpunkStyleQRCode('https://github.com/veaba/wasm-qrcode');
 ```
 
 ## 批量生成
@@ -139,23 +136,23 @@ const cyberpunk = generateCyberpunkStyleQRCode('https://example.com');
 import { generateBatchQRCodes, QRErrorCorrectLevel } from '@veaba/qrcodejs';
 
 const texts = [
-  'https://example.com/1',
-  'https://example.com/2',
-  'https://example.com/3'
+  'https://github.com/veaba/wasm-qrcode/1',
+  'https://github.com/veaba/wasm-qrcode/2',
+  'https://github.com/veaba/wasm-qrcode/3',
 ];
 
 // 批量生成
 const svgs = generateBatchQRCodes(texts, {
   correctLevel: QRErrorCorrectLevel.H,
-  size: 256
+  size: 256,
 });
 
 // 或使用样式
-const styledSvgs = texts.map(text => {
+const styledSvgs = texts.map((text) => {
   const qr = new QRCodeCore(text, QRErrorCorrectLevel.H);
   return qr.toStyledSVG({
     size: 256,
-    borderRadius: 8
+    borderRadius: 8,
   });
 });
 ```
@@ -166,16 +163,16 @@ const styledSvgs = texts.map(text => {
 import { generateQRCodeAsync, generateBatchAsync } from '@veaba/qrcodejs';
 
 // 单个异步生成
-const svg = await generateQRCodeAsync('https://example.com', {
+const svg = await generateQRCodeAsync('https://github.com/veaba/wasm-qrcode', {
   correctLevel: QRErrorCorrectLevel.H,
-  size: 256
+  size: 256,
 });
 
 // 批量异步生成
-const texts = Array.from({ length: 100 }, (_, i) => `https://example.com/${i}`);
+const texts = Array.from({ length: 100 }, (_, i) => `https://github.com/veaba/wasm-qrcode/${i}`);
 const svgs = await generateBatchAsync(texts, {
   correctLevel: QRErrorCorrectLevel.H,
-  size: 256
+  size: 256,
 });
 ```
 
@@ -190,17 +187,17 @@ import { getCachedQRCode, getCacheStats } from '@veaba/shared';
 // 方式1：手动使用缓存
 import { getCachedQRCode } from '@veaba/shared';
 
-const qr = getCachedQRCode('https://example.com', QRErrorCorrectLevel.H);
+const qr = getCachedQRCode('https://github.com/veaba/wasm-qrcode', QRErrorCorrectLevel.H);
 const svg = qr.toSVG(256);
 
 // 方式2：使用带缓存的预设函数
 import {
   generateRoundedQRCodeCached,
   generateGradientQRCodeCached,
-  generateWechatStyleQRCodeCached
+  generateWechatStyleQRCodeCached,
 } from '@veaba/shared';
 
-const svg = generateRoundedQRCodeCached('https://example.com', 256, 8);
+const svg = generateRoundedQRCodeCached('https://github.com/veaba/wasm-qrcode', 256, 8);
 
 // 查看缓存统计
 console.log(getCacheStats());
@@ -214,7 +211,7 @@ console.log(getCacheStats());
 ```typescript
 import { QRCodeCore, QRErrorCorrectLevel } from '@veaba/qrcodejs';
 
-const qr = new QRCodeCore('https://example.com', QRErrorCorrectLevel.H);
+const qr = new QRCodeCore('https://github.com/veaba/wasm-qrcode', QRErrorCorrectLevel.H);
 
 // 获取模块数量
 const count = qr.getModuleCount();
@@ -250,24 +247,24 @@ function QRCode({ text, size = 256 }) {
 
 ### Vue
 
-```vue
+```html
 <template>
   <div v-html="svg" />
 </template>
 
 <script setup>
-import { QRCodeCore, QRErrorCorrectLevel } from '@veaba/qrcodejs';
-import { computed } from 'vue';
+  import { QRCodeCore, QRErrorCorrectLevel } from '@veaba/qrcodejs';
+  import { computed } from 'vue';
 
-const props = defineProps({
-  text: String,
-  size: { type: Number, default: 256 }
-});
+  const props = defineProps({
+    text: String,
+    size: { type: Number, default: 256 },
+  });
 
-const svg = computed(() => {
-  const qr = new QRCodeCore(props.text, QRErrorCorrectLevel.H);
-  return qr.toSVG(props.size);
-});
+  const svg = computed(() => {
+    const qr = new QRCodeCore(props.text, QRErrorCorrectLevel.H);
+    return qr.toSVG(props.size);
+  });
 </script>
 ```
 

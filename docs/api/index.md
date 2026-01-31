@@ -87,7 +87,7 @@ import init, { QRCodeWasm } from '@veaba/qrcode-wasm';
 
 await init();
 const qr = new QRCodeWasm();
-qr.make_code('https://example.com');
+qr.make_code('https://github.com/veaba/wasm-qrcode');
 const svg = qr.get_svg();
 ```
 
@@ -96,7 +96,7 @@ const svg = qr.get_svg();
 ```typescript
 import { QRCodeCore, QRErrorCorrectLevel } from '@veaba/qrcodejs';
 
-const qr = new QRCodeCore('https://example.com', QRErrorCorrectLevel.H);
+const qr = new QRCodeCore('https://github.com/veaba/wasm-qrcode', QRErrorCorrectLevel.H);
 const svg = qr.toSVG();
 ```
 
@@ -105,7 +105,7 @@ const svg = qr.toSVG();
 ```typescript
 import { QRCode, QRErrorCorrectLevel } from '@veaba/qrcode-node';
 
-const qr = new QRCode('https://example.com', QRErrorCorrectLevel.H);
+const qr = new QRCode('https://github.com/veaba/wasm-qrcode', QRErrorCorrectLevel.H);
 const svg = qr.toSVG();
 const png = qr.toPNG();
 ```
@@ -115,7 +115,7 @@ const png = qr.toPNG();
 ```typescript
 import { QRCode, QRErrorCorrectLevel } from '@veaba/qrcode-ts';
 
-const qr = new QRCode('https://example.com', QRErrorCorrectLevel.H);
+const qr = new QRCode('https://github.com/veaba/wasm-qrcode', QRErrorCorrectLevel.H);
 const svg = qr.toSVG();
 ```
 
@@ -125,6 +125,6 @@ const svg = qr.toSVG();
 use qrcode_rust::{QRCode, QRErrorCorrectLevel};
 
 let mut qr = QRCode::new();
-qr.make_code("https://example.com");
+qr.make_code("https://github.com/veaba/wasm-qrcode");
 let svg = qr.get_svg();
 ```
