@@ -48,8 +48,6 @@ QR8bitByte.prototype = {
    *
    */
   write: function (buffer) {
-    console.log('buffer=>', Object.keys(buffer));
-    console.log('buffer 1=>', buffer);
     for (let i = 0, l = this.parsedData.length; i < l; i++) {
       buffer.put(this.parsedData[i], 8);
     }

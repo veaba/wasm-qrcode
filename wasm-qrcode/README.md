@@ -1,9 +1,8 @@
-# Qrcode for rust wasm.
-
+# Qrcode for rust wasm
 
 ## struct
 
-```json 
+```json
 - code
 -  
 ```

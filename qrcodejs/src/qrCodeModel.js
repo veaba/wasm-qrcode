@@ -16,7 +16,7 @@ function QRCodeModel(typeNumber, errorCorrectLevel) {
 QRCodeModel.prototype = {
   addData: function (data) {
     let newData = new QR8bitByte(data);
-    console.log('QR8bitByte 实例=>', data, newData);
+    // console.log('QR8bitByte 实例=>', data, newData);
     this.dataList.push(newData);
     this.dataCache = null;
   },
@@ -236,8 +236,6 @@ QRCodeModel.PAD1 = 0x11;
 QRCodeModel.createData = function (typeNumber, errorCorrectLevel, dataList) {
   const rsBlocks = QRRSBlock.getRSBlocks(typeNumber, errorCorrectLevel);
   const buffer = new QRBitBuffer();
-  // ====> buffer = {buffer:{},length:0}
-  console.log('buffer=> 实例=>',buffer)
   for (let i = 0; i < dataList.length; i++) {
     const data = dataList[i];
     buffer.put(data.mode, 4);

@@ -1,0 +1,611 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>QRCode Benchmark - WASM vs JavaScript</title>
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 20px;
+      background: #f5f5f5;
+    }
+    h1 {
+      text-align: center;
+      color: #333;
+    }
+    .container {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 20px;
+      margin-top: 20px;
+    }
+    .panel {
+      background: white;
+      border-radius: 8px;
+      padding: 20px;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+    .panel h2 {
+      margin-top: 0;
+      padding-bottom: 10px;
+      border-bottom: 2px solid #eee;
+    }
+    .panel.wasm h2 {
+      color: #00a8e8;
+      border-color: #00a8e8;
+    }
+    .panel.js h2 {
+      color: #f7b801;
+      border-color: #f7b801;
+    }
+    .controls {
+      background: white;
+      border-radius: 8px;
+      padding: 20px;
+      margin-bottom: 20px;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+    .control-group {
+      margin-bottom: 15px;
+    }
+    label {
+      display: block;
+      margin-bottom: 5px;
+      font-weight: bold;
+    }
+    input[type="text"], input[type="number"], select {
+      width: 100%;
+      padding: 8px 12px;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+      font-size: 14px;
+    }
+    .button-group {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+    button {
+      padding: 10px 20px;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 14px;
+      transition: background 0.2s;
+    }
+    .btn-primary {
+      background: #007bff;
+      color: white;
+    }
+    .btn-primary:hover {
+      background: #0056b3;
+    }
+    .btn-secondary {
+      background: #6c757d;
+      color: white;
+    }
+    .btn-secondary:hover {
+      background: #545b62;
+    }
+    .results {
+      margin-top: 20px;
+    }
+    .result-item {
+      display: flex;
+      justify-content: space-between;
+      padding: 10px;
+      background: #f8f9fa;
+      border-radius: 4px;
+      margin-bottom: 8px;
+    }
+    .result-label {
+      font-weight: 500;
+    }
+    .result-value {
+      font-family: 'Courier New', monospace;
+      font-weight: bold;
+    }
+    .result-value.good {
+      color: #28a745;
+    }
+    .result-value.bad {
+      color: #dc3545;
+    }
+    .qrcode-output {
+      margin-top: 15px;
+      text-align: center;
+      min-height: 200px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: #f8f9fa;
+      border-radius: 4px;
+    }
+    .qrcode-output svg, .qrcode-output canvas {
+      max-width: 100%;
+      height: auto;
+    }
+    .comparison {
+      background: white;
+      border-radius: 8px;
+      padding: 20px;
+      margin-top: 20px;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+    .comparison h2 {
+      margin-top: 0;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+    th, td {
+      padding: 12px;
+      text-align: left;
+      border-bottom: 1px solid #eee;
+    }
+    th {
+      background: #f8f9fa;
+      font-weight: 600;
+    }
+    .winner {
+      background: #d4edda;
+    }
+    .loser {
+      background: #f8d7da;
+    }
+    .progress-bar {
+      width: 100%;
+      height: 20px;
+      background: #e9ecef;
+      border-radius: 10px;
+      overflow: hidden;
+      margin-top: 5px;
+    }
+    .progress-fill {
+      height: 100%;
+      background: #007bff;
+      transition: width 0.3s;
+    }
+    .progress-fill.wasm {
+      background: #00a8e8;
+    }
+    .progress-fill.js {
+      background: #f7b801;
+    }
+    .status {
+      padding: 10px;
+      border-radius: 4px;
+      margin-bottom: 10px;
+    }
+    .status.loading {
+      background: #fff3cd;
+      color: #856404;
+    }
+    .status.ready {
+      background: #d4edda;
+      color: #155724;
+    }
+    .status.error {
+      background: #f8d7da;
+      color: #721c24;
+    }
+  </style>
+</head>
+<body>
+  <h1>🚀 QRCode Benchmark: WASM vs JavaScript</h1>
+
+  <div class="controls">
+    <div class="control-group">
+      <label>测试文本:</label>
+      <input type="text" id="testText" value="https://github.com/veaba/wasm-qrcode" placeholder="输入要编码的文本">
+    </div>
+    <div class="control-group">
+      <label>迭代次数:</label>
+      <input type="number" id="iterations" value="1000" min="1" max="10000">
+    </div>
+    <div class="control-group">
+      <label>错误纠正级别:</label>
+      <select id="correctLevel">
+        <option value="1">L (~7%)</option>
+        <option value="0">M (~15%)</option>
+        <option value="3">Q (~25%)</option>
+        <option value="2" selected>H (~30%)</option>
+      </select>
+    </div>
+    <div class="button-group">
+      <button class="btn-primary" onclick="runBenchmark()">运行基准测试</button>
+      <button class="btn-secondary" onclick="runSingleTest()">单次测试</button>
+      <button class="btn-secondary" onclick="runProgressiveTest()">渐进测试 (1-10000次)</button>
+      <button class="btn-secondary" onclick="runBatchTest()">批量测试 (1000个不同文本)</button>
+    </div>
+    <div id="status" class="status loading">正在加载 WASM...</div>
+  </div>
+
+  <div class="container">
+    <div class="panel wasm">
+      <h2>🦀 Rust WASM</h2>
+      <div class="results">
+        <div class="result-item">
+          <span class="result-label">总耗时:</span>
+          <span class="result-value" id="wasmTotal">-</span>
+        </div>
+        <div class="result-item">
+          <span class="result-label">平均耗时:</span>
+          <span class="result-value" id="wasmAvg">-</span>
+        </div>
+        <div class="result-item">
+          <span class="result-label">每秒生成:</span>
+          <span class="result-value" id="wasmOps">-</span>
+        </div>
+        <div class="result-item">
+          <span class="result-label">模块数量:</span>
+          <span class="result-value" id="wasmModules">-</span>
+        </div>
+      </div>
+      <div class="qrcode-output" id="wasmOutput">
+        <span>WASM QRCode 将显示在这里</span>
+      </div>
+    </div>
+
+    <div class="panel js">
+      <h2>🟨 JavaScript</h2>
+      <div class="results">
+        <div class="result-item">
+          <span class="result-label">总耗时:</span>
+          <span class="result-value" id="jsTotal">-</span>
+        </div>
+        <div class="result-item">
+          <span class="result-label">平均耗时:</span>
+          <span class="result-value" id="jsAvg">-</span>
+        </div>
+        <div class="result-item">
+          <span class="result-label">每秒生成:</span>
+          <span class="result-value" id="jsOps">-</span>
+        </div>
+        <div class="result-item">
+          <span class="result-label">模块数量:</span>
+          <span class="result-value" id="jsModules">-</span>
+        </div>
+      </div>
+      <div class="qrcode-output" id="jsOutput">
+        <span>JS QRCode 将显示在这里</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="comparison">
+    <h2>📊 对比结果</h2>
+    <table>
+      <thead>
+        <tr>
+          <th>指标</th>
+          <th>WASM</th>
+          <th>JavaScript</th>
+          <th>差异</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>总耗时</td>
+          <td id="compWasmTotal">-</td>
+          <td id="compJsTotal">-</td>
+          <td id="compTotalDiff">-</td>
+        </tr>
+        <tr>
+          <td>平均耗时</td>
+          <td id="compWasmAvg">-</td>
+          <td id="compJsAvg">-</td>
+          <td id="compAvgDiff">-</td>
+        </tr>
+        <tr>
+          <td>性能倍数</td>
+          <td colspan="3" id="perfMultiplier" style="text-align: center; font-size: 1.2em; font-weight: bold;">-</td>
+        </tr>
+      </tbody>
+    </table>
+    <div style="margin-top: 20px;">
+      <h3>可视化对比</h3>
+      <div style="margin-bottom: 10px;">
+        <div>WASM: <span id="vizWasmTime">-</span></div>
+        <div class="progress-bar">
+          <div class="progress-fill wasm" id="wasmBar" style="width: 50%"></div>
+        </div>
+      </div>
+      <div>
+        <div>JavaScript: <span id="vizJsTime">-</span></div>
+        <div class="progress-bar">
+          <div class="progress-fill js" id="jsBar" style="width: 50%"></div>
+        </div>
+      </div>
+    </div>
+    <div style="margin-top: 20px; padding: 15px; background: #f8f9fa; border-radius: 8px; font-size: 14px; color: #666;">
+      <strong>说明：</strong>JavaScript 版本可能比 WASM 快，因为现代 JS 引擎（V8）对简单的数学运算优化得非常好，且没有 WASM 与 JS 之间的边界跨越开销。WASM 的优势在于复杂的计算任务和内存密集型操作。
+    </div>
+  </div>
+
+  <!-- 加载 qrcodejs -->
+  <script type="module">
+    import { QRCode, QRErrorCorrectLevel } from './qrcodejs/src/qrcode.js';
+    
+    window.QRCode = QRCode;
+    window.QRErrorCorrectLevel = QRErrorCorrectLevel;
+  </script>
+
+  <!-- 加载 wasm -->
+  <script type="module">
+    import init, { QRCodeWasm, CorrectLevel } from './wasm-qrcode/pkg/wasm_qrcode.js';
+    
+    window.wasmInit = init;
+    window.QRCodeWasm = QRCodeWasm;
+    window.CorrectLevel = CorrectLevel;
+    
+    init().then(() => {
+      document.getElementById('status').className = 'status ready';
+      document.getElementById('status').textContent = 'WASM 已加载，准备就绪';
+    }).catch(err => {
+      document.getElementById('status').className = 'status error';
+      document.getElementById('status').textContent = 'WASM 加载失败: ' + err.message;
+    });
+  </script>
+
+  <script>
+    // 生成 JS QRCode（简化版，只生成模块数据）
+    function generateJSQRCode(text, correctLevel) {
+      const qr = new QRCode(text, correctLevel);
+      return qr;
+    }
+
+    // 生成 WASM QRCode
+    function generateWASMQRCode(text, correctLevel) {
+      const qr = new QRCodeWasm();
+      qr.make_code(text);
+      return qr;
+    }
+
+    // 生成 WASM QRCode（不获取模块数量，用于公平比较）
+    function generateWASMQRCodeSimple(text, correctLevel) {
+      const qr = new QRCodeWasm();
+      qr.make_code(text);
+      qr.free();
+    }
+
+    // 格式化时间
+    function formatTime(ms) {
+      if (ms < 1) return (ms * 1000).toFixed(2) + ' μs';
+      if (ms < 1000) return ms.toFixed(2) + ' ms';
+      return (ms / 1000).toFixed(2) + ' s';
+    }
+
+    // 格式化数字
+    function formatNumber(num) {
+      return num.toLocaleString();
+    }
+
+    // 运行基准测试
+    async function runBenchmark() {
+      const text = document.getElementById('testText').value;
+      const iterations = parseInt(document.getElementById('iterations').value);
+      const correctLevel = parseInt(document.getElementById('correctLevel').value);
+      
+      document.getElementById('status').textContent = `正在运行 ${formatNumber(iterations)} 次迭代测试...`;
+      
+      // 预热
+      for (let i = 0; i < 10; i++) {
+        const qr = generateWASMQRCode(text, correctLevel);
+        qr.free();
+        generateJSQRCode(text, correctLevel);
+      }
+
+      // WASM 测试
+      const wasmStart = performance.now();
+      let wasmModules = 0;
+      for (let i = 0; i < iterations; i++) {
+        const qr = generateWASMQRCode(text, correctLevel);
+        wasmModules = qr.get_module_count();
+        qr.free();
+      }
+      const wasmEnd = performance.now();
+      const wasmTotal = wasmEnd - wasmStart;
+
+      // JS 测试
+      const jsStart = performance.now();
+      let jsModules = 0;
+      for (let i = 0; i < iterations; i++) {
+        const qr = generateJSQRCode(text, correctLevel);
+        jsModules = qr.moduleCount;
+      }
+      const jsEnd = performance.now();
+      const jsTotal = jsEnd - jsStart;
+
+      // 更新结果
+      updateResults({
+        wasm: {
+          total: wasmTotal,
+          avg: wasmTotal / iterations,
+          ops: iterations / (wasmTotal / 1000),
+          modules: wasmModules
+        },
+        js: {
+          total: jsTotal,
+          avg: jsTotal / iterations,
+          ops: iterations / (jsTotal / 1000),
+          modules: jsModules
+        }
+      });
+
+      // 生成示例 QRCode
+      generateSampleQRCodes(text, correctLevel);
+
+      document.getElementById('status').textContent = '测试完成';
+    }
+
+    // 单次测试
+    async function runSingleTest() {
+      document.getElementById('iterations').value = 1;
+      await runBenchmark();
+    }
+
+    // 批量测试 - 生成多个不同的 QR 码
+    async function runBatchTest() {
+      const count = 1000;
+      document.getElementById('status').textContent = `正在生成 ${count} 个不同的 QR 码...`;
+      
+      // 生成不同的文本
+      const texts = [];
+      for (let i = 0; i < count; i++) {
+        texts.push(`https://example.com/item/${i}`);
+      }
+      
+      // WASM 批量测试
+      const wasmStart = performance.now();
+      for (const text of texts) {
+        const qr = generateWASMQRCode(text, 2); // H level
+        qr.free();
+      }
+      const wasmTotal = performance.now() - wasmStart;
+      
+      // JS 批量测试
+      const jsStart = performance.now();
+      for (const text of texts) {
+        generateJSQRCode(text, 2); // H level
+      }
+      const jsTotal = performance.now() - jsStart;
+      
+      // 显示结果
+      const speedup = jsTotal / wasmTotal;
+      const result = speedup > 1 
+        ? `WASM 比 JavaScript 快 ${speedup.toFixed(2)} 倍`
+        : `JavaScript 比 WASM 快 ${(1/speedup).toFixed(2)} 倍`;
+      
+      alert(`批量生成 ${count} 个 QR 码结果：\n` +
+            `WASM: ${wasmTotal.toFixed(2)} ms\n` +
+            `JavaScript: ${jsTotal.toFixed(2)} ms\n` +
+            `${result}`);
+      
+      document.getElementById('status').textContent = '批量测试完成';
+    }
+
+    // 渐进测试
+    async function runProgressiveTest() {
+      const text = document.getElementById('testText').value;
+      const correctLevel = parseInt(document.getElementById('correctLevel').value);
+      
+      const results = [];
+      const testPoints = [1, 10, 100, 500, 1000, 2000, 5000, 10000];
+      
+      for (const iterations of testPoints) {
+        document.getElementById('status').textContent = `正在测试 ${iterations} 次...`;
+        
+        // 预热
+        for (let i = 0; i < 5; i++) {
+          const qr = generateWASMQRCode(text, correctLevel);
+          qr.free();
+          generateJSQRCode(text, correctLevel);
+        }
+
+        // WASM 测试
+        const wasmStart = performance.now();
+        for (let i = 0; i < iterations; i++) {
+          const qr = generateWASMQRCode(text, correctLevel);
+          qr.free();
+        }
+        const wasmTotal = performance.now() - wasmStart;
+
+        // JS 测试
+        const jsStart = performance.now();
+        for (let i = 0; i < iterations; i++) {
+          generateJSQRCode(text, correctLevel);
+        }
+        const jsTotal = performance.now() - jsStart;
+
+        results.push({
+          iterations,
+          wasm: wasmTotal,
+          js: jsTotal,
+          speedup: jsTotal / wasmTotal
+        });
+      }
+
+      // 显示渐进测试结果
+      console.table(results);
+      alert('渐进测试完成！结果已输出到控制台 (F12)');
+      
+      document.getElementById('status').textContent = '渐进测试完成';
+    }
+
+    // 更新结果显示
+    function updateResults(results) {
+      // WASM 结果
+      document.getElementById('wasmTotal').textContent = formatTime(results.wasm.total);
+      document.getElementById('wasmAvg').textContent = formatTime(results.wasm.avg);
+      document.getElementById('wasmOps').textContent = formatNumber(Math.round(results.wasm.ops)) + ' ops/s';
+      document.getElementById('wasmModules').textContent = results.wasm.modules;
+
+      // JS 结果
+      document.getElementById('jsTotal').textContent = formatTime(results.js.total);
+      document.getElementById('jsAvg').textContent = formatTime(results.js.avg);
+      document.getElementById('jsOps').textContent = formatNumber(Math.round(results.js.ops)) + ' ops/s';
+      document.getElementById('jsModules').textContent = results.js.modules;
+
+      // 对比结果
+      document.getElementById('compWasmTotal').textContent = formatTime(results.wasm.total);
+      document.getElementById('compJsTotal').textContent = formatTime(results.js.total);
+      document.getElementById('compWasmAvg').textContent = formatTime(results.wasm.avg);
+      document.getElementById('compJsAvg').textContent = formatTime(results.js.avg);
+
+      // 差异
+      const totalDiff = results.js.total - results.wasm.total;
+      const avgDiff = results.js.avg - results.wasm.avg;
+      const speedup = results.js.total / results.wasm.total;
+
+      document.getElementById('compTotalDiff').textContent = 
+        `${totalDiff > 0 ? '+' : ''}${formatTime(totalDiff)} (${speedup.toFixed(2)}x)`;
+      document.getElementById('compAvgDiff').textContent = 
+        `${avgDiff > 0 ? '+' : ''}${formatTime(avgDiff)}`;
+
+      // 性能倍数
+      const multiplier = document.getElementById('perfMultiplier');
+      if (speedup > 1) {
+        multiplier.textContent = `WASM 比 JavaScript 快 ${speedup.toFixed(2)} 倍`;
+        multiplier.style.color = '#28a745';
+      } else {
+        const jsSpeedup = (1 / speedup).toFixed(2);
+        multiplier.textContent = `JavaScript 比 WASM 快 ${jsSpeedup} 倍`;
+        multiplier.style.color = '#28a745';
+      }
+
+      // 可视化
+      document.getElementById('vizWasmTime').textContent = formatTime(results.wasm.total);
+      document.getElementById('vizJsTime').textContent = formatTime(results.js.total);
+
+      const maxTime = Math.max(results.wasm.total, results.js.total);
+      document.getElementById('wasmBar').style.width = (results.wasm.total / maxTime * 100) + '%';
+      document.getElementById('jsBar').style.width = (results.js.total / maxTime * 100) + '%';
+    }
+
+    // 生成示例 QRCode
+    function generateSampleQRCodes(text, correctLevel) {
+      // WASM
+      const wasmQR = generateWASMQRCode(text, correctLevel);
+      document.getElementById('wasmOutput').innerHTML = wasmQR.get_svg();
+      wasmQR.free();
+
+      // JS - 使用新的 QRCode 类的 SVG 输出
+      const jsQR = generateJSQRCode(text, correctLevel);
+      document.getElementById('jsOutput').innerHTML = jsQR.toSVG(256);
+    }
+
+    // 暴露到全局
+    window.runBenchmark = runBenchmark;
+    window.runSingleTest = runSingleTest;
+    window.runProgressiveTest = runProgressiveTest;
+  </script>
+</body>
+</html>

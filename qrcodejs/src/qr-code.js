@@ -124,7 +124,7 @@ const App = function () {
       _getTypeNumber(sText, this._htOption.correctLevel),
       this._htOption.correctLevel
     );
-    console.log('_oQRCode=>', this._oQRCode);
+    // console.log('_oQRCode=>', this._oQRCode);
     this._oQRCode.addData(sText);
     this._oQRCode.make();
     this._el.title = sText;
