@@ -1,0 +1,38 @@
+[package]
+name = "qrcode-rust"
+version = "0.1.0"
+authors = ["veaba< Godpu@outlook.com>"]
+description = "Pure Rust QRCode generator"
+repository = "https://github.com/veaba/wasm-qrcode"
+license = "MIT"
+edition = "2021"
+
+[lib]
+crate-type = ["cdylib", "rlib"]
+
+[dependencies]
+wasm-bindgen = { version = "0.2.88", optional = true }
+js-sys = { version = "0.3.60", optional = true }
+web-sys = { version = "0.3.60", features = ["console"], optional = true }
+serde = { version = "1.0", features = ["derive"], optional = true }
+serde_json = { version = "1.0", optional = true }
+serde-wasm-bindgen = { version = "0.6", optional = true }
+image = { version = "0.24", optional = true }
+
+[features]
+default = ["wasm"]
+wasm = ["wasm-bindgen", "js-sys", "web-sys", "serde", "serde_json", "serde-wasm-bindgen"]
+serde-support = ["serde", "serde_json"]
+image-support = ["image"]
+
+[dev-dependencies]
+wasm-bindgen-test = "0.3.13"
+criterion = { version = "0.5", features = ["html_reports"] }
+
+[[bench]]
+name = "qrcode_bench"
+harness = false
+
+[profile.release]
+opt-level = "s"
+lto = true

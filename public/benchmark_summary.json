@@ -1,0 +1,8 @@
+{
+  "timestamp": "2026-01-31T15:05:53.584Z",
+  "files": [
+    "benchmark_node_result.json",
+    "benchmark_bun_result.json",
+    "benchmark_rust_result.json"
+  ]
+}

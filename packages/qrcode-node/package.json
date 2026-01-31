@@ -1,0 +1,46 @@
+{
+  "name": "@veaba/qrcode-node",
+  "version": "1.0.0",
+  "description": "Node.js version of QRCode generator - Pure JavaScript implementation",
+  "type": "module",
+  "main": "dist/index.js",
+  "module": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "exports": {
+    ".": {
+      "import": "./dist/index.js",
+      "types": "./dist/index.d.ts"
+    }
+  },
+  "files": [
+    "dist",
+    "src"
+  ],
+  "scripts": {
+    "build": "tsc",
+    "watch": "tsc --watch",
+    "test": "node --test dist/**/*.test.js"
+  },
+  "keywords": [
+    "qrcode",
+    "node",
+    "javascript",
+    "qr",
+    "barcode"
+  ],
+  "author": "veaba",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/veaba/wasm-qrcode"
+  },
+  "dependencies": {
+    "@veaba/shared": "workspace:*"
+  },
+  "devDependencies": {
+    "typescript": "^5.0.0"
+  },
+  "engines": {
+    "node": ">=16.0.0"
+  }
+}

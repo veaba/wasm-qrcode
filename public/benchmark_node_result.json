@@ -1,0 +1,112 @@
+{
+  "name": "@veaba/qrcode-node",
+  "description": "Node.js QRCode 生成性能测试",
+  "results": [
+    {
+      "name": "单条生成 (short)",
+      "ops": 14875,
+      "time": 67.2271,
+      "avgTime": 0.0672271,
+      "memoryDelta": 1056344
+    },
+    {
+      "name": "单条生成 (medium)",
+      "ops": 10822,
+      "time": 92.4028,
+      "avgTime": 0.0924028,
+      "memoryDelta": -515600
+    },
+    {
+      "name": "单条生成 (long)",
+      "ops": 4050,
+      "time": 246.9169,
+      "avgTime": 0.2469169,
+      "memoryDelta": 1113192
+    },
+    {
+      "name": "单条生成 (unicode)",
+      "ops": 10634,
+      "time": 94.04109999999997,
+      "avgTime": 0.09404109999999997,
+      "memoryDelta": 4017464
+    },
+    {
+      "name": "批量生成 (10 条)",
+      "ops": 13230,
+      "time": 75.6028,
+      "avgTime": 0.756028,
+      "memoryDelta": -5246048
+    },
+    {
+      "name": "批量生成 (100 条)",
+      "ops": 6400,
+      "time": 156.1594,
+      "avgTime": 15.61594,
+      "memoryDelta": 21238720
+    },
+    {
+      "name": "批量生成 (1000 条)",
+      "ops": 6000,
+      "time": 1572.7066999999997,
+      "avgTime": 157.27066999999997,
+      "memoryDelta": 79223984
+    },
+    {
+      "name": "SVG 输出",
+      "ops": 8929,
+      "time": 111.99609999999939,
+      "avgTime": 0.11199609999999939,
+      "memoryDelta": 2099464
+    },
+    {
+      "name": "Styled SVG 输出",
+      "ops": 9469,
+      "time": 105.60810000000038,
+      "avgTime": 0.10560810000000037,
+      "memoryDelta": -974136
+    },
+    {
+      "name": "PNG Buffer 输出",
+      "ops": 3521,
+      "time": 28.39969999999994,
+      "avgTime": 0.2839969999999994,
+      "memoryDelta": -1345160
+    },
+    {
+      "name": "纠错级别 L (低)",
+      "ops": 10082,
+      "time": 99.19130000000041,
+      "avgTime": 0.09919130000000041,
+      "memoryDelta": 2220696
+    },
+    {
+      "name": "纠错级别 M (中)",
+      "ops": 10215,
+      "time": 97.89390000000003,
+      "avgTime": 0.09789390000000003,
+      "memoryDelta": 194448
+    },
+    {
+      "name": "纠错级别 Q (较高)",
+      "ops": 10262,
+      "time": 97.44670000000042,
+      "avgTime": 0.09744670000000041,
+      "memoryDelta": -511360
+    },
+    {
+      "name": "纠错级别 H (高)",
+      "ops": 9359,
+      "time": 106.85190000000057,
+      "avgTime": 0.10685190000000057,
+      "memoryDelta": -4572616
+    },
+    {
+      "name": "异步单条生成",
+      "ops": 7779,
+      "time": 12.85530000000017,
+      "avgTime": 0.1285530000000017
+    }
+  ],
+  "timestamp": "2026-01-31T15:04:40.873Z",
+  "nodeVersion": "v20.19.4"
+}

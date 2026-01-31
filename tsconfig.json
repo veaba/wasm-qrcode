@@ -15,7 +15,13 @@
     "noUnusedParameters": true,
     "noImplicitReturns": true,
     "skipLibCheck": true,
-    "allowSyntheticDefaultImports": true
+    "allowSyntheticDefaultImports": true,
+    "baseUrl": ".",
+    "paths": {
+      "@veaba/shared": ["./packages/shared/src/index.ts"],
+      "@veaba/qrcodejs": ["./packages/qrcodejs/src/index.js"],
+      "@veaba/qrcode-wasm": ["./packages/qrcode-wasm/pkg/wasm_qrcode.d.ts"]
+    }
   },
   "include": ["src/**/*.ts", "src/**/*.vue"],
   "references": [{ "path": "./tsconfig.node.json" }]
