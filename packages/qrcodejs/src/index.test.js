@@ -5,8 +5,8 @@
 
 import { describe, it, expect, beforeEach, afterEach } from 'vitest';
 
-describe('@veaba/qrcodejs - Re-exports from @veaba/shared', () => {
-  // Note: @veaba/qrcodejs re-exports everything from @veaba/shared
+describe('@veaba/qrcodejs - Re-exports from @veaba/qrcode-shared', () => {
+  // Note: @veaba/qrcodejs re-exports everything from @veaba/qrcode-shared
   // These tests verify the re-exports work correctly
 
   it('should export QRCodeCore', async () => {
@@ -174,7 +174,7 @@ describe('@veaba/qrcodejs - Functional Tests', () => {
     expect(typeof info).toBe('string');
     const parsed = JSON.parse(info);
     expect(parsed.version).toBeDefined();
-    expect(parsed.name).toBe('@veaba/shared');
+    expect(parsed.name).toBe('@veaba/qrcode-shared');
   });
 });
 

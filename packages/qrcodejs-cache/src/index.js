@@ -1,8 +1,8 @@
 /**
  * @veaba/qrcodejs-cache - QRCode library with LRU caching
  * 
- * This package re-exports everything from @veaba/shared.
- * All functionality is now unified in @veaba/shared.
+ * This package re-exports everything from @veaba/qrcode-shared.
+ * All functionality is now unified in @veaba/qrcode-shared.
  */
 
 // Re-export everything from shared
@@ -13,11 +13,11 @@ export {
   QRMath,
   Polynomial,
   BitBuffer,
-  
+
   // Enums and constants
   QRErrorCorrectLevel,
   QRMode,
-  
+
   // Style generators (cached by default)
   generateRoundedQRCodeCached as generateRoundedQRCode,
   generateQRCodeWithLogoAreaCached as generateQRCodeWithLogoArea,
@@ -29,7 +29,7 @@ export {
   generateCyberpunkStyleQRCodeCached as generateCyberpunkStyleQRCode,
   generateRetroStyleQRCodeCached as generateRetroStyleQRCode,
   generateMinimalStyleQRCodeCached as generateMinimalStyleQRCode,
-  
+
   // Snake_case aliases (cached)
   generateRoundedQRCodeCached as generate_rounded_qrcode,
   generateQRCodeWithLogoAreaCached as generate_qrcode_with_logo_area,
@@ -41,24 +41,24 @@ export {
   generateCyberpunkStyleQRCodeCached as generate_cyberpunk_style_qrcode,
   generateRetroStyleQRCodeCached as generate_retro_style_qrcode,
   generateMinimalStyleQRCodeCached as generate_minimal_style_qrcode,
-  
+
   // Batch generation (cached)
   generateBatchQRCodesCached as generateBatchQRCodes,
-  
+
   // Async generation
   generateQRCodeAsync,
   generateBatchAsync,
-  
+
   // Cache management
   getCachedQRCode,
   clearQRCodeCache,
   getCacheStats,
   configureCache,
-  
+
   // Version info
   VERSION,
   getVersionInfo,
-} from '@veaba/shared';
+} from '@veaba/qrcode-shared';
 
 // Default export
-export { QRCodeCore as default } from '@veaba/shared';
+export { QRCodeCore as default } from '@veaba/qrcode-shared';

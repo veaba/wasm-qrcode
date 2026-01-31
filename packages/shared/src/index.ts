@@ -769,7 +769,7 @@ class LRUCache<K, V> {
 
   get(key: K): V | undefined {
     if (!this.enabled) return undefined;
-    
+
     const value = this.cache.get(key);
     if (value !== undefined) {
       // Move to end (most recently used)
@@ -781,7 +781,7 @@ class LRUCache<K, V> {
 
   set(key: K, value: V): void {
     if (!this.enabled) return;
-    
+
     if (this.cache.has(key)) {
       this.cache.delete(key);
     } else if (this.cache.size >= this.maxSize) {
@@ -823,12 +823,12 @@ function getCacheKey(text: string, correctLevel: QRErrorCorrectLevel): string {
 export function getCachedQRCode(text: string, correctLevel: QRErrorCorrectLevel = QRErrorCorrectLevel.H): QRCodeCore {
   const key = getCacheKey(text, correctLevel);
   let qr = qrCodeCache.get(key);
-  
+
   if (!qr) {
     qr = new QRCodeCore(text, correctLevel);
     qrCodeCache.set(key, qr);
   }
-  
+
   return qr;
 }
 
@@ -968,7 +968,7 @@ export function generateMinimalStyleQRCodeCached(text: string, size: number = 25
 export function generateBatchQRCodesCached(texts: string[], options: Partial<QRCodeOptions> & { styled?: boolean; style?: StyledSVGOptions } = {}): string[] {
   return texts.map(text => {
     const qr = getCachedQRCode(text, options.correctLevel || QRErrorCorrectLevel.H);
-    return options.styled 
+    return options.styled
       ? qr.toStyledSVG({ size: options.size || 256, ...options.style })
       : qr.toSVG(options.size || 256);
   });
@@ -995,10 +995,10 @@ export function generateQRCodeAsyncAdvanced(text: string, options: AsyncQRCodeOp
     if (typeof WorkerGlobalScope !== 'undefined' && typeof self !== 'undefined' && (self as any) instanceof (self as any).constructor) {
       try {
         const useCache = options.cache !== false;
-        const qr = useCache 
+        const qr = useCache
           ? getCachedQRCode(text, options.correctLevel || QRErrorCorrectLevel.H)
           : new QRCodeCore(text, options.correctLevel || QRErrorCorrectLevel.H);
-        const svg = options.styled 
+        const svg = options.styled
           ? qr.toStyledSVG({ size: options.size || 256, ...options.style })
           : qr.toSVG(options.size || 256);
         resolve({ text, svg, moduleCount: qr.getModuleCount() });
@@ -1011,10 +1011,10 @@ export function generateQRCodeAsyncAdvanced(text: string, options: AsyncQRCodeOp
       setTimeout(() => {
         try {
           const useCache = options.cache !== false;
-          const qr = useCache 
+          const qr = useCache
             ? getCachedQRCode(text, options.correctLevel || QRErrorCorrectLevel.H)
             : new QRCodeCore(text, options.correctLevel || QRErrorCorrectLevel.H);
-          const svg = options.styled 
+          const svg = options.styled
             ? qr.toStyledSVG({ size: options.size || 256, ...options.style })
             : qr.toSVG(options.size || 256);
           resolve({ text, svg, moduleCount: qr.getModuleCount() });
@@ -1062,7 +1062,7 @@ export const VERSION = '1.0.0';
 export function getVersionInfo(): string {
   return JSON.stringify({
     version: VERSION,
-    name: '@veaba/shared',
+    name: '@veaba/qrcode-shared',
     features: [
       'basic_qrcode',
       'styled_svg',

@@ -243,7 +243,7 @@ stream.pipeTo(writeStream);
 
 ```typescript
 import { QRCode, QRErrorCorrectLevel } from '@veaba/qrcode-node';
-import { getCachedQRCode } from '@veaba/shared';
+import { getCachedQRCode } from '@veaba/qrcode-shared';
 
 // 对于重复文本，使用缓存
 function getQRCodeSVG(text: string, size: number = 256): string {

@@ -11,7 +11,7 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 import { QRCode, generateBatchQRCodes, generateQRCodeAsync } from '../src';
-import { QRErrorCorrectLevel } from '@veaba/shared';
+import { QRErrorCorrectLevel } from '@veaba/qrcode-shared';
 
 interface BenchmarkResult {
   name: string;
@@ -105,7 +105,7 @@ function benchmarkSingleGeneration(): BenchmarkResult[] {
       },
       CONFIG.benchmarkRuns
     );
-    
+
     results.push(result);
   }
 
@@ -206,7 +206,7 @@ function benchmarkErrorCorrectionLevels(): BenchmarkResult[] {
       },
       CONFIG.benchmarkRuns
     );
-    
+
     results.push(result);
   }
 

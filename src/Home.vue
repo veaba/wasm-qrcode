@@ -28,7 +28,7 @@ import {
   generateCyberpunkStyleQRCode as jsCyberpunk,
   generateRetroStyleQRCode as jsRetro,
   generateMinimalStyleQRCode as jsMinimal,
-} from '@veaba/shared'
+} from '@veaba/qrcode-shared'
 
 
 

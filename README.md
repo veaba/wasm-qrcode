@@ -192,7 +192,7 @@ wasm-qrcode/
 | `@veaba/qrcode-ts` | Bun 实现 | Bun 运行时 |
 | `@veaba/qrcode-rust` | Rust Native | 原生高性能需求 |
 | `@veaba/qrcodejs` | 纯 JavaScript | 兼容性优先 |
-| `@veaba/shared` | 共享类型 | 所有包依赖 |
+| `@veaba/qrcode-shared` | 共享类型 | 所有包依赖 |
 
 ## 🔧 API 文档
 

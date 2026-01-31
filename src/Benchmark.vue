@@ -23,7 +23,7 @@ interface BenchmarkSuite {
 // @ts-ignore
 import init, { QRCodeWasm } from '@veaba/qrcode-wasm'
 // @ts-ignore
-import { QRCodeCore as QRCodeJS, QRErrorCorrectLevel } from '@veaba/shared'
+import { QRCodeCore as QRCodeJS, QRErrorCorrectLevel } from '@veaba/qrcode-shared'
 
 // ========== 状态管理 ==========
 const isLoading = ref(true)
@@ -408,7 +408,7 @@ function getMaxOps(item: { node?: number; bun?: number; rust?: number }): number
                 <td><span class="badge" :class="getPerformanceClass(frontendResults.jsPerf.ops, bestFrontendResult?.ops || 1)">{{ getPerformanceClass(frontendResults.jsPerf.ops, bestFrontendResult?.ops || 1) }}</span></td>
               </tr>
               <tr v-if="frontendResults.jsCache" :class="['row-cache', getPerformanceClass(frontendResults.jsCache.ops, bestFrontendResult?.ops || 1)]">
-                <td><strong>@veaba/shared (cache)</strong></td>
+                <td><strong>@veaba/qrcode-shared (cache)</strong></td>
                 <td>带缓存的 JS 生成</td>
                 <td>{{ formatTime(frontendResults.jsCache.time) }}</td>
                 <td class="ops-cell">{{ formatNumber(frontendResults.jsCache.ops) }} ops/s</td>
@@ -608,7 +608,7 @@ function getMaxOps(item: { node?: number; bun?: number; rust?: number }): number
           <ul>
             <li><strong>@veaba/qrcode-wasm:</strong> Rust WASM 版本，性能最佳，推荐生产环境使用</li>
             <li><strong>@veaba/qrcodejs:</strong> 纯 JavaScript 版本，无需 WASM，兼容性好</li>
-            <li><strong>@veaba/shared:</strong> 共享核心库，包含缓存和性能优化工具</li>
+            <li><strong>@veaba/qrcode-shared:</strong> 共享核心库，包含缓存和性能优化工具</li>
           </ul>
         </div>
         <div class="tip">
@@ -623,7 +623,7 @@ function getMaxOps(item: { node?: number; bun?: number; rust?: number }): number
           <h4>📦 架构说明</h4>
           <ul>
             <li><strong>统一 API:</strong> 所有包使用相同的接口设计，易于切换</li>
-            <li><strong>@veaba/shared:</strong> 单一数据源，类型定义和核心逻辑共享</li>
+            <li><strong>@veaba/qrcode-shared:</strong> 单一数据源，类型定义和核心逻辑共享</li>
             <li><strong>缓存系统:</strong> LRU 缓存实现，重复文本场景性能提升显著</li>
           </ul>
         </div>

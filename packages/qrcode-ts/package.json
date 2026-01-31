@@ -37,7 +37,7 @@
     "url": "https://github.com/veaba/wasm-qrcode"
   },
   "dependencies": {
-    "@veaba/shared": "workspace:*"
+    "@veaba/qrcode-shared": "workspace:*"
   },
   "devDependencies": {
     "typescript": "^5.0.0",

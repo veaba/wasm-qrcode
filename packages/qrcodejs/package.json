@@ -1,7 +1,7 @@
 {
   "name": "@veaba/qrcodejs",
   "version": "1.0.0",
-  "description": "A browser-compatible QRCode library with caching - extends @veaba/shared",
+  "description": "A browser-compatible QRCode library with caching - extends @veaba/qrcode-shared",
   "type": "module",
   "source": "src/index.js",
   "main": "dist/index.js",
@@ -38,7 +38,7 @@
     "url": "https://github.com/veaba/wasm-qrcode"
   },
   "dependencies": {
-    "@veaba/shared": "workspace:*"
+    "@veaba/qrcode-shared": "workspace:*"
   },
   "devDependencies": {
     "parcel": "^2.7.0",

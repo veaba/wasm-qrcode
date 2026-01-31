@@ -14,7 +14,7 @@
   "author": "veaba",
   "license": "MIT",
   "dependencies": {
-    "@veaba/shared": "workspace:*"
+    "@veaba/qrcode-shared": "workspace:*"
   },
   "devDependencies": {
     "parcel": "^2.7.0"

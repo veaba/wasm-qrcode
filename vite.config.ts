@@ -7,7 +7,7 @@ export default defineConfig({
   resolve: {
     alias: {
       '@': '/src',
-      '@veaba/shared': '/packages/shared/src/index.ts',
+      '@veaba/qrcode-shared': '/packages/shared/src/index.ts',
       '@veaba/qrcodejs': '/packages/qrcodejs/src/index.js',
       '@veaba/qrcode-wasm': '/packages/qrcode-wasm/pkg/wasm_qrcode',
     }
@@ -18,6 +18,6 @@ export default defineConfig({
     }
   },
   optimizeDeps: {
-    exclude: ['wasm-qrcode', '@veaba/shared']
+    exclude: ['wasm-qrcode', '@veaba/qrcode-shared']
   }
 })

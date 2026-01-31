@@ -37,7 +37,7 @@ function check(condition, message) {
 }
 
 const packages = [
-  { name: '@veaba/shared', path: 'packages/shared' },
+  { name: '@veaba/qrcode-shared', path: 'packages/shared' },
   { name: '@veaba/qrcode-wasm', path: 'packages/qrcode-wasm' },
   { name: '@veaba/qrcode-node', path: 'packages/qrcode-node' },
   { name: '@veaba/qrcode-ts', path: 'packages/qrcode-ts' },
@@ -84,28 +84,28 @@ log('\n📋 包检查', 'bright');
 
 for (const pkg of packages) {
   log(`\n  ${pkg.name}:`, 'blue');
-  
+
   const pkgPath = path.join(rootDir, pkg.path);
   const pkgJsonPath = path.join(pkgPath, 'package.json');
-  
+
   // 检查 package.json 是否存在
   if (!check(fs.existsSync(pkgJsonPath), 'package.json 存在')) {
     allPassed = false;
     continue;
   }
-  
+
   const pkgJson = JSON.parse(fs.readFileSync(pkgJsonPath, 'utf-8'));
-  
+
   // 检查必要字段
   check(pkgJson.name, 'name 字段存在') || (allPassed = false);
   check(pkgJson.version, 'version 字段存在') || (allPassed = false);
   check(pkgJson.description, 'description 字段存在') || (allPassed = false);
   check(pkgJson.main || pkgJson.module, 'main/module 字段存在') || (allPassed = false);
-  
+
   // 检查版本格式
   const versionRegex = /^\d+\.\d+\.\d+/;
   check(versionRegex.test(pkgJson.version), `版本号格式正确: ${pkgJson.version}`) || (allPassed = false);
-  
+
   // 检查构建产物
   if (pkg.name === '@veaba/qrcode-wasm') {
     const pkgDir = path.join(pkgPath, 'pkg');
@@ -117,17 +117,17 @@ for (const pkg of packages) {
     check(fs.existsSync(path.join(distDir, 'index.js')), 'dist/index.js 存在') || (allPassed = false);
     check(fs.existsSync(path.join(distDir, 'index.d.ts')), 'dist/index.d.ts 存在') || (allPassed = false);
   }
-  
+
   // 检查 README
   check(fs.existsSync(path.join(pkgPath, 'README.md')), 'README.md 存在') || (allPassed = false);
-  
+
   // 检查远程版本
   try {
-    const remoteVersion = execSync(`npm view ${pkg.name} version --silent 2>nul || echo "not found"`, { 
+    const remoteVersion = execSync(`npm view ${pkg.name} version --silent 2>nul || echo "not found"`, {
       encoding: 'utf-8',
       stdio: ['pipe', 'pipe', 'pipe']
     }).trim();
-    
+
     if (remoteVersion === 'not found') {
       check(true, '新包（未发布）');
     } else {

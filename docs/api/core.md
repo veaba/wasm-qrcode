@@ -1,6 +1,6 @@
 # QRCodeCore
 
-`QRCodeCore` 是 `@veaba/shared` 和 `@veaba/qrcodejs` 的核心类，提供纯 JavaScript 的 QRCode 生成功能。
+`QRCodeCore` 是 `@veaba/qrcode-shared` 和 `@veaba/qrcodejs` 的核心类，提供纯 JavaScript 的 QRCode 生成功能。
 
 ## 构造函数
 
@@ -21,7 +21,7 @@ constructor(
 ### 示例
 
 ```typescript
-import { QRCodeCore, QRErrorCorrectLevel } from '@veaba/shared';
+import { QRCodeCore, QRErrorCorrectLevel } from '@veaba/qrcode-shared';
 
 // 默认纠错级别 H
 const qr1 = new QRCodeCore('https://github.com/veaba/wasm-qrcode');
@@ -192,14 +192,14 @@ for (let row = 0; row < count; row++) {
 
 ## 静态方法
 
-`QRCodeCore` 没有静态方法，但 `@veaba/shared` 提供了相关的工具函数。
+`QRCodeCore` 没有静态方法，但 `@veaba/qrcode-shared` 提供了相关的工具函数。
 
 ## 完整示例
 
 ### 基础使用
 
 ```typescript
-import { QRCodeCore, QRErrorCorrectLevel } from '@veaba/shared';
+import { QRCodeCore, QRErrorCorrectLevel } from '@veaba/qrcode-shared';
 
 const qr = new QRCodeCore('https://github.com/veaba/wasm-qrcode', QRErrorCorrectLevel.H);
 
@@ -211,7 +211,7 @@ document.getElementById('qrcode').innerHTML = svg;
 ### 自定义样式
 
 ```typescript
-import { QRCodeCore, QRErrorCorrectLevel } from '@veaba/shared';
+import { QRCodeCore, QRErrorCorrectLevel } from '@veaba/qrcode-shared';
 
 const qr = new QRCodeCore('https://github.com/veaba/wasm-qrcode', QRErrorCorrectLevel.H);
 
@@ -233,7 +233,7 @@ document.getElementById('qrcode').innerHTML = styledSvg;
 ### 自定义渲染
 
 ```typescript
-import { QRCodeCore, QRErrorCorrectLevel } from '@veaba/shared';
+import { QRCodeCore, QRErrorCorrectLevel } from '@veaba/qrcode-shared';
 
 const qr = new QRCodeCore('https://github.com/veaba/wasm-qrcode', QRErrorCorrectLevel.H);
 const count = qr.getModuleCount();
@@ -268,6 +268,6 @@ const svgs = texts.map(text => {
 });
 
 // 推荐：批量生成
-import { generateBatchQRCodes } from '@veaba/shared';
+import { generateBatchQRCodes } from '@veaba/qrcode-shared';
 const svgs = generateBatchQRCodes(texts, { size: 256 });
 ```

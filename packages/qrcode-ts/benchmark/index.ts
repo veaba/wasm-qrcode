@@ -4,7 +4,7 @@
  */
 
 import { QRCode, generateBatchQRCodes, generateQRCodeAsync } from '../src/index';
-import { QRErrorCorrectLevel } from '@veaba/shared';
+import { QRErrorCorrectLevel } from '@veaba/qrcode-shared';
 
 interface BenchmarkResult {
   name: string;
@@ -98,7 +98,7 @@ function benchmarkSingleGeneration(): BenchmarkResult[] {
       },
       CONFIG.benchmarkRuns
     );
-    
+
     results.push(result);
   }
 
@@ -199,7 +199,7 @@ function benchmarkErrorCorrectionLevels(): BenchmarkResult[] {
       },
       CONFIG.benchmarkRuns
     );
-    
+
     results.push(result);
   }
 

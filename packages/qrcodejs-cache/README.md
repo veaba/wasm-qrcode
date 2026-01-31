@@ -4,7 +4,7 @@
 
 ## 简介
 
-基于 `@veaba/shared` 核心库构建，提供 LRU 缓存机制以避免重复计算相同文本的 QRCode。
+基于 `@veaba/qrcode-shared` 核心库构建，提供 LRU 缓存机制以避免重复计算相同文本的 QRCode。
 
 ## 安装
 
@@ -156,7 +156,7 @@ const svg = qr.get_styled_svg({
 
 ## 依赖
 
-- `@veaba/shared` - 核心共享库
+- `@veaba/qrcode-shared` - 核心共享库
 
 ## License
 

@@ -4,7 +4,7 @@
  */
 
 import { QRCode, generateBatchQRCodes, generateQRCodeAsync } from '../dist/index.js';
-import { QRErrorCorrectLevel } from '@veaba/shared';
+import { QRErrorCorrectLevel } from '@veaba/qrcode-shared';
 
 // 测试配置
 const CONFIG = {
@@ -78,7 +78,7 @@ function benchmarkSingleGeneration() {
       },
       CONFIG.benchmarkRuns
     );
-    
+
     results.push(result);
   }
 
@@ -179,7 +179,7 @@ function benchmarkErrorCorrectionLevels() {
       },
       CONFIG.benchmarkRuns
     );
-    
+
     results.push(result);
   }
 
@@ -285,15 +285,15 @@ function exportResults(suite) {
 runBenchmarks().then(async suite => {
   const fs = await import('fs');
   const path = await import('path');
-  
+
   const outputPath = path.join(process.cwd(), 'benchmark', 'benchmark_result.json');
-  
+
   // 确保目录存在
   const dir = path.dirname(outputPath);
   if (!fs.existsSync(dir)) {
     fs.mkdirSync(dir, { recursive: true });
   }
-  
+
   fs.writeFileSync(outputPath, exportResults(suite));
   console.log(`\n💾 结果已保存到: ${outputPath}`);
 }).catch(console.error);

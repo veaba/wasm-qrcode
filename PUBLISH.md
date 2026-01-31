@@ -198,7 +198,7 @@ cd packages/qrcode-rust && pnpm version 1.0.1
 
 ### 方式一：手动逐个发包
 
-#### 1. 发布 @veaba/shared
+#### 1. 发布 @veaba/qrcode-shared
 
 ```bash
 cd packages/shared
@@ -291,7 +291,7 @@ const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const rootDir = path.resolve(__dirname, '..');
 
 const packages = [
-  { name: '@veaba/shared', path: 'packages/shared', build: 'pnpm run build' },
+  { name: '@veaba/qrcode-shared', path: 'packages/shared', build: 'pnpm run build' },
   { name: '@veaba/qrcode-wasm', path: 'packages/qrcode-wasm/pkg', build: 'wasm-pack build --target web' },
   { name: '@veaba/qrcode-node', path: 'packages/qrcode-node', build: 'pnpm run build' },
   { name: '@veaba/qrcode-ts', path: 'packages/qrcode-ts', build: 'pnpm run build' },
@@ -343,7 +343,7 @@ node scripts/publish.js
 
 访问以下链接确认包已发布：
 
-- <https://www.npmjs.com/package/@veaba/shared>
+- <https://www.npmjs.com/package/@veaba/qrcode-shared>
 - <https://www.npmjs.com/package/@veaba/qrcode-wasm>
 - <https://www.npmjs.com/package/@veaba/qrcode-node>
 - <https://www.npmjs.com/package/@veaba/qrcode-ts>
@@ -423,7 +423,7 @@ cat pkg/package.json
 
 **解决**: 按照依赖顺序发布：
 
-1. `@veaba/shared` (最先)
+1. `@veaba/qrcode-shared` (最先)
 2. `@veaba/qrcode-wasm`
 3. `@veaba/qrcode-node`
 4. `@veaba/qrcode-ts`

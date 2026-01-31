@@ -4,7 +4,7 @@
 
 ## 简介
 
-基于 `@veaba/shared` 核心库构建，专注于性能优化，不包含缓存机制，适合每次生成不同内容的场景。
+基于 `@veaba/qrcode-shared` 核心库构建，专注于性能优化，不包含缓存机制，适合每次生成不同内容的场景。
 
 ## 安装
 
@@ -146,7 +146,7 @@ const svg = qr.get_styled_svg({
 
 ## 依赖
 
-- `@veaba/shared` - 核心共享库
+- `@veaba/qrcode-shared` - 核心共享库
 
 ## License
 

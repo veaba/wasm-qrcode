@@ -3,7 +3,10 @@
     "target": "ESNext",
     "useDefineForClassFields": true,
     "module": "ESNext",
-    "lib": ["ESNext", "DOM"],
+    "lib": [
+      "ESNext",
+      "DOM"
+    ],
     "moduleResolution": "Node",
     "strict": true,
     "sourceMap": true,
@@ -18,11 +21,24 @@
     "allowSyntheticDefaultImports": true,
     "baseUrl": ".",
     "paths": {
-      "@veaba/shared": ["./packages/shared/src/index.ts"],
-      "@veaba/qrcodejs": ["./packages/qrcodejs/src/index.js"],
-      "@veaba/qrcode-wasm": ["./packages/qrcode-wasm/pkg/wasm_qrcode.d.ts"]
+      "@veaba/qrcode-shared": [
+        "./packages/shared/src/index.ts"
+      ],
+      "@veaba/qrcodejs": [
+        "./packages/qrcodejs/src/index.js"
+      ],
+      "@veaba/qrcode-wasm": [
+        "./packages/qrcode-wasm/pkg/wasm_qrcode.d.ts"
+      ]
     }
   },
-  "include": ["src/**/*.ts", "src/**/*.vue"],
-  "references": [{ "path": "./tsconfig.node.json" }]
+  "include": [
+    "src/**/*.ts",
+    "src/**/*.vue"
+  ],
+  "references": [
+    {
+      "path": "./tsconfig.node.json"
+    }
+  ]
 }

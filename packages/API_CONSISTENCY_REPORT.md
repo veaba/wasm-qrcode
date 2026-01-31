@@ -4,9 +4,9 @@
 
 | 包名 | 类型 | 依赖 |
 |------|------|------|
-| @veaba/qrcodejs | JavaScript (缓存版) | @veaba/shared |
-| @veaba/qrcodejs-cache | JavaScript (缓存版) | @veaba/shared |
-| @veaba/qrcodejs-perf | JavaScript (无缓存版) | @veaba/shared |
+| @veaba/qrcodejs | JavaScript (缓存版) | @veaba/qrcode-shared |
+| @veaba/qrcodejs-cache | JavaScript (缓存版) | @veaba/qrcode-shared |
+| @veaba/qrcodejs-perf | JavaScript (无缓存版) | @veaba/qrcode-shared |
 | @veaba/qrcode-wasm | WebAssembly | wasm-pack 生成 |
 
 ## API 对比矩阵
@@ -120,7 +120,7 @@
 
 3. **缓存函数位置**
    - `getCachedQRCode`, `clearQRCodeCache`, `getCacheStats` 只在 qrcodejs
-   - 建议: 移到 @veaba/shared，所有包统一使用
+   - 建议: 移到 @veaba/qrcode-shared，所有包统一使用
 
 4. **批量生成函数命名**
    - JS: `generateBatchQRCodes`
@@ -129,19 +129,19 @@
 
 ### 中等不一致 (建议修复)
 
-5. **WASM 特有功能未在 JS 中实现**
+1. **WASM 特有功能未在 JS 中实现**
    - `render_qrcode_to_pixels` - 渲染到像素数组
    - `init_thread_pool` - 线程池初始化
    - 建议: JS 包提供空实现或模拟实现
 
-6. **版本信息函数**
+2. **版本信息函数**
    - WASM: `version()`, `get_version_info()`
    - JS: 缺失
    - 建议: JS 包添加统一版本信息
 
 ### 轻微不一致 (可选修复)
 
-7. **枚举导出**
+1. **枚举导出**
    - JS: `QRMode`, `PATTERN_POSITION_TABLE` 等
    - WASM: 未导出
    - 建议: WASM 不需要这些内部常量

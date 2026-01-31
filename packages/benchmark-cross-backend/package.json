@@ -10,7 +10,7 @@
   "dependencies": {
     "@veaba/qrcode-node": "workspace:*",
     "@veaba/qrcode-ts": "workspace:*",
-    "@veaba/shared": "workspace:*"
+    "@veaba/qrcode-shared": "workspace:*"
   },
   "devDependencies": {
     "@types/node": "^20.0.0",

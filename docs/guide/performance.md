@@ -186,7 +186,7 @@ error_level_H:         8.877 µs   8.914 µs   8.954 µs
 |---------|-------|
 | PNG 输出 | @veaba/qrcode-node |
 | 样式化 SVG | 任意包 |
-| 缓存支持 | @veaba/shared |
+| 缓存支持 | @veaba/qrcode-shared |
 | 批量生成 | @veaba/qrcode-ts |
 | 最小包体积 | @veaba/qrcodejs |
 
@@ -195,7 +195,7 @@ error_level_H:         8.877 µs   8.914 µs   8.954 µs
 ### 1. 使用缓存
 
 ```typescript
-import { getCachedQRCode } from '@veaba/shared';
+import { getCachedQRCode } from '@veaba/qrcode-shared';
 
 // 重复文本性能提升 10-100 倍
 const qr = getCachedQRCode('https://github.com/veaba/wasm-qrcode');
@@ -214,7 +214,7 @@ const svgs = generateBatchQRCodes(texts, { size: 256 });
 
 ```typescript
 // 避免阻塞主线程
-import { generateBatchAsync } from '@veaba/shared';
+import { generateBatchAsync } from '@veaba/qrcode-shared';
 
 const svgs = await generateBatchAsync(largeTextArray, { size: 256 });
 ```

@@ -2,7 +2,7 @@
 
 ## 变更概述
 
-所有前端 QRCode 包现在统一使用 `@veaba/shared` 作为核心依赖，API 完全一致。
+所有前端 QRCode 包现在统一使用 `@veaba/qrcode-shared` 作为核心依赖，API 完全一致。
 
 ## 包结构
 
@@ -11,11 +11,11 @@ packages/
 ├── shared/                    # 核心库 (所有功能)
 │   └── src/index.ts           # 统一导出所有 API
 ├── qrcodejs/                  # 浏览器兼容包 (带缓存)
-│   └── src/index.js           # 重新导出 @veaba/shared
+│   └── src/index.js           # 重新导出 @veaba/qrcode-shared
 ├── qrcodejs-cache/            # 缓存版本
-│   └── src/index.js           # 重新导出 @veaba/shared (默认使用缓存版本)
+│   └── src/index.js           # 重新导出 @veaba/qrcode-shared (默认使用缓存版本)
 ├── qrcodejs-perf/             # 性能版本 (无缓存)
-│   └── src/index.js           # 重新导出 @veaba/shared (默认使用非缓存版本)
+│   └── src/index.js           # 重新导出 @veaba/qrcode-shared (默认使用非缓存版本)
 └── qrcode-wasm/               # WebAssembly 版本
     └── pkg/                   # wasm-pack 生成 (API 略有不同)
 ```
@@ -191,11 +191,11 @@ const svg = generate_rounded_qrcode('Hello', 256, 8);
 | @veaba/qrcodejs | ~1500 行 | ~50 行 | 97% |
 | @veaba/qrcodejs-cache | ~800 行 | ~50 行 | 94% |
 | @veaba/qrcodejs-perf | ~600 行 | ~30 行 | 95% |
-| @veaba/shared | - | ~900 行 | - |
+| @veaba/qrcode-shared | - | ~900 行 | - |
 
 ## 维护优势
 
-1. **单一 truth source**: 所有核心逻辑在 `@veaba/shared` 中维护
+1. **单一 truth source**: 所有核心逻辑在 `@veaba/qrcode-shared` 中维护
 2. **减少重复代码**: 消除了 3 个包之间的代码重复
 3. **统一更新**: 修复 bug 或添加功能只需修改一个地方
 4. **类型安全**: TypeScript 类型定义统一在 shared 中

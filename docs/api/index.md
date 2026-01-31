@@ -11,7 +11,7 @@ Wasm QRCode 的完整 API 文档。
 | `@veaba/qrcode-node` | Node.js | `QRCode`, `QRErrorCorrectLevel` |
 | `@veaba/qrcode-ts` | Bun | `QRCode`, `QRErrorCorrectLevel` |
 | `@veaba/qrcode-rust` | Rust | `QRCode`, `QRErrorCorrectLevel` |
-| `@veaba/shared` | 通用 | `QRCodeCore`, `LRUCache`, 工具函数 |
+| `@veaba/qrcode-shared` | 通用 | `QRCodeCore`, `LRUCache`, 工具函数 |
 
 ## 快速导航
 

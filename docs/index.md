@@ -73,7 +73,7 @@ console.log(svg);
 | `@veaba/qrcode-node` | Node.js | 服务端渲染，支持 PNG | Node.js 后端 |
 | `@veaba/qrcode-ts` | Bun | Bun 运行时优化 | 边缘计算、Deno |
 | `@veaba/qrcode-rust` | Rust | 原生性能，内存安全 | Rust 项目 |
-| `@veaba/shared` | 通用 | 共享核心，缓存系统 | 所有包的依赖 |
+| `@veaba/qrcode-shared` | 通用 | 共享核心，缓存系统 | 所有包的依赖 |
 
 ## 性能对比
 

@@ -1,5 +1,5 @@
 // @veaba/qrcodejs 类型声明
-// Re-exports from @veaba/shared with additional cached versions
+// Re-exports from @veaba/qrcode-shared with additional cached versions
 
 export {
   // Core classes
@@ -7,19 +7,19 @@ export {
   QRMath,
   Polynomial,
   BitBuffer,
-  
+
   // Enums and constants
   QRErrorCorrectLevel,
   QRMode,
   PATTERN_POSITION_TABLE,
   QRCodeLimitLength,
   RS_BLOCK_TABLE,
-  
+
   // Utility functions
   getErrorCorrectPolynomial,
   getRSBlocks,
   getTypeNumber,
-  
+
   // Style generators (non-cached versions from shared)
   generateRoundedQRCode,
   generateQRCodeWithLogoArea,
@@ -34,14 +34,14 @@ export {
   generateBatchQRCodes,
   generateQRCodeAsync,
   generateBatchAsync,
-  
+
   // Types
   QRCodeOptions,
   StyledSVGOptions,
   RSBlock,
-} from '@veaba/shared';
+} from '@veaba/qrcode-shared';
 
-import { QRCodeCore, QRErrorCorrectLevel, QRCodeOptions, StyledSVGOptions } from '@veaba/shared';
+import { QRCodeCore, QRErrorCorrectLevel, QRCodeOptions, StyledSVGOptions } from '@veaba/qrcode-shared';
 
 // QRCode is an alias for QRCodeCore
 export { QRCodeCore as QRCode };
@@ -78,8 +78,8 @@ export interface QRCodeResult {
 
 export declare function generateQRCodeAsync(
   text: string,
-  options?: Partial<QRCodeOptions> & { 
-    styled?: boolean; 
+  options?: Partial<QRCodeOptions> & {
+    styled?: boolean;
     style?: StyledSVGOptions;
     cache?: boolean;
   }
@@ -87,8 +87,8 @@ export declare function generateQRCodeAsync(
 
 export declare function generateBatchAsync(
   texts: string[],
-  options?: Partial<QRCodeOptions> & { 
-    styled?: boolean; 
+  options?: Partial<QRCodeOptions> & {
+    styled?: boolean;
     style?: StyledSVGOptions;
     cache?: boolean;
   }

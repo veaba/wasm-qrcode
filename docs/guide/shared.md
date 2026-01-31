@@ -1,4 +1,4 @@
-# @veaba/shared
+# @veaba/qrcode-shared
 
 共享核心库，包含 QRCode 生成的核心算法、类型定义、缓存系统和工具函数。所有其他包都依赖此库。
 
@@ -7,7 +7,7 @@
 通常不需要单独安装，其他包会自动依赖：
 
 ```bash
-npm install @veaba/shared
+npm install @veaba/qrcode-shared
 ```
 
 ## 核心功能
@@ -15,7 +15,7 @@ npm install @veaba/shared
 ### 1. QRCodeCore - 核心类
 
 ```typescript
-import { QRCodeCore, QRErrorCorrectLevel } from '@veaba/shared';
+import { QRCodeCore, QRErrorCorrectLevel } from '@veaba/qrcode-shared';
 
 // 创建 QRCode
 const qr = new QRCodeCore('https://github.com/veaba/wasm-qrcode', QRErrorCorrectLevel.H);
@@ -39,7 +39,7 @@ import {
   clearQRCodeCache, 
   getCacheStats,
   configureCache 
-} from '@veaba/shared';
+} from '@veaba/qrcode-shared';
 
 // 获取缓存的 QRCode（如果不存在则创建并缓存）
 const qr = getCachedQRCode('https://github.com/veaba/wasm-qrcode', QRErrorCorrectLevel.H);
@@ -64,7 +64,7 @@ import {
   generateRoundedQRCode,
   generateGradientQRCode,
   generateQRCodeWithLogoArea
-} from '@veaba/shared';
+} from '@veaba/qrcode-shared';
 
 // 圆角 QRCode
 const svg1 = generateRoundedQRCode('https://github.com/veaba/wasm-qrcode', 256, 8);
@@ -87,7 +87,7 @@ import {
   generateRetroStyleQRCode,
   generateMinimalStyleQRCode,
   generateXiaohongshuStyleQRCode
-} from '@veaba/shared';
+} from '@veaba/qrcode-shared';
 
 // 各种主题风格
 const wechat = generateWechatStyleQRCode('https://github.com/veaba/wasm-qrcode', 256);
@@ -107,7 +107,7 @@ import {
   generateGradientQRCodeCached,
   generateWechatStyleQRCodeCached,
   // ... 其他带 Cached 后缀的函数
-} from '@veaba/shared';
+} from '@veaba/qrcode-shared';
 
 // 使用缓存版本，重复文本性能提升 10-100 倍
 const svg = generateRoundedQRCodeCached('https://github.com/veaba/wasm-qrcode', 256, 8);
@@ -120,7 +120,7 @@ import {
   generateBatchQRCodes, 
   generateBatchQRCodesCached,
   generateBatchAsync 
-} from '@veaba/shared';
+} from '@veaba/qrcode-shared';
 
 const texts = ['url1', 'url2', 'url3'];
 
@@ -151,7 +151,7 @@ const asyncSvgs = await generateBatchAsync(texts, {
 import { 
   generateQRCodeAsync, 
   generateQRCodeAsyncAdvanced 
-} from '@veaba/shared';
+} from '@veaba/qrcode-shared';
 
 // 简单异步生成
 const svg = await generateQRCodeAsync('https://github.com/veaba/wasm-qrcode', {
@@ -256,7 +256,7 @@ const QRMode = {
 ### Galois Field 数学运算
 
 ```typescript
-import { QRMath } from '@veaba/shared';
+import { QRMath } from '@veaba/qrcode-shared';
 
 // Galois Field 指数运算
 const exp = QRMath.gexp(100);
@@ -268,7 +268,7 @@ const log = QRMath.glog(200);
 ### 多项式运算
 
 ```typescript
-import { Polynomial } from '@veaba/shared';
+import { Polynomial } from '@veaba/qrcode-shared';
 
 // 创建多项式
 const p1 = new Polynomial([1, 2, 3]);
@@ -284,7 +284,7 @@ const remainder = p1.mod(p2);
 ### 获取 RS Blocks
 
 ```typescript
-import { getRSBlocks, QRErrorCorrectLevel } from '@veaba/shared';
+import { getRSBlocks, QRErrorCorrectLevel } from '@veaba/qrcode-shared';
 
 const rsBlocks = getRSBlocks(2, QRErrorCorrectLevel.H);
 // [{ totalCount: 26, dataCount: 16 }, ...]
@@ -293,7 +293,7 @@ const rsBlocks = getRSBlocks(2, QRErrorCorrectLevel.H);
 ### 获取 Type Number
 
 ```typescript
-import { getTypeNumber, QRErrorCorrectLevel } from '@veaba/shared';
+import { getTypeNumber, QRErrorCorrectLevel } from '@veaba/qrcode-shared';
 
 const typeNumber = getTypeNumber(100, QRErrorCorrectLevel.H);
 // 根据文本长度和纠错级别计算版本号
@@ -348,7 +348,7 @@ getCacheKey('https://github.com/veaba/wasm-qrcode', QRErrorCorrectLevel.H);
 ### 1. 需要缓存的场景
 
 ```typescript
-import { getCachedQRCode } from '@veaba/shared';
+import { getCachedQRCode } from '@veaba/qrcode-shared';
 
 // 电商网站：商品二维码
 function getProductQRCode(productId: string) {
@@ -360,7 +360,7 @@ function getProductQRCode(productId: string) {
 ### 2. 批量生成场景
 
 ```typescript
-import { generateBatchQRCodesCached } from '@veaba/shared';
+import { generateBatchQRCodesCached } from '@veaba/qrcode-shared';
 
 // 活动门票：批量生成
 const tickets = Array.from({ length: 1000 }, (_, i) => ({
@@ -378,7 +378,7 @@ const qrCodes = generateBatchQRCodesCached(
 ### 3. 服务端渲染
 
 ```typescript
-import { QRCodeCore, QRErrorCorrectLevel } from '@veaba/shared';
+import { QRCodeCore, QRErrorCorrectLevel } from '@veaba/qrcode-shared';
 
 // Next.js / Nuxt.js 服务端渲染
 export async function getServerSideProps() {
@@ -401,7 +401,7 @@ export async function getServerSideProps() {
 ## 架构位置
 
 ```
-@veaba/shared (共享核心)
+@veaba/qrcode-shared (共享核心)
     │
     ├── QRCodeCore (核心算法)
     ├── LRU Cache (缓存系统)
@@ -413,4 +413,4 @@ export async function getServerSideProps() {
     └──► @veaba/qrcode-ts (Bun)
 ```
 
-`@veaba/shared` 是架构的核心，所有 JavaScript/TypeScript 包都基于它构建。
+`@veaba/qrcode-shared` 是架构的核心，所有 JavaScript/TypeScript 包都基于它构建。

@@ -178,14 +178,14 @@ const svgs = await generateBatchAsync(texts, {
 
 ## 使用缓存
 
-配合 `@veaba/shared` 使用缓存，大幅提升重复文本的生成性能：
+配合 `@veaba/qrcode-shared` 使用缓存，大幅提升重复文本的生成性能：
 
 ```typescript
 import { QRCodeCore, QRErrorCorrectLevel } from '@veaba/qrcodejs';
-import { getCachedQRCode, getCacheStats } from '@veaba/shared';
+import { getCachedQRCode, getCacheStats } from '@veaba/qrcode-shared';
 
 // 方式1：手动使用缓存
-import { getCachedQRCode } from '@veaba/shared';
+import { getCachedQRCode } from '@veaba/qrcode-shared';
 
 const qr = getCachedQRCode('https://github.com/veaba/wasm-qrcode', QRErrorCorrectLevel.H);
 const svg = qr.toSVG(256);
@@ -195,7 +195,7 @@ import {
   generateRoundedQRCodeCached,
   generateGradientQRCodeCached,
   generateWechatStyleQRCodeCached,
-} from '@veaba/shared';
+} from '@veaba/qrcode-shared';
 
 const svg = generateRoundedQRCodeCached('https://github.com/veaba/wasm-qrcode', 256, 8);
 

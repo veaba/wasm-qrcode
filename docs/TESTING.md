@@ -71,6 +71,7 @@ node scripts/test.js [options]
 ```
 
 Options:
+
 - `--browser` / `-b` - Run browser tests
 - `--coverage` / `-c` - Enable coverage report
 - `--watch` / `-w` - Watch mode
@@ -91,7 +92,7 @@ vitest --config vitest.config.browser.ts
 
 | Package | Test Location |
 |---------|---------------|
-| @veaba/shared | `packages/shared/src/index.test.ts` |
+| @veaba/qrcode-shared | `packages/shared/src/index.test.ts` |
 | @veaba/qrcode-node | `packages/qrcode-node/src/index.test.ts` |
 | @veaba/qrcode-ts | `packages/qrcode-ts/src/index.test.ts` |
 | @veaba/qrcodejs | `packages/qrcodejs/src/index.test.js` |
