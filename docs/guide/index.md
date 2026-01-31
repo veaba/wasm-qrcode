@@ -1,0 +1,119 @@
+# 介绍
+
+Wasm QRCode 是一个高性能、跨平台的 QRCode 生成库，采用 Rust 编写核心算法，支持编译为 WebAssembly 在浏览器运行，或作为原生库在 Node.js、Bun 和 Rust 环境中使用。
+
+## 为什么选 Wasm QRCode？
+
+### 1. 极致性能
+
+核心算法使用 Rust 实现，编译为 WASM 后在浏览器中运行，性能比传统 JavaScript 实现快 **2-5 倍**。
+
+```
+单条生成性能对比（ops/s，越高越好）：
+
+WASM:    ████████████████████████████████████████ 15,005
+JS:      ██████████████████████████████           9,927
+```
+
+### 2. 统一 API
+
+无论你使用哪个包，API 设计保持一致，轻松切换运行环境：
+
+```typescript
+// 浏览器 (WASM)
+import { QRCodeWasm } from '@veaba/qrcode-wasm';
+const qr = new QRCodeWasm();
+qr.make_code('text');
+
+// Node.js
+import { QRCode } from '@veaba/qrcode-node';
+const qr = new QRCode();
+qr.make_code('text');
+
+// Bun
+import { QRCode } from '@veaba/qrcode-ts';
+const qr = new QRCode();
+qr.make_code('text');
+```
+
+### 3. 智能缓存
+
+内置 LRU 缓存机制，对于重复文本的生成，性能提升 **10-100 倍**：
+
+```typescript
+import { getCachedQRCode } from '@veaba/shared';
+
+// 第一次生成
+const qr1 = getCachedQRCode('https://example.com');
+
+// 第二次生成（从缓存获取，几乎无计算开销）
+const qr2 = getCachedQRCode('https://example.com');
+```
+
+## 架构设计
+
+```
+┌─────────────────────────────────────────────────────────┐
+│                      应用层                               │
+│  ┌─────────────┐  ┌─────────────┐  ┌─────────────────┐  │
+│  │ @veaba/     │  │ @veaba/     │  │ @veaba/         │  │
+│  │ qrcode-wasm │  │ qrcodejs    │  │ qrcode-node     │  │
+│  │ (浏览器)     │  │ (浏览器)     │  │ (Node.js)       │  │
+│  └──────┬──────┘  └──────┬──────┘  └────────┬────────┘  │
+│  ┌─────────────┐  ┌─────────────┐  ┌─────────────────┐  │
+│  │ @veaba/     │  │ @veaba/     │  │ @veaba/         │  │
+│  │ qrcode-ts   │  │ qrcode-rust │  │ shared          │  │
+│  │ (Bun)       │  │ (原生 Rust)  │  │ (共享核心)       │  │
+│  └──────┬──────┘  └──────┬──────┘  └────────┬────────┘  │
+└─────────┼────────────────┼──────────────────┼───────────┘
+          │                │                  │
+          └────────────────┴──────────────────┘
+                             │
+                    ┌────────┴────────┐
+                    │   核心算法 (Rust)  │
+                    │  - Reed-Solomon  │
+                    │  - 模块布局        │
+                    │  - 掩码计算        │
+                    └─────────────────┘
+```
+
+## 安装指南
+
+根据你的运行环境选择对应的包：
+
+### 浏览器（推荐 WASM）
+
+```bash
+npm install @veaba/qrcode-wasm
+```
+
+### 浏览器（纯 JS，无需 WASM）
+
+```bash
+npm install @veaba/qrcodejs
+```
+
+### Node.js
+
+```bash
+npm install @veaba/qrcode-node
+```
+
+### Bun
+
+```bash
+bun add @veaba/qrcode-ts
+```
+
+### Rust
+
+```toml
+[dependencies]
+qrcode-rust = { path = "packages/qrcode-rust" }
+```
+
+## 下一步
+
+- [快速开始](./quick-start) - 5 分钟上手教程
+- [性能对比](./performance) - 详细的性能测试数据
+- [API 参考](../api/) - 完整的 API 文档

@@ -9,7 +9,10 @@
       "Bash(pnpm run build)",
       "Bash(pnpm build)",
       "Bash(pnpm test:*)",
-      "Bash(pnpm run benchmark:node:*)"
+      "Bash(pnpm run benchmark:node:*)",
+      "Bash(pnpm run test:coverage:*)",
+      "Bash(start \"F:\\\\Github\\\\veaba\\\\wasm-qrcode\\\\coverage\\\\index.html\")",
+      "Bash(git add:*)"
     ]
   }
 }

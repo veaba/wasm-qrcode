@@ -1,0 +1,209 @@
+# 快速开始
+
+本指南将帮助你在 5 分钟内开始使用 Wasm QRCode。
+
+## 浏览器环境（WASM）
+
+### 1. 安装
+
+```bash
+npm install @veaba/qrcode-wasm
+```
+
+### 2. 基础使用
+
+```typescript
+import init, { QRCodeWasm } from '@veaba/qrcode-wasm';
+
+// 初始化 WASM（只需一次）
+await init();
+
+// 创建 QRCode 实例
+const qr = new QRCodeWasm();
+
+// 生成 QRCode
+qr.make_code('https://github.com/veaba/wasm-qrcode');
+
+// 获取 SVG 字符串
+const svg = qr.get_svg();
+
+// 插入到页面
+document.getElementById('qrcode').innerHTML = svg;
+```
+
+### 3. 在框架中使用
+
+:::code-group
+
+```tsx [React]
+import { useEffect, useState } from 'react';
+import init, { QRCodeWasm } from '@veaba/qrcode-wasm';
+
+function QRCode({ text }) {
+  const [svg, setSvg] = useState('');
+
+  useEffect(() => {
+    init().then(() => {
+      const qr = new QRCodeWasm();
+      qr.make_code(text);
+      setSvg(qr.get_svg());
+    });
+  }, [text]);
+
+  return <div dangerouslySetInnerHTML={{ __html: svg }} />;
+}
+```
+
+```vue [Vue]
+<template>
+  <div v-html="svg" />
+</template>
+
+<script setup>
+import { ref, watch } from 'vue';
+import init, { QRCodeWasm } from '@veaba/qrcode-wasm';
+
+const props = defineProps({ text: String });
+const svg = ref('');
+
+watch(() => props.text, async (text) => {
+  await init();
+  const qr = new QRCodeWasm();
+  qr.make_code(text);
+  svg.value = qr.get_svg();
+}, { immediate: true });
+</script>
+```
+
+:::
+
+## Node.js 环境
+
+### 1. 安装
+
+```bash
+npm install @veaba/qrcode-node
+```
+
+### 2. 基础使用
+
+```typescript
+import { QRCode, QRErrorCorrectLevel } from '@veaba/qrcode-node';
+import fs from 'fs';
+
+// 创建 QRCode
+const qr = new QRCode('https://example.com', QRErrorCorrectLevel.H);
+
+// 获取 SVG
+const svg = qr.toSVG();
+fs.writeFileSync('qrcode.svg', svg);
+
+// 获取 PNG Buffer
+const pngBuffer = qr.toPNG(256);
+fs.writeFileSync('qrcode.png', pngBuffer);
+```
+
+### 3. Express 示例
+
+```typescript
+import express from 'express';
+import { QRCode, QRErrorCorrectLevel } from '@veaba/qrcode-node';
+
+const app = express();
+
+app.get('/qrcode', (req, res) => {
+  const { text = 'https://example.com', size = 256 } = req.query;
+  
+  const qr = new QRCode(text, QRErrorCorrectLevel.H);
+  const svg = qr.toStyledSVG({ size: parseInt(size) });
+  
+  res.setHeader('Content-Type', 'image/svg+xml');
+  res.send(svg);
+});
+
+app.listen(3000);
+```
+
+## Bun 环境
+
+### 1. 安装
+
+```bash
+bun add @veaba/qrcode-ts
+```
+
+### 2. 基础使用
+
+```typescript
+import { QRCode, QRErrorCorrectLevel } from '@veaba/qrcode-ts';
+
+// Bun 的 API 与 Node.js 版本一致
+const qr = new QRCode('https://example.com', QRErrorCorrectLevel.H);
+
+// 获取 SVG
+const svg = qr.toSVG();
+console.log(svg);
+
+// 批量生成（Bun 的并发性能更优）
+const texts = Array.from({ length: 1000 }, (_, i) => `https://example.com/${i}`);
+const results = texts.map(t => {
+  const q = new QRCode(t, QRErrorCorrectLevel.H);
+  return q.toSVG();
+});
+```
+
+## Rust 环境
+
+### 1. 添加依赖
+
+```toml
+[dependencies]
+qrcode-rust = { git = "https://github.com/veaba/wasm-qrcode" }
+```
+
+### 2. 基础使用
+
+```rust
+use qrcode_rust::{QRCode, QRErrorCorrectLevel};
+
+fn main() {
+    // 创建 QRCode
+    let mut qr = QRCode::new();
+    qr.make_code("https://example.com");
+    
+    // 获取 SVG
+    let svg = qr.get_svg();
+    println!("{}", svg);
+    
+    // 获取模块数据
+    let modules = qr.get_modules();
+    println!("Module count: {}", qr.get_module_count());
+}
+```
+
+## 使用缓存优化
+
+对于重复文本的生成，使用缓存可以大幅提升性能：
+
+```typescript
+import { getCachedQRCode, clearQRCodeCache } from '@veaba/shared';
+
+// 第一次生成（计算）
+const qr1 = getCachedQRCode('https://example.com');
+
+// 第二次生成（从缓存获取，几乎无开销）
+const qr2 = getCachedQRCode('https://example.com');
+
+// 查看缓存统计
+console.log(getCacheStats());
+// { size: 1, maxSize: 100, keys: ['https://example.com:2'] }
+
+// 清空缓存
+clearQRCodeCache();
+```
+
+## 下一步
+
+- 了解更多 [API 参考](../api/)
+- 查看 [性能对比](./performance)
+- 探索 [样式化 QRCode](./qrcode-wasm#样式化)
