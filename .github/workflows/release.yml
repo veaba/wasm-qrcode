@@ -1,0 +1,231 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - 'v*'
+  workflow_dispatch:
+    inputs:
+      version:
+        description: 'Version to release (e.g., 1.0.0)'
+        required: true
+        type: string
+
+env:
+  NODE_VERSION: '20'
+  RUST_VERSION: '1.75'
+  NPM_REGISTRY: 'https://registry.npmjs.org'
+
+jobs:
+  # ========== 验证和构建 ==========
+  build:
+    name: Build Packages
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'pnpm'
+          registry-url: ${{ env.NPM_REGISTRY }}
+
+      - name: Install pnpm
+        uses: pnpm/action-setup@v2
+        with:
+          version: 8
+
+      - name: Setup Rust
+        uses: dtolnay/rust-action@stable
+        with:
+          toolchain: ${{ env.RUST_VERSION }}
+
+      - name: Cache Rust dependencies
+        uses: Swatinem/rust-cache@v2
+        with:
+          workspaces: packages/qrcode-rust
+
+      - name: Install wasm-pack
+        run: curl https://rustwasm.github.io/wasm-pack/installer/init.sh -sSf | sh
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Build all packages
+        run: |
+          # Build WASM packages
+          cd packages/qrcode-wasm
+          wasm-pack build --target web --out-dir pkg
+          cd ../qrcode-rust
+          wasm-pack build --target web --out-dir pkg
+          
+          # Build shared
+          cd ../shared
+          pnpm build
+          
+          # Build other packages
+          cd ../qrcode-node
+          pnpm build || echo "No build script"
+          cd ../qrcode-bun
+          pnpm build || echo "No build script"
+
+      - name: Upload build artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: release-artifacts
+          path: |
+            packages/*/dist
+            packages/*/pkg
+            packages/*/package.json
+            !packages/*/node_modules
+
+  # ========== 发布到 npm ==========
+  publish-npm:
+    name: Publish to npm
+    runs-on: ubuntu-latest
+    needs: build
+    permissions:
+      contents: write
+      id-token: write
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          registry-url: ${{ env.NPM_REGISTRY }}
+
+      - name: Install pnpm
+        uses: pnpm/action-setup@v2
+        with:
+          version: 8
+
+      - name: Download build artifacts
+        uses: actions/download-artifact@v4
+        with:
+          name: release-artifacts
+          path: packages
+
+      - name: Publish packages
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+          NPM_CONFIG_PROVENANCE: true
+        run: |
+          # 按依赖顺序发布
+          
+          # 1. shared (基础包)
+          echo "Publishing @veaba/shared..."
+          cd packages/shared
+          npm publish --access public || echo "May already exist"
+          cd ../..
+          
+          # 2. qrcode-js (浏览器 JS)
+          echo "Publishing @veaba/qrcode-js..."
+          cd packages/qrcode-js
+          npm publish --access public || echo "May already exist"
+          cd ../..
+          
+          # 3. qrcode-wasm (浏览器 WASM)
+          echo "Publishing @veaba/qrcode-wasm..."
+          cd packages/qrcode-wasm
+          npm publish --access public || echo "May already exist"
+          cd ../..
+          
+          # 4. qrcode-node (Node.js)
+          echo "Publishing @veaba/qrcode-node..."
+          cd packages/qrcode-node
+          npm publish --access public || echo "May already exist"
+          cd ../..
+          
+          # 5. qrcode-bun (Bun)
+          echo "Publishing @veaba/qrcode-bun..."
+          cd packages/qrcode-bun
+          npm publish --access public || echo "May already exist"
+          cd ../..
+
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v1
+        if: startsWith(github.ref, 'refs/tags/')
+        with:
+          generate_release_notes: true
+          draft: false
+          prerelease: ${{ contains(github.ref, 'alpha') || contains(github.ref, 'beta') || contains(github.ref, 'rc') }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+  # ========== 发布 Rust crate ==========
+  publish-crate:
+    name: Publish Rust Crate
+    runs-on: ubuntu-latest
+    needs: build
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Rust
+        uses: dtolnay/rust-action@stable
+        with:
+          toolchain: ${{ env.RUST_VERSION }}
+
+      - name: Cache Rust dependencies
+        uses: Swatinem/rust-cache@v2
+        with:
+          workspaces: packages/qrcode-rust
+
+      - name: Verify crate
+        working-directory: packages/qrcode-rust
+        run: |
+          cargo check
+          cargo test
+          cargo publish --dry-run
+
+      - name: Publish to crates.io
+        working-directory: packages/qrcode-rust
+        env:
+          CARGO_REGISTRY_TOKEN: ${{ secrets.CARGO_REGISTRY_TOKEN }}
+        run: |
+          # 只在有 token 时发布
+          if [ -n "$CARGO_REGISTRY_TOKEN" ]; then
+            cargo publish --token $CARGO_REGISTRY_TOKEN || echo "May already exist"
+          else
+            echo "CARGO_REGISTRY_TOKEN not set, skipping"
+          fi
+
+  # ========== 更新文档 ==========
+  update-docs:
+    name: Update Documentation
+    runs-on: ubuntu-latest
+    needs: [publish-npm, publish-crate]
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'pnpm'
+
+      - name: Install pnpm
+        uses: pnpm/action-setup@v2
+        with:
+          version: 8
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Build documentation
+        run: pnpm docs:build
+
+      - name: Deploy to GitHub Pages
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./docs/doc_build
+          cname: qrcodes.dev  # 如果有自定义域名

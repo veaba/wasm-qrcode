@@ -11,7 +11,7 @@ hero:
       link: /guide/
     - theme: alt
       text: GitHub
-      link: https://github.com/veaba/wasm-qrcode
+      link: https://github.com/veaba/qrcodes
   image:
     src: /logo.png
     alt: Wasm QRCode Logo
@@ -57,7 +57,7 @@ await init();
 
 // 创建 QRCode
 const qr = new QRCodeWasm();
-qr.make_code('https://github.com/veaba/wasm-qrcode');
+qr.make_code('https://github.com/veaba/qrcodes');
 
 // 获取 SVG
 const svg = qr.get_svg();
@@ -69,9 +69,9 @@ console.log(svg);
 | 包名 | 环境 | 特点 | 适用场景 |
 |------|------|------|----------|
 | `@veaba/qrcode-wasm` | 浏览器 | Rust WASM，性能最佳 | 前端生产环境 |
-| `@veaba/qrcodejs` | 浏览器 | 纯 JavaScript，兼容性好 | 无需 WASM 的场景 |
+| `@veaba/qrcode-js` | 浏览器 | 纯 JavaScript，兼容性好 | 无需 WASM 的场景 |
 | `@veaba/qrcode-node` | Node.js | 服务端渲染，支持 PNG | Node.js 后端 |
-| `@veaba/qrcode-ts` | Bun | Bun 运行时优化 | 边缘计算、Deno |
+| `@veaba/qrcode-bun` | Bun | Bun 运行时优化 | 边缘计算、Deno |
 | `@veaba/qrcode-rust` | Rust | 原生性能，内存安全 | Rust 项目 |
 | `@veaba/qrcode-shared` | 通用 | 共享核心，缓存系统 | 所有包的依赖 |
 
@@ -88,4 +88,4 @@ console.log(svg);
 
 ## 许可证
 
-[MIT](https://github.com/veaba/wasm-qrcode/blob/main/LICENSE)
+[MIT](https://github.com/veaba/qrcodes/blob/main/LICENSE)

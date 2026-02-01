@@ -22,10 +22,10 @@
     "baseUrl": ".",
     "paths": {
       "@veaba/qrcode-shared": [
-        "./packages/shared/src/index.ts"
+        "./packages/qrcode-shared/src/index.ts"
       ],
-      "@veaba/qrcodejs": [
-        "./packages/qrcodejs/src/index.js"
+      "@veaba/qrcode-js": [
+        "./packages/qrcode-js/src/index.js"
       ],
       "@veaba/qrcode-wasm": [
         "./packages/qrcode-wasm/pkg/wasm_qrcode.d.ts"
@@ -35,10 +35,5 @@
   "include": [
     "src/**/*.ts",
     "src/**/*.vue"
-  ],
-  "references": [
-    {
-      "path": "./tsconfig.node.json"
-    }
   ]
 }

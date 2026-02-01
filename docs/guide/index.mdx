@@ -46,7 +46,7 @@ qr.make_code('text');
 <Tab label="Bun">
 ```typescript
 // Bun
-import { QRCode } from '@veaba/qrcode-ts';
+import { QRCode } from '@veaba/qrcode-bun';
 const qr = new QRCode();
 qr.make_code('text');
 ```
@@ -75,12 +75,12 @@ const qr2 = getCachedQRCode('https://example.com');
 │                      应用层                               │
 │  ┌─────────────┐  ┌─────────────┐  ┌─────────────────┐  │
 │  │ @veaba/     │  │ @veaba/     │  │ @veaba/         │  │
-│  │ qrcode-wasm │  │ qrcodejs    │  │ qrcode-node     │  │
+│  │ qrcode-wasm │  │ qrcode-js    │  │ qrcode-node     │  │
 │  │ (浏览器)     │  │ (浏览器)     │  │ (Node.js)       │  │
 │  └──────┬──────┘  └──────┬──────┘  └────────┬────────┘  │
 │  ┌─────────────┐  ┌─────────────┐  ┌─────────────────┐  │
 │  │ @veaba/     │  │ @veaba/     │  │ @veaba/         │  │
-│  │ qrcode-ts   │  │ qrcode-rust │  │ shared          │  │
+│  │ qrcode-bun   │  │ qrcode-rust │  │ shared          │  │
 │  │ (Bun)       │  │ (原生 Rust)  │  │ (共享核心)       │  │
 │  └──────┬──────┘  └──────┬──────┘  └────────┬────────┘  │
 └─────────┼────────────────┼──────────────────┼───────────┘
@@ -105,7 +105,7 @@ const qr2 = getCachedQRCode('https://example.com');
 
 ### 浏览器（纯 JS，无需 WASM）
 
-<PackageManagerTabs command='install @veaba/qrcodejs' />
+<PackageManagerTabs command='install @veaba/qrcode-js' />
 
 ### Node.js
 
@@ -114,7 +114,7 @@ const qr2 = getCachedQRCode('https://example.com');
 ### Bun
 
 ```bash
-bun add @veaba/qrcode-ts
+bun add @veaba/qrcode-bun
 ```
 
 ### Rust

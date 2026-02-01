@@ -1,6 +1,8 @@
-# wasm-qrcode
+# qrcodes
 
 > 🚀 高性能 QRCode 生成器 - Rust WASM + JavaScript 双引擎
+>
+> 🔥 **比主流 Rust QRCode 库快 6-9 倍！**
 
 [![Rust](https://img.shields.io/badge/Rust-1.70%2B-orange.svg)](https://www.rust-lang.org/)
 [![WASM](https://img.shields.io/badge/WebAssembly-✓-654ff0.svg)](https://webassembly.org/)
@@ -10,6 +12,7 @@
 ## ✨ 特性
 
 - **🦀 Rust WASM 核心** - 内存安全，高性能
+- **🔥 极致性能** - 比 crates.io 最流行的 QRCode 库快 **6-9 倍**！
 - **⚡ 实例复用** - 批量生成性能提升 5-10 倍
 - **🎨 10+ 个性样式** - 微信、抖音、支付宝、赛博朋克等
 - **📦 批量生成** - 一次性生成数千个二维码
@@ -34,7 +37,7 @@ npm install
 npm run dev
 
 # 构建 WASM
-wasm-pack build wasm-qrcode --target web --out-dir pkg
+wasm-pack build qrcodes --target web --out-dir pkg
 ```
 
 ### 构建
@@ -52,7 +55,7 @@ npm run preview
 ### 基础用法
 
 ```javascript
-import init, { QRCodeGenerator } from './wasm-qrcode/pkg/wasm_qrcode.js'
+import init, { QRCodeGenerator } from './qrcodes/pkg/wasm_qrcode.js'
 
 await init()
 
@@ -60,7 +63,7 @@ await init()
 const gen = new QRCodeGenerator()
 
 // 生成单个二维码
-const svg = gen.generate('https://github.com/veaba/wasm-qrcode')
+const svg = gen.generate('https://github.com/veaba/qrcodes')
 
 // 获取 SVG 字符串
 document.getElementById('qrcode').innerHTML = gen.get_svg()
@@ -70,8 +73,8 @@ document.getElementById('qrcode').innerHTML = gen.get_svg()
 
 ```javascript
 const texts = [
-  'https://github.com/veaba/wasm-qrcode/page1',
-  'https://github.com/veaba/wasm-qrcode/page2',
+  'https://github.com/veaba/qrcodes/page1',
+  'https://github.com/veaba/qrcodes/page2',
   // ... 数千个
 ]
 
@@ -86,7 +89,7 @@ import {
   generate_wechat_style_qrcode,
   generate_douyin_style_qrcode,
   generate_cyberpunk_style_qrcode 
-} from './wasm-qrcode/pkg/wasm_qrcode.js'
+} from './qrcodes/pkg/wasm_qrcode.js'
 
 // 微信风格
 const wechatQR = generate_wechat_style_qrcode('https://weixin.qq.com', 256)
@@ -95,7 +98,7 @@ const wechatQR = generate_wechat_style_qrcode('https://weixin.qq.com', 256)
 const douyinQR = generate_douyin_style_qrcode('https://douyin.com', 256)
 
 // 赛博朋克风格
-const cyberQR = generate_cyberpunk_style_qrcode('https://github.com/veaba/wasm-qrcode', 256)
+const cyberQR = generate_cyberpunk_style_qrcode('https://github.com/veaba/qrcodes', 256)
 ```
 
 ## 🎨 支持的样式
@@ -131,9 +134,9 @@ pnpm run dev
 | 包名 | 实现 | 吞吐量 (ops/s) | 单次耗时 (ms) | 性能评级 |
 |------|------|---------------|--------------|----------|
 | @veaba/qrcode-wasm | Rust WASM | ~50,000 | ~0.02 | ⭐⭐⭐⭐⭐ |
-| @veaba/qrcodejs (perf) | 优化 JS | ~35,000 | ~0.029 | ⭐⭐⭐⭐ |
-| @veaba/qrcodejs (cache) | 缓存 JS | ~150,000* | ~0.007 | ⭐⭐⭐⭐⭐ |
-| @veaba/qrcodejs (original) | 原始 JS | ~25,000 | ~0.04 | ⭐⭐⭐ |
+| @veaba/qrcode-js (perf) | 优化 JS | ~35,000 | ~0.029 | ⭐⭐⭐⭐ |
+| @veaba/qrcode-js (cache) | 缓存 JS | ~150,000* | ~0.007 | ⭐⭐⭐⭐⭐ |
+| @veaba/qrcode-js (original) | 原始 JS | ~25,000 | ~0.04 | ⭐⭐⭐ |
 
 > *缓存版本在重复文本场景下的性能
 
@@ -145,6 +148,21 @@ pnpm run dev
 | 🥟 Bun | ~52,000 | ~145,000 | ~0.0192 |
 | 🟢 Node.js | ~45,000 | ~120,000 | ~0.0221 |
 
+### 🔥 与主流 Rust QRCode 库对比
+
+与 [kennytm/qrcode](https://github.com/kennytm/qrcode-rust) (crates.io 下载量最高的 QRCode 库) 的性能对比：
+
+| 测试项 | @veaba/qrcode-rust (我们的) | kennytm/qrcode (第三方) | 性能比 |
+|--------|---------------------------|------------------------|--------|
+| **单条生成** | 82.08 µs | 514.41 µs | **🔥 6.3x 更快** |
+| **批量 100 条** | 4.86 ms | 37.10 ms | **🔥 7.6x 更快** |
+| **纠错级别 L** | 39.01 µs | 363.89 µs | **🔥 9.3x 更快** |
+| **纠错级别 M** | 38.53 µs | 354.87 µs | **🔥 9.2x 更快** |
+| **中等文本 (36字符)** | 79.17 µs | - | - |
+| **长文本 (98字符)** | 163.85 µs | - | - |
+
+> **牛逼！（破音）** 我们的实现比 crates.io 上最流行的 QRCode 库快 **6-9 倍**！
+
 ### 性能比率
 
 | 对比 | 比率 |
@@ -153,6 +171,7 @@ pnpm run dev
 | Rust vs Bun | **3.6x** 更快 |
 | Bun vs Node.js | **1.15x** 更快 |
 | WASM vs JS (浏览器) | **2.0x** 更快 |
+| **@veaba vs kennytm** | **6-9x** 更快 🔥 |
 
 ### 测试环境
 
@@ -166,13 +185,13 @@ pnpm run dev
 ## 🏗️ 项目结构
 
 ```
-wasm-qrcode/
+qrcodes/
 ├── packages/
 │   ├── qrcode-wasm/        # Rust WASM 核心
 │   ├── qrcode-node/        # Node.js 实现
-│   ├── qrcode-ts/          # Bun 实现
+│   ├── qrcode-bun/          # Bun 实现
 │   ├── qrcode-rust/        # Rust Native
-│   ├── qrcodejs/           # JavaScript 实现
+│   ├── qrcode-js/           # JavaScript 实现
 │   └── shared/             # 共享类型和工具
 ├── src/                    # Vue 前端
 │   ├── App.vue
@@ -189,9 +208,9 @@ wasm-qrcode/
 |------|------|----------|
 | `@veaba/qrcode-wasm` | Rust WASM 实现 | 浏览器，最高性能 |
 | `@veaba/qrcode-node` | Node.js 实现 | Node.js 服务端 |
-| `@veaba/qrcode-ts` | Bun 实现 | Bun 运行时 |
+| `@veaba/qrcode-bun` | Bun 实现 | Bun 运行时 |
 | `@veaba/qrcode-rust` | Rust Native | 原生高性能需求 |
-| `@veaba/qrcodejs` | 纯 JavaScript | 兼容性优先 |
+| `@veaba/qrcode-js` | 纯 JavaScript | 兼容性优先 |
 | `@veaba/qrcode-shared` | 共享类型 | 所有包依赖 |
 
 ## 🔧 API 文档
@@ -227,7 +246,7 @@ style.set_gradient(true, "#667eea", "#764ba2")
 
 // 生成
 let mut qr = StyledQRCode::with_style(style)
-qr.generate("https://github.com/veaba/wasm-qrcode", 2)
+qr.generate("https://github.com/veaba/qrcodes", 2)
 let svg = qr.get_styled_svg()
 ```
 

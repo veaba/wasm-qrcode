@@ -1,11 +1,11 @@
-# @veaba/qrcode-ts
+# @veaba/qrcode-bun
 
 Bun 运行时的 QRCode 生成库，针对 Bun 的高性能特性进行优化，适合边缘计算和快速启动场景。
 
 ## 安装
 
 ```bash
-bun add @veaba/qrcode-ts
+bun add @veaba/qrcode-bun
 ```
 
 ## 为什么选择 Bun？
@@ -25,10 +25,10 @@ Bun 相比 Node.js 的优势：
 ### 创建 QRCode
 
 ```typescript
-import { QRCode, QRErrorCorrectLevel } from '@veaba/qrcode-ts';
+import { QRCode, QRErrorCorrectLevel } from '@veaba/qrcode-bun';
 
 // 创建 QRCode 实例
-const qr = new QRCode('https://github.com/veaba/wasm-qrcode', QRErrorCorrectLevel.H);
+const qr = new QRCode('https://github.com/veaba/qrcodes', QRErrorCorrectLevel.H);
 
 // 获取 SVG
 const svg = qr.toSVG();
@@ -38,9 +38,9 @@ console.log(svg);
 ### 保存文件
 
 ```typescript
-import { QRCode, QRErrorCorrectLevel } from '@veaba/qrcode-ts';
+import { QRCode, QRErrorCorrectLevel } from '@veaba/qrcode-bun';
 
-const qr = new QRCode('https://github.com/veaba/wasm-qrcode', QRErrorCorrectLevel.H);
+const qr = new QRCode('https://github.com/veaba/qrcodes', QRErrorCorrectLevel.H);
 
 // Bun 的文件写入 API
 await Bun.write('qrcode.svg', qr.toSVG());
@@ -55,7 +55,7 @@ fs.writeFileSync('qrcode.svg', qr.toSVG());
 ### 使用 Bun.serve
 
 ```typescript
-import { QRCode, QRErrorCorrectLevel } from '@veaba/qrcode-ts';
+import { QRCode, QRErrorCorrectLevel } from '@veaba/qrcode-bun';
 
 Bun.serve({
   port: 3000,
@@ -63,7 +63,7 @@ Bun.serve({
     const url = new URL(req.url);
     
     if (url.pathname === '/qrcode') {
-      const text = url.searchParams.get('text') || 'https://github.com/veaba/wasm-qrcode';
+      const text = url.searchParams.get('text') || 'https://github.com/veaba/qrcodes';
       const size = parseInt(url.searchParams.get('size') || '256');
       
       const qr = new QRCode(text, QRErrorCorrectLevel.H);
@@ -87,10 +87,10 @@ console.log('Try: http://localhost:3000/qrcode?text=Hello&size=256');
 Bun 的并发性能特别适合批量生成：
 
 ```typescript
-import { QRCode, QRErrorCorrectLevel } from '@veaba/qrcode-ts';
+import { QRCode, QRErrorCorrectLevel } from '@veaba/qrcode-bun';
 
 // 生成 10000 个 QRCode
-const texts = Array.from({ length: 10000 }, (_, i) => `https://github.com/veaba/wasm-qrcode/${i}`);
+const texts = Array.from({ length: 10000 }, (_, i) => `https://github.com/veaba/qrcodes/${i}`);
 
 console.time('generate');
 
@@ -112,7 +112,7 @@ Bun 支持 Web Workers，可以并行生成：
 
 ```typescript
 // worker.ts
-import { QRCode, QRErrorCorrectLevel } from '@veaba/qrcode-ts';
+import { QRCode, QRErrorCorrectLevel } from '@veaba/qrcode-bun';
 
 self.onmessage = (event) => {
   const { id, text, size } = event.data;
@@ -162,7 +162,7 @@ async function generateWithWorkers(texts: string[], size: number = 256) {
 }
 
 // 使用
-const texts = Array.from({ length: 1000 }, (_, i) => `https://github.com/veaba/wasm-qrcode/${i}`);
+const texts = Array.from({ length: 1000 }, (_, i) => `https://github.com/veaba/qrcodes/${i}`);
 const results = await generateWithWorkers(texts, 256);
 ```
 
@@ -172,12 +172,12 @@ const results = await generateWithWorkers(texts, 256);
 
 ```typescript
 // index.ts
-import { QRCode, QRErrorCorrectLevel } from '@veaba/qrcode-ts';
+import { QRCode, QRErrorCorrectLevel } from '@veaba/qrcode-bun';
 
 export default {
   async fetch(request: Request): Promise<Response> {
     const url = new URL(request.url);
-    const text = url.searchParams.get('text') || 'https://github.com/veaba/wasm-qrcode';
+    const text = url.searchParams.get('text') || 'https://github.com/veaba/qrcodes';
     const size = parseInt(url.searchParams.get('size') || '256');
     
     const qr = new QRCode(text, QRErrorCorrectLevel.H);
@@ -197,11 +197,11 @@ export default {
 
 ```typescript
 // api/qrcode.ts
-import { QRCode, QRErrorCorrectLevel } from '@veaba/qrcode-ts';
+import { QRCode, QRErrorCorrectLevel } from '@veaba/qrcode-bun';
 import type { VercelRequest, VercelResponse } from '@vercel/node';
 
 export default function handler(req: VercelRequest, res: VercelResponse) {
-  const { text = 'https://github.com/veaba/wasm-qrcode', size = '256' } = req.query;
+  const { text = 'https://github.com/veaba/qrcodes', size = '256' } = req.query;
   
   const qr = new QRCode(text as string, QRErrorCorrectLevel.H);
   const svg = qr.toSVG(parseInt(size as string));
@@ -221,9 +221,9 @@ export const config = {
 ### 文件写入
 
 ```typescript
-import { QRCode, QRErrorCorrectLevel } from '@veaba/qrcode-ts';
+import { QRCode, QRErrorCorrectLevel } from '@veaba/qrcode-bun';
 
-const qr = new QRCode('https://github.com/veaba/wasm-qrcode', QRErrorCorrectLevel.H);
+const qr = new QRCode('https://github.com/veaba/qrcodes', QRErrorCorrectLevel.H);
 
 // Bun 原生 API（推荐）
 await Bun.write('qrcode.svg', qr.toSVG());
@@ -236,7 +236,7 @@ fs.writeFileSync('qrcode.svg', qr.toSVG());
 ### HTTP 服务器
 
 ```typescript
-import { QRCode, QRErrorCorrectLevel } from '@veaba/qrcode-ts';
+import { QRCode, QRErrorCorrectLevel } from '@veaba/qrcode-bun';
 
 // Bun 原生（推荐）
 Bun.serve({
@@ -258,7 +258,7 @@ http.createServer((req, res) => {
 运行基准测试：
 
 ```bash
-cd packages/qrcode-ts
+cd packages/qrcode-bun
 bun benchmark/index.ts
 ```
 
@@ -266,7 +266,7 @@ bun benchmark/index.ts
 
 ```
 ============================================================
-📦 @veaba/qrcode-ts
+📦 @veaba/qrcode-bun
 📝 Bun QRCode 生成性能测试
 ============================================================
 
@@ -291,12 +291,12 @@ TextEncoder 编码:
 import { QRCode, QRErrorCorrectLevel } from '@veaba/qrcode-node';
 
 // Bun
-import { QRCode, QRErrorCorrectLevel } from '@veaba/qrcode-ts';
+import { QRCode, QRErrorCorrectLevel } from '@veaba/qrcode-bun';
 ```
 
 主要区别：
 
-| 特性 | @veaba/qrcode-ts | @veaba/qrcode-node |
+| 特性 | @veaba/qrcode-bun | @veaba/qrcode-node |
 |------|-----------------|-------------------|
 | 运行时 | Bun | Node.js |
 | 启动速度 | 更快 | 快 |
@@ -304,7 +304,7 @@ import { QRCode, QRErrorCorrectLevel } from '@veaba/qrcode-ts';
 | TypeScript | 原生 | 需 ts-node/tsx |
 | npm 兼容 | 是 | 是 |
 
-## 何时使用 @veaba/qrcode-ts？
+## 何时使用 @veaba/qrcode-bun？
 
 - ✅ 使用 Bun 作为运行时
 - ✅ 需要极致的批量生成性能
@@ -320,7 +320,7 @@ import { QRCode, QRErrorCorrectLevel } from '@veaba/qrcode-ts';
 
 ```diff
 - import { QRCode } from '@veaba/qrcode-node';
-+ import { QRCode } from '@veaba/qrcode-ts';
++ import { QRCode } from '@veaba/qrcode-bun';
 ```
 
 1. 文件写入（可选优化）：

@@ -1,0 +1,20 @@
+{
+  "name": "@veaba/benchmark-cross-backend",
+  "version": "1.0.0",
+  "private": true,
+  "description": "跨后端基准测试 - 对比 Node.js / Bun / Rust 性能",
+  "scripts": {
+    "start": "ts-node index.ts",
+    "test": "ts-node index.ts"
+  },
+  "dependencies": {
+    "@veaba/qrcode-node": "workspace:*",
+    "@veaba/qrcode-bun": "workspace:*",
+    "@veaba/qrcode-shared": "workspace:*"
+  },
+  "devDependencies": {
+    "@types/node": "^20.0.0",
+    "ts-node": "^10.9.0",
+    "typescript": "^5.0.0"
+  }
+}

@@ -3,7 +3,7 @@ name = "qrcode-rust"
 version = "0.1.0"
 authors = ["veaba< Godpu@outlook.com>"]
 description = "Pure Rust QRCode generator"
-repository = "https://github.com/veaba/wasm-qrcode"
+repository = "https://github.com/veaba/qrcodes"
 license = "MIT"
 edition = "2021"
 
@@ -28,9 +28,15 @@ image-support = ["image"]
 [dev-dependencies]
 wasm-bindgen-test = "0.3.13"
 criterion = { version = "0.5", features = ["html_reports"] }
+# kennytm 的 qrcode crate 用于对比测试
+qrcode-kennytm = { package = "qrcode", version = "0.14" }
 
 [[bench]]
 name = "qrcode_bench"
+harness = false
+
+[[bench]]
+name = "comparison_bench"
 harness = false
 
 [profile.release]

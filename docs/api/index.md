@@ -7,9 +7,9 @@ Wasm QRCode 的完整 API 文档。
 | 包名 | 环境 | 主要导出 |
 |------|------|---------|
 | `@veaba/qrcode-wasm` | 浏览器 | `QRCodeWasm`, `QRCodeGenerator`, `init` |
-| `@veaba/qrcodejs` | 浏览器 | `QRCodeCore`, `QRErrorCorrectLevel` |
+| `@veaba/qrcode-js` | 浏览器 | `QRCodeCore`, `QRErrorCorrectLevel` |
 | `@veaba/qrcode-node` | Node.js | `QRCode`, `QRErrorCorrectLevel` |
-| `@veaba/qrcode-ts` | Bun | `QRCode`, `QRErrorCorrectLevel` |
+| `@veaba/qrcode-bun` | Bun | `QRCode`, `QRErrorCorrectLevel` |
 | `@veaba/qrcode-rust` | Rust | `QRCode`, `QRErrorCorrectLevel` |
 | `@veaba/qrcode-shared` | 通用 | `QRCodeCore`, `LRUCache`, 工具函数 |
 
@@ -87,16 +87,16 @@ import init, { QRCodeWasm } from '@veaba/qrcode-wasm';
 
 await init();
 const qr = new QRCodeWasm();
-qr.make_code('https://github.com/veaba/wasm-qrcode');
+qr.make_code('https://github.com/veaba/qrcodes');
 const svg = qr.get_svg();
 ```
 
 ### 浏览器 (JS)
 
 ```typescript
-import { QRCodeCore, QRErrorCorrectLevel } from '@veaba/qrcodejs';
+import { QRCodeCore, QRErrorCorrectLevel } from '@veaba/qrcode-js';
 
-const qr = new QRCodeCore('https://github.com/veaba/wasm-qrcode', QRErrorCorrectLevel.H);
+const qr = new QRCodeCore('https://github.com/veaba/qrcodes', QRErrorCorrectLevel.H);
 const svg = qr.toSVG();
 ```
 
@@ -105,7 +105,7 @@ const svg = qr.toSVG();
 ```typescript
 import { QRCode, QRErrorCorrectLevel } from '@veaba/qrcode-node';
 
-const qr = new QRCode('https://github.com/veaba/wasm-qrcode', QRErrorCorrectLevel.H);
+const qr = new QRCode('https://github.com/veaba/qrcodes', QRErrorCorrectLevel.H);
 const svg = qr.toSVG();
 const png = qr.toPNG();
 ```
@@ -113,9 +113,9 @@ const png = qr.toPNG();
 ### Bun
 
 ```typescript
-import { QRCode, QRErrorCorrectLevel } from '@veaba/qrcode-ts';
+import { QRCode, QRErrorCorrectLevel } from '@veaba/qrcode-bun';
 
-const qr = new QRCode('https://github.com/veaba/wasm-qrcode', QRErrorCorrectLevel.H);
+const qr = new QRCode('https://github.com/veaba/qrcodes', QRErrorCorrectLevel.H);
 const svg = qr.toSVG();
 ```
 
@@ -125,6 +125,6 @@ const svg = qr.toSVG();
 use qrcode_rust::{QRCode, QRErrorCorrectLevel};
 
 let mut qr = QRCode::new();
-qr.make_code("https://github.com/veaba/wasm-qrcode");
+qr.make_code("https://github.com/veaba/qrcodes");
 let svg = qr.get_svg();
 ```

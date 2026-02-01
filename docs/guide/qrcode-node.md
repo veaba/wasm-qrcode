@@ -16,7 +16,7 @@ npm install @veaba/qrcode-node
 import { QRCode, QRErrorCorrectLevel } from '@veaba/qrcode-node';
 
 // 创建 QRCode 实例
-const qr = new QRCode('https://github.com/veaba/wasm-qrcode', QRErrorCorrectLevel.H);
+const qr = new QRCode('https://github.com/veaba/qrcodes', QRErrorCorrectLevel.H);
 
 // 获取 SVG 字符串
 const svg = qr.toSVG();
@@ -29,7 +29,7 @@ console.log(svg);
 import { QRCode, QRErrorCorrectLevel } from '@veaba/qrcode-node';
 import fs from 'fs';
 
-const qr = new QRCode('https://github.com/veaba/wasm-qrcode', QRErrorCorrectLevel.H);
+const qr = new QRCode('https://github.com/veaba/qrcodes', QRErrorCorrectLevel.H);
 
 // 保存 SVG
 fs.writeFileSync('qrcode.svg', qr.toSVG());
@@ -43,7 +43,7 @@ fs.writeFileSync('qrcode.png', qr.toPNG(256));
 ### SVG 输出
 
 ```typescript
-const qr = new QRCode('https://github.com/veaba/wasm-qrcode', QRErrorCorrectLevel.H);
+const qr = new QRCode('https://github.com/veaba/qrcodes', QRErrorCorrectLevel.H);
 
 // 基础 SVG（默认 256x256）
 const svg = qr.toSVG();
@@ -55,7 +55,7 @@ const largeSvg = qr.toSVG(512);
 ### PNG 输出
 
 ```typescript
-const qr = new QRCode('https://github.com/veaba/wasm-qrcode', QRErrorCorrectLevel.H);
+const qr = new QRCode('https://github.com/veaba/qrcodes', QRErrorCorrectLevel.H);
 
 // 生成 PNG Buffer（默认 256x256）
 const pngBuffer = qr.toPNG();
@@ -70,7 +70,7 @@ fs.writeFileSync('qrcode.png', pngBuffer);
 ### 样式化 SVG
 
 ```typescript
-const qr = new QRCode('https://github.com/veaba/wasm-qrcode', QRErrorCorrectLevel.H);
+const qr = new QRCode('https://github.com/veaba/qrcodes', QRErrorCorrectLevel.H);
 
 const styledSvg = qr.toStyledSVG({
   size: 256,
@@ -99,7 +99,7 @@ const app = express();
 
 // SVG 端点
 app.get('/qrcode.svg', (req, res) => {
-  const { text = 'https://github.com/veaba/wasm-qrcode', size = 256 } = req.query;
+  const { text = 'https://github.com/veaba/qrcodes', size = 256 } = req.query;
   
   const qr = new QRCode(text, QRErrorCorrectLevel.H);
   const svg = qr.toStyledSVG({ 
@@ -113,7 +113,7 @@ app.get('/qrcode.svg', (req, res) => {
 
 // PNG 端点
 app.get('/qrcode.png', (req, res) => {
-  const { text = 'https://github.com/veaba/wasm-qrcode', size = 256 } = req.query;
+  const { text = 'https://github.com/veaba/qrcodes', size = 256 } = req.query;
   
   const qr = new QRCode(text, QRErrorCorrectLevel.H);
   const png = qr.toPNG(parseInt(size));
@@ -137,7 +137,7 @@ import { QRCode, QRErrorCorrectLevel } from '@veaba/qrcode-node';
 const fastify = Fastify();
 
 fastify.get('/qrcode', async (request, reply) => {
-  const { text = 'https://github.com/veaba/wasm-qrcode', size = 256, type = 'svg' } = request.query;
+  const { text = 'https://github.com/veaba/qrcodes', size = 256, type = 'svg' } = request.query;
   
   const qr = new QRCode(text, QRErrorCorrectLevel.H);
   
@@ -161,7 +161,7 @@ import type { NextApiRequest, NextApiResponse } from 'next';
 import { QRCode, QRErrorCorrectLevel } from '@veaba/qrcode-node';
 
 export default function handler(req: NextApiRequest, res: NextApiResponse) {
-  const { text = 'https://github.com/veaba/wasm-qrcode', size = 256 } = req.query;
+  const { text = 'https://github.com/veaba/qrcodes', size = 256 } = req.query;
   
   const qr = new QRCode(text as string, QRErrorCorrectLevel.H);
   const svg = qr.toSVG(parseInt(size as string));
@@ -179,9 +179,9 @@ import fs from 'fs';
 import path from 'path';
 
 const urls = [
-  'https://github.com/veaba/wasm-qrcode/product/1',
-  'https://github.com/veaba/wasm-qrcode/product/2',
-  'https://github.com/veaba/wasm-qrcode/product/3'
+  'https://github.com/veaba/qrcodes/product/1',
+  'https://github.com/veaba/qrcodes/product/2',
+  'https://github.com/veaba/qrcodes/product/3'
 ];
 
 // 批量生成
@@ -229,7 +229,7 @@ function createQRCodeStream(text: string, size: number) {
 }
 
 // 使用
-const stream = createQRCodeStream('https://github.com/veaba/wasm-qrcode', 256);
+const stream = createQRCodeStream('https://github.com/veaba/qrcodes', 256);
 const writeStream = createWriteStream('output.svg');
 
 // Node 18+ 支持 Web Streams
@@ -252,10 +252,10 @@ function getQRCodeSVG(text: string, size: number = 256): string {
 }
 
 // 第一次生成（计算）
-const svg1 = getQRCodeSVG('https://github.com/veaba/wasm-qrcode');
+const svg1 = getQRCodeSVG('https://github.com/veaba/qrcodes');
 
 // 第二次生成（缓存，快 10-100 倍）
-const svg2 = getQRCodeSVG('https://github.com/veaba/wasm-qrcode');
+const svg2 = getQRCodeSVG('https://github.com/veaba/qrcodes');
 ```
 
 ### 异步批量生成
@@ -276,7 +276,7 @@ async function generateBatch(texts: string[], size: number = 256) {
 }
 
 // 使用
-const texts = Array.from({ length: 100 }, (_, i) => `https://github.com/veaba/wasm-qrcode/${i}`);
+const texts = Array.from({ length: 100 }, (_, i) => `https://github.com/veaba/qrcodes/${i}`);
 const results = await generateBatch(texts, 256);
 ```
 

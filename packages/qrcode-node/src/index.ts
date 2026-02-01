@@ -2,7 +2,7 @@
  * @veaba/qrcode-node - Pure JavaScript QRCode generator for Node.js
  * 
  * Backend unified API implementation for Node.js runtime.
- * Provides consistent API with qrcode-ts and qrcode-rust.
+ * Provides consistent API with qrcode-bun and qrcode-rust.
  */
 
 import {

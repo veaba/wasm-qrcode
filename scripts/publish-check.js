@@ -40,8 +40,8 @@ const packages = [
   { name: '@veaba/qrcode-shared', path: 'packages/shared' },
   { name: '@veaba/qrcode-wasm', path: 'packages/qrcode-wasm' },
   { name: '@veaba/qrcode-node', path: 'packages/qrcode-node' },
-  { name: '@veaba/qrcode-ts', path: 'packages/qrcode-ts' },
-  { name: '@veaba/qrcodejs', path: 'packages/qrcodejs' },
+  { name: '@veaba/qrcode-bun', path: 'packages/qrcode-bun' },
+  { name: '@veaba/qrcode-js', path: 'packages/qrcode-js' },
 ];
 
 let allPassed = true;

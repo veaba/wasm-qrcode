@@ -1,6 +1,6 @@
 # QRCodeCore
 
-`QRCodeCore` 是 `@veaba/qrcode-shared` 和 `@veaba/qrcodejs` 的核心类，提供纯 JavaScript 的 QRCode 生成功能。
+`QRCodeCore` 是 `@veaba/qrcode-shared` 和 `@veaba/qrcode-js` 的核心类，提供纯 JavaScript 的 QRCode 生成功能。
 
 ## 构造函数
 
@@ -24,10 +24,10 @@ constructor(
 import { QRCodeCore, QRErrorCorrectLevel } from '@veaba/qrcode-shared';
 
 // 默认纠错级别 H
-const qr1 = new QRCodeCore('https://github.com/veaba/wasm-qrcode');
+const qr1 = new QRCodeCore('https://github.com/veaba/qrcodes');
 
 // 指定纠错级别
-const qr2 = new QRCodeCore('https://github.com/veaba/wasm-qrcode', QRErrorCorrectLevel.M);
+const qr2 = new QRCodeCore('https://github.com/veaba/qrcodes', QRErrorCorrectLevel.M);
 ```
 
 ## 属性
@@ -63,7 +63,7 @@ toSVG(size: number = 256): string
 #### 示例
 
 ```typescript
-const qr = new QRCodeCore('https://github.com/veaba/wasm-qrcode');
+const qr = new QRCodeCore('https://github.com/veaba/qrcodes');
 
 // 默认 256x256
 const svg1 = qr.toSVG();
@@ -104,7 +104,7 @@ toStyledSVG(options: StyledSVGOptions = {}): string
 #### 示例
 
 ```typescript
-const qr = new QRCodeCore('https://github.com/veaba/wasm-qrcode');
+const qr = new QRCodeCore('https://github.com/veaba/qrcodes');
 
 // 基础样式
 const svg1 = qr.toStyledSVG({
@@ -151,7 +151,7 @@ getModuleCount(): number
 #### 示例
 
 ```typescript
-const qr = new QRCodeCore('https://github.com/veaba/wasm-qrcode');
+const qr = new QRCodeCore('https://github.com/veaba/qrcodes');
 console.log(qr.getModuleCount()); // 25
 ```
 
@@ -177,7 +177,7 @@ isDark(row: number, col: number): boolean
 #### 示例
 
 ```typescript
-const qr = new QRCodeCore('https://github.com/veaba/wasm-qrcode');
+const qr = new QRCodeCore('https://github.com/veaba/qrcodes');
 const count = qr.getModuleCount();
 
 // 遍历所有模块
@@ -201,7 +201,7 @@ for (let row = 0; row < count; row++) {
 ```typescript
 import { QRCodeCore, QRErrorCorrectLevel } from '@veaba/qrcode-shared';
 
-const qr = new QRCodeCore('https://github.com/veaba/wasm-qrcode', QRErrorCorrectLevel.H);
+const qr = new QRCodeCore('https://github.com/veaba/qrcodes', QRErrorCorrectLevel.H);
 
 // 获取基础 SVG
 const svg = qr.toSVG(256);
@@ -213,7 +213,7 @@ document.getElementById('qrcode').innerHTML = svg;
 ```typescript
 import { QRCodeCore, QRErrorCorrectLevel } from '@veaba/qrcode-shared';
 
-const qr = new QRCodeCore('https://github.com/veaba/wasm-qrcode', QRErrorCorrectLevel.H);
+const qr = new QRCodeCore('https://github.com/veaba/qrcodes', QRErrorCorrectLevel.H);
 
 const styledSvg = qr.toStyledSVG({
   size: 300,
@@ -235,7 +235,7 @@ document.getElementById('qrcode').innerHTML = styledSvg;
 ```typescript
 import { QRCodeCore, QRErrorCorrectLevel } from '@veaba/qrcode-shared';
 
-const qr = new QRCodeCore('https://github.com/veaba/wasm-qrcode', QRErrorCorrectLevel.H);
+const qr = new QRCodeCore('https://github.com/veaba/qrcodes', QRErrorCorrectLevel.H);
 const count = qr.getModuleCount();
 
 // 创建 Canvas 自定义渲染

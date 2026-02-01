@@ -1,7 +1,7 @@
 //! @veaba/qrcode-rust - Pure Rust QRCode Generator
 //! 
 //! Backend unified API implementation.
-//! Provides consistent API with qrcode-node and qrcode-ts.
+//! Provides consistent API with qrcode-node and qrcode-bun.
 
 #![cfg_attr(feature = "wasm", allow(non_snake_case))]
 

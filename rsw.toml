@@ -7,5 +7,5 @@ using = "wasm-pack"
 dir = "my-template"
 
 [[crates]]
-name = "wasm-qrcode"
+name = "qrcodes"
 link = true

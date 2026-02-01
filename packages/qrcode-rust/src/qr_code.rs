@@ -1,5 +1,7 @@
 //! QR Code implementation
 
+use core::fmt::Write;
+
 use crate::qr_8bit_byte::QR8bitByte;
 use crate::qr_bit_buffer::BitBuffer;
 use crate::qr_code_model::{get_type_number, PATTERN_POSITION_TABLE, QRErrorCorrectLevel, QRMode};
@@ -384,7 +386,7 @@ impl QRCode {
 }
 
 impl QRCode {
-    /// 生成 SVG 字符串
+    /// 生成 SVG 字符串（高性能版本 - 使用 Path 合并 + write! 优化）
     pub fn get_svg(&self) -> String {
         let count = self.module_count;
         if count == 0 {
@@ -396,34 +398,35 @@ impl QRCode {
         let actual_size = cell_size * count;
         let offset = (size - actual_size) / 2;
         
-        let mut svg = format!(
-            r#"<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 {} {}" width="{}" height="{}">"#,
-            size, size, size, size
-        );
+        // 估算容量：约 50% 模块为深色，每个模块约 25 字节
+        let estimated_dark = (count * count) as usize / 2;
+        let mut svg = String::with_capacity(350 + estimated_dark * 25);
         
-        // 背景
-        svg.push_str(&format!(
-            r#"<rect width="{}" height="{}" fill="{}"/>"#,
-            size, size, self.options.color_light
-        ));
+        // SVG 头部 - 使用 write! 避免临时字符串
+        write!(
+            svg,
+            r#"<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 {0} {0}" width="{0}" height="{0}"><path d="M0 0h{0}v{0}H0z" fill="{1}"/><path fill="{2}" d=""#,
+            size, self.options.color_light, self.options.color_dark
+        ).unwrap();
 
-        // 使用 rect 绘制每个模块
-        for row in 0..count {
-            for col in 0..count {
-                if self.is_dark(row, col) {
-                    svg.push_str(&format!(
-                        r#"<rect x="{}" y="{}" width="{}" height="{}" fill="{}"/>"#,
-                        col * cell_size + offset,
-                        row * cell_size + offset,
-                        cell_size,
-                        cell_size,
-                        self.options.color_dark
-                    ));
-                }
+        // 使用单个 Path 绘制所有深色模块
+        // 展平二维访问为一维，减少边界检查开销
+        let modules_flat: Vec<bool> = self.modules.iter()
+            .flat_map(|row| row.iter().map(|&m| m.unwrap_or(false)))
+            .collect();
+        
+        let count_i32 = count;
+        for (idx, is_dark) in modules_flat.iter().enumerate() {
+            if *is_dark {
+                let row = (idx as i32) / count_i32;
+                let col = (idx as i32) % count_i32;
+                let x = col * cell_size + offset;
+                let y = row * cell_size + offset;
+                write!(svg, "M{x} {y}h{cell_size}v{cell_size}h-{cell_size}z").unwrap();
             }
         }
-
-        svg.push_str("</svg>");
+        
+        svg.push_str(r#""/></svg>"#);
         svg
     }
 }

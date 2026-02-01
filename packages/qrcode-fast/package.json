@@ -1,0 +1,39 @@
+{
+  "name": "@veaba/qrcode-fast",
+  "version": "0.1.0",
+  "description": "Pure Rust QRCode generator compiled to WebAssembly",
+  "type": "module",
+  "main": "pkg/qrcode_rust.js",
+  "module": "pkg/qrcode_rust.js",
+  "types": "pkg/qrcode_rust.d.ts",
+  "exports": {
+    ".": {
+      "import": "./pkg/qrcode_rust.js",
+      "types": "./pkg/qrcode_rust.d.ts"
+    }
+  },
+  "files": [
+    "pkg",
+    "src"
+  ],
+  "scripts": {
+    "build": "wasm-pack build --target web --out-dir pkg",
+    "build:node": "wasm-pack build --target nodejs --out-dir pkg",
+    "build:bundler": "wasm-pack build --target bundler --out-dir pkg",
+    "prepare": "wasm-pack build --target web --out-dir pkg"
+  },
+  "keywords": [
+    "qrcode",
+    "rust",
+    "wasm",
+    "webassembly",
+    "qr",
+    "barcode"
+  ],
+  "author": "veaba",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/veaba/qrcodes"
+  }
+}

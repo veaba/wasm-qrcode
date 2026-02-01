@@ -73,7 +73,7 @@ import init, { QRCodeWasm, CorrectLevel } from '@veaba/qrcode-wasm';
 await init();
 
 // 创建 QRCode 实例
-const qr = new QRCodeWasm('https://github.com/veaba/wasm-qrcode', CorrectLevel.H);
+const qr = new QRCodeWasm('https://github.com/veaba/qrcodes', CorrectLevel.H);
 ```
 
 ### 静态方法
@@ -94,7 +94,7 @@ static with_options(
 
 ```typescript
 const qr = QRCodeWasm.with_options(256, 256, CorrectLevel.H);
-qr.make_code('https://github.com/veaba/wasm-qrcode');
+qr.make_code('https://github.com/veaba/qrcodes');
 ```
 
 ## 实例方法
@@ -117,7 +117,7 @@ make_code(text: string): void
 
 ```typescript
 const qr = new QRCodeWasm();
-qr.make_code('https://github.com/veaba/wasm-qrcode');
+qr.make_code('https://github.com/veaba/qrcodes');
 ```
 
 ### get_svg
@@ -136,7 +136,7 @@ get_svg(): string
 
 ```typescript
 const qr = new QRCodeWasm();
-qr.make_code('https://github.com/veaba/wasm-qrcode');
+qr.make_code('https://github.com/veaba/qrcodes');
 const svg = qr.get_svg();
 console.log(svg);
 ```
@@ -158,7 +158,7 @@ toSVG(size?: number | null): string
 #### 示例
 
 ```typescript
-const qr = new QRCodeWasm('https://github.com/veaba/wasm-qrcode', CorrectLevel.H);
+const qr = new QRCodeWasm('https://github.com/veaba/qrcodes', CorrectLevel.H);
 const svg = qr.toSVG(256);
 ```
 
@@ -179,7 +179,7 @@ toStyledSVG(options: any): string
 #### 示例
 
 ```typescript
-const qr = new QRCodeWasm('https://github.com/veaba/wasm-qrcode', CorrectLevel.H);
+const qr = new QRCodeWasm('https://github.com/veaba/qrcodes', CorrectLevel.H);
 const svg = qr.toStyledSVG({
   size: 256,
   colorDark: '#000000',
@@ -245,7 +245,7 @@ WASM 对象不会自动被垃圾回收，需要手动调用 `free()` 释放内�
 
 ```typescript
 {
-  using qr = new QRCodeWasm('https://github.com/veaba/wasm-qrcode', CorrectLevel.H);
+  using qr = new QRCodeWasm('https://github.com/veaba/qrcodes', CorrectLevel.H);
   const svg = qr.get_svg();
   // 离开作用域自动调用 free()
 }
@@ -392,7 +392,7 @@ await init();
 const renderer = new CanvasRenderer(256, 256);
 renderer.set_colors(0, 0, 0, 255, 255, 255, 255, 255);
 
-const pixelData = renderer.render('https://github.com/veaba/wasm-qrcode', CorrectLevel.H);
+const pixelData = renderer.render('https://github.com/veaba/qrcodes', CorrectLevel.H);
 
 // 使用 ImageData 显示
 const imageData = new ImageData(

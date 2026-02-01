@@ -77,8 +77,8 @@ Options:
 - `--watch` / `-w` - Watch mode
 - `--shared` - Test shared package only
 - `--node` - Test qrcode-node package only
-- `--ts` - Test qrcode-ts package only
-- `--qrcodejs` - Test qrcodejs package only
+- `--ts` - Test qrcode-bun package only
+- `--qrcode-js` - Test qrcode-js package only
 
 ## Browser Mode Tests
 
@@ -94,10 +94,10 @@ vitest --config vitest.config.browser.ts
 |---------|---------------|
 | @veaba/qrcode-shared | `packages/shared/src/index.test.ts` |
 | @veaba/qrcode-node | `packages/qrcode-node/src/index.test.ts` |
-| @veaba/qrcode-ts | `packages/qrcode-ts/src/index.test.ts` |
-| @veaba/qrcodejs | `packages/qrcodejs/src/index.test.js` |
-| qrcodejs-cache | `packages/qrcodejs-cache/src/index.test.js` |
-| qrcodejs-perf | `packages/qrcodejs-perf/src/index.test.js` |
+| @veaba/qrcode-bun | `packages/qrcode-bun/src/index.test.ts` |
+| @veaba/qrcode-js | `packages/qrcode-js/src/index.test.js` |
+| qrcode-js-cache | `packages/qrcode-js-cache/src/index.test.js` |
+| qrcode-js-perf | `packages/qrcode-js-perf/src/index.test.js` |
 | @veaba/qrcode-rust | `packages/qrcode-rust/src/pkg.test.ts` |
 | @veaba/qrcode-wasm | `packages/qrcode-wasm/src/pkg.test.ts` |
 

@@ -16,7 +16,7 @@ const CONFIG = {
 // 测试数据
 const TEST_TEXTS = {
   short: 'https://example.com',
-  medium: 'https://github.com/veaba/wasm-qrcode',
+  medium: 'https://github.com/veaba/qrcodes',
   long: 'https://example.com/very/long/path/with/many/parameters?foo=bar&baz=qux&key=value&another=parameter',
   unicode: 'https://例子.com/测试路径?参数=值',
 };

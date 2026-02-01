@@ -72,7 +72,7 @@ SVG 输出:            9,871 ops/s, 0.1013 ms/op
 PNG Buffer 输出:      3,637 ops/s, 0.2750 ms/op
 ```
 
-### @veaba/qrcode-ts (Bun)
+### @veaba/qrcode-bun (Bun)
 
 ```
 单条生成 (short):    15,262 ops/s, 0.0655 ms/op
@@ -133,10 +133,10 @@ error_level_H:         8.877 µs   8.914 µs   8.954 µs
 
 | 包 | 压缩后 | 解压后 | 说明 |
 |----|-------|-------|------|
-| @veaba/qrcodejs | 8 KB | 15 KB | 纯 JS |
+| @veaba/qrcode-js | 8 KB | 15 KB | 纯 JS |
 | @veaba/qrcode-wasm | 25 KB | 80 KB | 含 .wasm |
 | @veaba/qrcode-node | 10 KB | 20 KB | 服务端 |
-| @veaba/qrcode-ts | 10 KB | 20 KB | 服务端 |
+| @veaba/qrcode-bun | 10 KB | 20 KB | 服务端 |
 
 ### 运行时内存
 
@@ -165,11 +165,11 @@ error_level_H:         8.877 µs   8.914 µs   8.954 µs
 | 场景 | 推荐包 | 原因 |
 |------|-------|------|
 | 前端生产环境 | @veaba/qrcode-wasm | 浏览器中最快 |
-| 前端简单需求 | @veaba/qrcodejs | 包小，无需 WASM |
+| 前端简单需求 | @veaba/qrcode-js | 包小，无需 WASM |
 | Node.js 后端 | @veaba/qrcode-node | 支持 PNG，生态丰富 |
-| Bun 后端 | @veaba/qrcode-ts | 批量性能最优 |
+| Bun 后端 | @veaba/qrcode-bun | 批量性能最优 |
 | Rust 项目 | @veaba/qrcode-rust | 极致性能 |
-| 边缘计算 | @veaba/qrcode-ts | 启动快，内存小 |
+| 边缘计算 | @veaba/qrcode-bun | 启动快，内存小 |
 
 ### 根据性能需求选择
 
@@ -187,8 +187,8 @@ error_level_H:         8.877 µs   8.914 µs   8.954 µs
 | PNG 输出 | @veaba/qrcode-node |
 | 样式化 SVG | 任意包 |
 | 缓存支持 | @veaba/qrcode-shared |
-| 批量生成 | @veaba/qrcode-ts |
-| 最小包体积 | @veaba/qrcodejs |
+| 批量生成 | @veaba/qrcode-bun |
+| 最小包体积 | @veaba/qrcode-js |
 
 ## 优化建议
 
@@ -198,14 +198,14 @@ error_level_H:         8.877 µs   8.914 µs   8.954 µs
 import { getCachedQRCode } from '@veaba/qrcode-shared';
 
 // 重复文本性能提升 10-100 倍
-const qr = getCachedQRCode('https://github.com/veaba/wasm-qrcode');
+const qr = getCachedQRCode('https://github.com/veaba/qrcodes');
 ```
 
 ### 2. 批量生成
 
 ```typescript
 // Bun 批量性能最优
-import { generateBatchQRCodes } from '@veaba/qrcode-ts';
+import { generateBatchQRCodes } from '@veaba/qrcode-bun';
 
 const svgs = generateBatchQRCodes(texts, { size: 256 });
 ```
@@ -242,7 +242,7 @@ node benchmark/index.js
 ### Bun
 
 ```bash
-cd packages/qrcode-ts
+cd packages/qrcode-bun
 bun benchmark/index.ts
 ```
 

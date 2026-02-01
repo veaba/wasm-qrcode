@@ -105,7 +105,7 @@ async function runBunBenchmark() {
   }
 
   try {
-    const bunDir = path.join(rootDir, 'packages/qrcode-ts');
+    const bunDir = path.join(rootDir, 'packages/qrcode-bun');
     
     log('运行 Bun 基准测试...', 'blue');
     execSync('bun run benchmark/index.ts', { 

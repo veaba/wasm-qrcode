@@ -22,7 +22,7 @@ await init();
 const qr = new QRCodeWasm();
 
 // 生成 QRCode
-qr.make_code('https://github.com/veaba/wasm-qrcode');
+qr.make_code('https://github.com/veaba/qrcodes');
 
 // 获取 SVG 字符串
 const svg = qr.get_svg();
@@ -141,13 +141,13 @@ app.listen(3000);
 ### 1. 安装
 
 ```bash
-bun add @veaba/qrcode-ts
+bun add @veaba/qrcode-bun
 ```
 
 ### 2. 基础使用
 
 ```typescript
-import { QRCode, QRErrorCorrectLevel } from '@veaba/qrcode-ts';
+import { QRCode, QRErrorCorrectLevel } from '@veaba/qrcode-bun';
 
 // Bun 的 API 与 Node.js 版本一致
 const qr = new QRCode('https://example.com', QRErrorCorrectLevel.H);
@@ -170,7 +170,7 @@ const results = texts.map((t) => {
 
 ```toml
 [dependencies]
-qrcode-rust = { git = "https://github.com/veaba/wasm-qrcode" }
+qrcode-rust = { git = "https://github.com/veaba/qrcodes" }
 ```
 
 ### 2. 基础使用

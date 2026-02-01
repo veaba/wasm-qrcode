@@ -10,7 +10,7 @@
  *   node scripts/test.js --watch      - Watch mode
  *   node scripts/test.js --shared     - Test specific package
  *   node scripts/test.js --node       - Test qrcode-node package
- *   node scripts/test.js --ts         - Test qrcode-ts package
+ *   node scripts/test.js --ts         - Test qrcode-bun package
  */
 
 import { execSync } from 'child_process';
@@ -86,10 +86,10 @@ function parseArgs(args) {
         options.packages.push('qrcode-node');
         break;
       case '--ts':
-        options.packages.push('qrcode-ts');
+        options.packages.push('qrcode-bun');
         break;
-      case '--qrcodejs':
-        options.packages.push('qrcodejs');
+      case '--qrcode-js':
+        options.packages.push('qrcode-js');
         break;
       case '--all':
         // Run all packages (default)
@@ -107,13 +107,13 @@ function parseArgs(args) {
 // Check if a package has tests
 function hasTests(packageName) {
   const packageDir = resolve(rootDir, 'packages', packageName);
-  const testFile = resolve(packageDir, 'src', 'index.test.' + (packageName === 'qrcodejs' || packageName.includes('cache') || packageName.includes('perf') ? 'js' : 'ts'));
+  const testFile = resolve(packageDir, 'src', 'index.test.' + (packageName === 'qrcode-js' || packageName.includes('cache') || packageName.includes('perf') ? 'js' : 'ts'));
   return existsSync(testFile);
 }
 
 // Get all packages with tests
 function getPackagesWithTests() {
-  const packages = ['shared', 'qrcode-node', 'qrcode-ts', 'qrcodejs', 'qrcodejs-cache', 'qrcodejs-perf'];
+  const packages = ['shared', 'qrcode-node', 'qrcode-bun', 'qrcode-js', 'qrcode-js-cache', 'qrcode-js-perf'];
   return packages.filter(pkg => hasTests(pkg));
 }
 
@@ -162,7 +162,7 @@ async function runTests(runtime, options) {
       command = buildVitestCommand(options);
     } else if (runtime === 'bun') {
       // Bun tests use its own test runner
-      const bunPackage = resolve(rootDir, 'packages', 'qrcode-ts');
+      const bunPackage = resolve(rootDir, 'packages', 'qrcode-bun');
       command = `cd "${bunPackage}" && bun test`;
     } else {
       command = buildVitestCommand(options);
@@ -205,9 +205,9 @@ async function main() {
 
   let allPassed = true;
 
-  // Run Node.js tests (shared, qrcode-node, qrcodejs)
+  // Run Node.js tests (shared, qrcode-node, qrcode-js)
   const nodePackages = packagesToTest.filter(pkg =>
-    ['shared', 'qrcode-node', 'qrcodejs', 'qrcodejs-cache', 'qrcodejs-perf'].includes(pkg)
+    ['shared', 'qrcode-node', 'qrcode-js', 'qrcode-js-cache', 'qrcode-js-perf'].includes(pkg)
   );
 
   if (nodePackages.length > 0) {
@@ -216,8 +216,8 @@ async function main() {
     allPassed = allPassed && nodePassed;
   }
 
-  // Run Bun tests (qrcode-ts)
-  if (packagesToTest.includes('qrcode-ts')) {
+  // Run Bun tests (qrcode-bun)
+  if (packagesToTest.includes('qrcode-bun')) {
     const bunPassed = await runTests('Bun', options);
     allPassed = allPassed && bunPassed;
   }

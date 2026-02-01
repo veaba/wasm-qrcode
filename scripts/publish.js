@@ -55,16 +55,16 @@ const packages = [
     publishPath: 'packages/qrcode-node'
   },
   {
-    name: '@veaba/qrcode-ts',
-    path: 'packages/qrcode-ts',
+    name: '@veaba/qrcode-bun',
+    path: 'packages/qrcode-bun',
     buildCmd: 'pnpm run build',
-    publishPath: 'packages/qrcode-ts'
+    publishPath: 'packages/qrcode-bun'
   },
   {
-    name: '@veaba/qrcodejs',
-    path: 'packages/qrcodejs',
+    name: '@veaba/qrcode-js',
+    path: 'packages/qrcode-js',
     buildCmd: 'pnpm run build',
-    publishPath: 'packages/qrcodejs'
+    publishPath: 'packages/qrcode-js'
   },
 ];
 

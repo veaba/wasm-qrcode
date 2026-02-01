@@ -131,13 +131,13 @@ import { writeFileSync } from 'fs';
 import { join } from 'path';
 
 // 生成基础二维码
-const qr = new QRCode('https://github.com/veaba/wasm-qrcode');
+const qr = new QRCode('https://github.com/veaba/qrcodes');
 const svg = qr.toSVG(512);
 writeFileSync(join(process.cwd(), 'qrcode.svg'), svg);
 
 // 生成渐变二维码
 const gradientSvg = generateGradientQRCode(
-  'https://github.com/veaba/wasm-qrcode',
+  'https://github.com/veaba/qrcodes',
   512,
   '#667eea',
   '#764ba2'

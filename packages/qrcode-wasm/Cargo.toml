@@ -1,9 +1,9 @@
 [package]
-name = "wasm-qrcode"
+name = "qrcodes"
 version = "0.1.0"
 authors = ['veaba< Godpu@outlook.com>']
 description = "QRcode for rust wasm."
-repository = "https://github.com/veaba/wasm-qrcode"
+repository = "https://github.com/veaba/qrcodes"
 license = "MIT"
 edition  = '2021'
 

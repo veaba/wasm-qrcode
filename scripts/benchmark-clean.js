@@ -17,7 +17,7 @@ const filesToClean = [
   'public/benchmark_rust_result.json',
   'public/benchmark_summary.json',
   'packages/qrcode-node/benchmark/benchmark_result.json',
-  'packages/qrcode-ts/benchmark_result.json',
+  'packages/qrcode-bun/benchmark_result.json',
 ];
 
 console.log('\n🧹 清理基准测试文件...\n');

@@ -1,6 +1,6 @@
 # 📦 发包引导文档
 
-> 如何将 @veaba/qrcode 生态包发布到 npm
+> 如何将 @veaba/qrcode 生态包发布到 npm 和 crates.io
 
 ---
 
@@ -132,12 +132,12 @@ wasm-pack build --target web
 cd ../qrcode-node
 pnpm run build
 
-# 4. 构建 qrcode-ts
-cd ../qrcode-ts
+# 4. 构建 qrcode-bun
+cd ../qrcode-bun
 pnpm run build
 
-# 5. 构建 qrcodejs
-cd ../qrcodejs
+# 5. 构建 qrcode-js
+cd ../qrcode-js
 pnpm run build
 ```
 
@@ -147,8 +147,8 @@ pnpm run build
 # 检查构建产物是否存在
 ls packages/shared/dist/
 ls packages/qrcode-node/dist/
-ls packages/qrcode-ts/dist/
-ls packages/qrcodejs/dist/
+ls packages/qrcode-bun/dist/
+ls packages/qrcode-js/dist/
 ls packages/qrcode-wasm/pkg/
 ```
 
@@ -187,8 +187,8 @@ pnpm version 1.2.3
 cd packages/shared && pnpm version 1.0.1
 cd packages/qrcode-wasm && pnpm version 1.0.1
 cd packages/qrcode-node && pnpm version 1.0.1
-cd packages/qrcode-ts && pnpm version 1.0.1
-cd packages/qrcodejs && pnpm version 1.0.1
+cd packages/qrcode-bun && pnpm version 1.0.1
+cd packages/qrcode-js && pnpm version 1.0.1
 cd packages/qrcode-rust && pnpm version 1.0.1
 ```
 
@@ -239,10 +239,10 @@ npm pack --dry-run
 npm publish --access public
 ```
 
-#### 4. 发布 @veaba/qrcode-ts
+#### 4. 发布 @veaba/qrcode-bun
 
 ```bash
-cd packages/qrcode-ts
+cd packages/qrcode-bun
 
 # 构建
 pnpm run build
@@ -252,10 +252,10 @@ npm pack --dry-run
 npm publish --access public
 ```
 
-#### 5. 发布 @veaba/qrcodejs
+#### 5. 发布 @veaba/qrcode-js
 
 ```bash
-cd packages/qrcodejs
+cd packages/qrcode-js
 
 # 构建
 pnpm run build
@@ -265,15 +265,32 @@ npm pack --dry-run
 npm publish --access public
 ```
 
-#### 6. 发布 @veaba/qrcode-rust
+#### 6. 发布 qrcode-rust (Rust Crate)
+
+`qrcode-rust` 是 Rust 原生包，发布到 **crates.io** 而不是 npm：
 
 ```bash
-cd packages/qrcode-rust/pkg
+cd packages/qrcode-rust
 
-# 检查并发布
-npm pack --dry-run
-npm publish --access public
+# 登录 crates.io（首次需要）
+cargo login
+
+# 验证包
+cargo package --list
+cargo package --allow-dirty
+
+# 发布到 crates.io
+cargo publish
+
+# 或者使用 --dry-run 先测试
+cargo publish --dry-run
 ```
+
+**注意**:
+
+- 确保 `Cargo.toml` 中的 `version` 已更新
+- crates.io 上的包名是 `qrcode-rust`（不带 @veaba 前缀）
+- 发布后可在 <https://crates.io/crates/qrcode-rust> 查看
 
 ### 方式二：使用脚本批量发包
 
@@ -290,17 +307,22 @@ import { fileURLToPath } from 'url';
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const rootDir = path.resolve(__dirname, '..');
 
-const packages = [
-  { name: '@veaba/qrcode-shared', path: 'packages/shared', build: 'pnpm run build' },
+// npm 包列表（按依赖顺序）
+const npmPackages = [
+  { name: '@veaba/shared', path: 'packages/shared', build: 'pnpm run build' },
   { name: '@veaba/qrcode-wasm', path: 'packages/qrcode-wasm/pkg', build: 'wasm-pack build --target web' },
   { name: '@veaba/qrcode-node', path: 'packages/qrcode-node', build: 'pnpm run build' },
-  { name: '@veaba/qrcode-ts', path: 'packages/qrcode-ts', build: 'pnpm run build' },
-  { name: '@veaba/qrcodejs', path: 'packages/qrcodejs', build: 'pnpm run build' },
+  { name: '@veaba/qrcode-bun', path: 'packages/qrcode-bun', build: 'pnpm run build' },
+  { name: '@veaba/qrcode-js', path: 'packages/qrcode-js', build: 'pnpm run build' },
 ];
 
-console.log('🚀 开始批量发包...\n');
+// Rust crate（发布到 crates.io）
+const rustCrate = { name: 'qrcode-rust', path: 'packages/qrcode-rust', build: 'cargo build --release' };
 
-for (const pkg of packages) {
+// 发布 npm 包
+console.log('🚀 开始批量发布 npm 包...\n');
+
+for (const pkg of npmPackages) {
   const pkgPath = path.join(rootDir, pkg.path);
   
   console.log(`📦 发布 ${pkg.name}...`);
@@ -312,14 +334,30 @@ for (const pkg of packages) {
       execSync(pkg.build, { cwd: path.dirname(pkgPath), stdio: 'inherit' });
     }
     
-    // 发布
-    console.log(`  📤 发布...`);
+    // 发布到 npm
+    console.log(`  📤 发布到 npm...`);
     execSync('npm publish --access public', { cwd: pkgPath, stdio: 'inherit' });
     
     console.log(`  ✅ ${pkg.name} 发布成功\n`);
   } catch (error) {
     console.error(`  ❌ ${pkg.name} 发布失败:`, error.message);
   }
+}
+
+// 发布 Rust crate
+console.log(`📦 发布 ${rustCrate.name} 到 crates.io...`);
+try {
+  if (rustCrate.build) {
+    console.log(`  🔨 构建...`);
+    execSync(rustCrate.build, { cwd: path.join(rootDir, rustCrate.path), stdio: 'inherit' });
+  }
+  
+  console.log(`  📤 发布到 crates.io...`);
+  execSync('cargo publish', { cwd: path.join(rootDir, rustCrate.path), stdio: 'inherit' });
+  
+  console.log(`  ✅ ${rustCrate.name} 发布成功\n`);
+} catch (error) {
+  console.error(`  ❌ ${rustCrate.name} 发布失败:`, error.message);
 }
 
 console.log('🎉 批量发包完成！');
@@ -346,9 +384,9 @@ node scripts/publish.js
 - <https://www.npmjs.com/package/@veaba/qrcode-shared>
 - <https://www.npmjs.com/package/@veaba/qrcode-wasm>
 - <https://www.npmjs.com/package/@veaba/qrcode-node>
-- <https://www.npmjs.com/package/@veaba/qrcode-ts>
-- <https://www.npmjs.com/package/@veaba/qrcodejs>
-- <https://www.npmjs.com/package/@veaba/qrcode-rust>
+- <https://www.npmjs.com/package/@veaba/qrcode-bun>
+- <https://www.npmjs.com/package/@veaba/qrcode-js>
+- <https://crates.io/crates/qrcode-rust> (Rust crate，非 npm)
 
 ### 2. 安装测试
 
@@ -360,7 +398,7 @@ npm init -y
 # 测试安装
 npm install @veaba/qrcode-wasm
 npm install @veaba/qrcode-node
-npm install @veaba/qrcode-ts
+npm install @veaba/qrcode-bun
 
 # 验证安装
 ls node_modules/@veaba/
@@ -372,7 +410,7 @@ ls node_modules/@veaba/
 // test.js
 import { QRCode } from '@veaba/qrcode-node';
 
-const qr = new QRCode('https://github.com/veaba/wasm-qrcode');
+const qr = new QRCode('https://github.com/veaba/qrcodes');
 console.log(qr.toSVG());
 ```
 
@@ -423,11 +461,17 @@ cat pkg/package.json
 
 **解决**: 按照依赖顺序发布：
 
-1. `@veaba/qrcode-shared` (最先)
+npm 包（按依赖顺序）：
+
+1. `@veaba/shared` (最先)
 2. `@veaba/qrcode-wasm`
 3. `@veaba/qrcode-node`
-4. `@veaba/qrcode-ts`
-5. `@veaba/qrcodejs`
+4. `@veaba/qrcode-bun`
+5. `@veaba/qrcode-js`
+
+Rust crate：
+
+- `qrcode-rust`（发布到 crates.io，独立流程）
 
 ### Q5: 版本冲突
 
@@ -508,7 +552,7 @@ npm view @veaba/qrcode-wasm time
 如有问题，请联系：
 
 - 📧 Email: <godpu@outlook.com>
-- 🐙 GitHub: <https://github.com/veaba/wasm-qrcode/issues>
+- 🐙 GitHub: <https://github.com/veaba/qrcodes/issues>
 
 ---
 

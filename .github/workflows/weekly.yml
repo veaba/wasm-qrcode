@@ -1,0 +1,211 @@
+name: Weekly
+
+on:
+  schedule:
+    # 每周一 UTC 02:00 运行
+    - cron: '0 2 * * 1'
+  workflow_dispatch:
+
+env:
+  NODE_VERSION: '20'
+  RUST_VERSION: '1.75'
+
+jobs:
+  # ========== 依赖更新检查（每周） ==========
+  check-updates:
+    name: Check Dependency Updates (Weekly)
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'pnpm'
+
+      - name: Install pnpm
+        uses: pnpm/action-setup@v2
+        with:
+          version: 8
+
+      - name: Check for updates
+        run: |
+          pnpm outdated --format json > outdated.json || true
+          cat outdated.json
+
+      - name: Create issue if updates available
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const fs = require('fs');
+            try {
+              const outdated = JSON.parse(fs.readFileSync('outdated.json', 'utf8'));
+              const packages = Object.keys(outdated);
+              
+              if (packages.length > 0) {
+                const body = packages.map(pkg => {
+                  const info = outdated[pkg];
+                  return `- \`${pkg}\`: ${info.current} → ${info.latest}`;
+                }).join('\n');
+                
+                await github.rest.issues.create({
+                  owner: context.repo.owner,
+                  repo: context.repo.repo,
+                  title: `📦 Dependency Updates Available (${new Date().toISOString().split('T')[0]})`,
+                  body: `The following packages have updates available:\n\n${body}`,
+                  labels: ['dependencies', 'automated']
+                });
+              }
+            } catch (e) {
+              console.log('No updates or error:', e.message);
+            }
+
+  # ========== 性能回归测试 ==========
+  performance-regression:
+    name: Performance Regression Test
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'pnpm'
+
+      - name: Setup Rust
+        uses: dtolnay/rust-action@stable
+        with:
+          toolchain: ${{ env.RUST_VERSION }}
+
+      - name: Install pnpm
+        uses: pnpm/action-setup@v2
+        with:
+          version: 8
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Install wasm-pack
+        run: curl https://rustwasm.github.io/wasm-pack/installer/init.sh -sSf | sh
+
+      - name: Build packages
+        run: |
+          cd packages/shared && pnpm build
+          cd ../qrcode-wasm && wasm-pack build --target web --out-dir pkg
+          cd ../qrcode-rust && wasm-pack build --target web --out-dir pkg
+
+      - name: Run benchmarks
+        run: |
+          cd packages/qrcode-rust
+          cargo bench --no-fail-fast 2>&1 | tee benchmark-results.txt
+
+      - name: Upload benchmark results
+        uses: actions/upload-artifact@v4
+        with:
+          name: nightly-benchmark-results
+          path: packages/qrcode-rust/benchmark-results.txt
+
+      - name: Compare with previous
+        uses: benchmark-action/github-action-benchmark@v1
+        with:
+          tool: 'cargo'
+          output-file-path: packages/qrcode-rust/benchmark-results.txt
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          auto-push: true
+          alert-threshold: '150%'
+          comment-on-alert: true
+          fail-on-alert: false
+
+  # ========== 安全审计 ==========
+  security-audit:
+    name: Security Audit
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+
+      - name: Install pnpm
+        uses: pnpm/action-setup@v2
+        with:
+          version: 8
+
+      - name: Run security audit
+        run: |
+          pnpm audit --audit-level=high --json > audit-results.json || true
+          cat audit-results.json
+
+      - name: Check Rust dependencies
+        uses: rustsec/audit-check@v1.4.1
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          working-directory: packages/qrcode-rust
+
+  # ========== 代码覆盖率 ==========
+  coverage:
+    name: Code Coverage
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'pnpm'
+
+      - name: Setup Rust
+        uses: dtolnay/rust-action@stable
+        with:
+          toolchain: ${{ env.RUST_VERSION }}
+
+      - name: Install pnpm
+        uses: pnpm/action-setup@v2
+        with:
+          version: 8
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Install wasm-pack
+        run: curl https://rustwasm.github.io/wasm-pack/installer/init.sh -sSf | sh
+
+      - name: Build packages
+        run: |
+          cd packages/shared && pnpm build
+          cd ../qrcode-wasm && wasm-pack build --target web --out-dir pkg
+
+      - name: Run tests with coverage
+        run: |
+          pnpm test:coverage || echo "Coverage not configured"
+
+      - name: Upload coverage to Codecov
+        uses: codecov/codecov-action@v3
+        with:
+          files: ./coverage/lcov.info
+          flags: unittests
+          name: codecov-umbrella
+          fail_ci_if_error: false
+
+  # ========== 文档链接检查 ==========
+  check-links:
+    name: Check Documentation Links
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Check Markdown links
+        uses: lycheeverse/lychee-action@v1
+        with:
+          args: --verbose --no-progress './**/*.md'
+          fail: false

@@ -234,5 +234,5 @@ pub fn get_version_info() -> String {
 /// 简单的问候函数
 #[wasm_bindgen]
 pub fn greet() {
-    web_sys::console::log_1(&"Hello from wasm-qrcode v0.2.0!".into());
+    web_sys::console::log_1(&"Hello from qrcodes v0.2.0!".into());
 }

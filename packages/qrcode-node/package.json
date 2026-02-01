@@ -32,7 +32,7 @@
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "https://github.com/veaba/wasm-qrcode"
+    "url": "https://github.com/veaba/qrcodes"
   },
   "dependencies": {
     "@veaba/qrcode-shared": "workspace:*"

@@ -30,7 +30,7 @@ const CONFIG = {
 // 测试数据
 const TEST_TEXTS = {
   short: 'https://example.com',
-  medium: 'https://github.com/veaba/wasm-qrcode',
+  medium: 'https://github.com/veaba/qrcodes',
   long: 'https://example.com/very/long/path/with/many/parameters?foo=bar&baz=qux&key=value&another=parameter',
   unicode: 'https://例子.com/测试路径?参数=值',
 };
@@ -89,7 +89,7 @@ function benchmarkSingleGeneration(): BenchmarkResult[] {
 
   for (const [type, text] of Object.entries(TEST_TEXTS)) {
     const qr = new QRCode();
-    
+
     const result = runBenchmark(
       `单条生成 (${type})`,
       () => {
@@ -98,7 +98,7 @@ function benchmarkSingleGeneration(): BenchmarkResult[] {
       },
       CONFIG.benchmarkRuns
     );
-    
+
     results.push(result);
   }
 
@@ -184,7 +184,7 @@ function benchmarkErrorCorrectionLevels(): BenchmarkResult[] {
 
   for (const { name, level } of levels) {
     const qr = new QRCode(200, 200, level);
-    
+
     const result = runBenchmark(
       `纠错级别 ${name}`,
       () => {
@@ -193,7 +193,7 @@ function benchmarkErrorCorrectionLevels(): BenchmarkResult[] {
       },
       CONFIG.benchmarkRuns
     );
-    
+
     results.push(result);
   }
 

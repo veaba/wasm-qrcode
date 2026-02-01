@@ -1,0 +1,59 @@
+[package]
+name = "qrcode-fast-tools"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+qrcode-fast = { path = "../../packages/qrcode-fast" }
+qrcode-rust = { path = "../../packages/qrcode-rust" }
+qrcode-kennytm = { package = "qrcode", version = "0.14" }
+
+# 验证依赖
+resvg = { version = "0.44", optional = true }
+rqrr = { version = "0.7", optional = true }
+image = { version = "0.25", optional = true }
+
+[features]
+default = ["validation"]
+validation = ["resvg", "rqrr", "image"]
+
+[[bin]]
+name = "svg-gen"
+path = "src/bin/svg_gen.rs"
+
+[[bin]]
+name = "compare-svgs"
+path = "src/bin/compare_svgs.rs"
+
+[[bin]]
+name = "real-qr"
+path = "src/bin/real_qr.rs"
+
+[[bin]]
+name = "validate-qr"
+path = "src/bin/validate_qr.rs"
+
+[[bin]]
+name = "verify-kennytm"
+path = "src/bin/verify_kennytm.rs"
+
+[[bin]]
+name = "verified-qr"
+path = "src/bin/verified_qr.rs"
+
+[[bin]]
+name = "simple-qr"
+path = "src/bin/simple_qr.rs"
+
+[[bin]]
+name = "fast-qr"
+path = "src/bin/fast_qr.rs"
+
+[[bin]]
+name = "benchmark-report"
+path = "src/bin/benchmark_report.rs"
+
+[profile.release]
+opt-level = 3
+lto = true
+codegen-units = 1

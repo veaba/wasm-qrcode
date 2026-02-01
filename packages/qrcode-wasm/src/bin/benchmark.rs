@@ -9,7 +9,7 @@ fn main() {
     println!("1. 矩阵生成: 字符串 → QRCode 矩阵（0/1）");
     println!("2. SVG 渲染: 矩阵 → SVG 字符串\n");
 
-    let text = "https://github.com/veaba/wasm-qrcode";
+    let text = "https://github.com/veaba/qrcodes";
     let count = 1000;
 
     println!("测试文本: {}", text);

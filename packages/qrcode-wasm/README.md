@@ -45,7 +45,7 @@ const svg = generate_qrcode('Hello World');
   
   async function run() {
     await init();
-    const svg = generate_qrcode('https://github.com/veaba/wasm-qrcode');
+    const svg = generate_qrcode('https://github.com/veaba/qrcodes');
     document.getElementById('qrcode').innerHTML = svg;
   }
   
@@ -96,13 +96,13 @@ wasm-pack build --release --target web
 | 实现 | 相对性能 | 适用场景 |
 |------|----------|----------|
 | qrcode-wasm | ⚡⚡⚡ 最快 | 高性能需求 |
-| qrcodejs-perf | ⚡⚡ 快 | 一般浏览器环境 |
-| qrcodejs-cache | ⚡⚡ 快 | 重复生成场景 |
+| qrcode-js-perf | ⚡⚡ 快 | 一般浏览器环境 |
+| qrcode-js-cache | ⚡⚡ 快 | 重复生成场景 |
 
 ## 相关包
 
-- `qrcodejs-cache` - JavaScript 缓存版本
-- `qrcodejs-perf` - JavaScript 高性能版本
+- `qrcode-js-cache` - JavaScript 缓存版本
+- `qrcode-js-perf` - JavaScript 高性能版本
 - `qrcode-node` - Node.js 版本
 
 ## License
