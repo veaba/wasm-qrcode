@@ -576,13 +576,16 @@ export class QRCodeCore {
     const actualSize = cellSize * totalCount;
     const offset = (size - actualSize) / 2;
 
+    // 生成唯一的渐变 ID，避免多个 SVG 之间的冲突
+    const gradientId = gradient ? `qrGradient_${Math.random().toString(36).substr(2, 9)}` : '';
+    
     let defs = '';
     if (gradient) {
-      defs = `<defs><linearGradient id="qrGradient" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" style="stop-color:${gradient.color1}"/><stop offset="100%" style="stop-color:${gradient.color2}"/></linearGradient></defs>`;
+      defs = `<defs><linearGradient id="${gradientId}" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" style="stop-color:${gradient.color1}"/><stop offset="100%" style="stop-color:${gradient.color2}"/></linearGradient></defs>`;
     }
 
     const bgRadius = Math.min(borderRadius, size / 8);
-    const fillColor = gradient ? 'url(#qrGradient)' : colorDark;
+    const fillColor = gradient ? `url(#${gradientId})` : colorDark;
     const radius = Math.min(borderRadius, Math.floor(cellSize / 4));
 
     let path = '';
@@ -682,7 +685,14 @@ export function generateDouyinStyleQRCode(text: string, size: number = 256): str
 }
 
 export function generateAlipayStyleQRCode(text: string, size: number = 256): string {
-  return generateQRCodeWithLogoArea(text, size, 0.15);
+  const qr = new QRCodeCore(text, QRErrorCorrectLevel.H);
+  return qr.toStyledSVG({
+    size,
+    colorDark: '#1677FF',
+    colorLight: '#ffffff',
+    borderRadius: 4,
+    quietZone: 2
+  });
 }
 
 export function generateXiaohongshuStyleQRCode(text: string, size: number = 256): string {
@@ -915,7 +925,14 @@ export function generateDouyinStyleQRCodeCached(text: string, size: number = 256
 }
 
 export function generateAlipayStyleQRCodeCached(text: string, size: number = 256): string {
-  return generateQRCodeWithLogoAreaCached(text, size, 0.15);
+  const qr = getCachedQRCode(text, QRErrorCorrectLevel.H);
+  return qr.toStyledSVG({
+    size,
+    colorDark: '#1677FF',
+    colorLight: '#ffffff',
+    borderRadius: 4,
+    quietZone: 2
+  });
 }
 
 export function generateXiaohongshuStyleQRCodeCached(text: string, size: number = 256): string {

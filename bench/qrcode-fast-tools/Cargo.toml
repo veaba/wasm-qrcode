@@ -53,6 +53,22 @@ path = "src/bin/fast_qr.rs"
 name = "benchmark-report"
 path = "src/bin/benchmark_report.rs"
 
+[[bin]]
+name = "veaba-qr"
+path = "src/bin/veaba_qr.rs"
+
+[[bin]]
+name = "test-veaba"
+path = "src/bin/test_veaba.rs"
+
+[[bin]]
+name = "debug-qr"
+path = "src/bin/debug_qr.rs"
+
+[[bin]]
+name = "debug-qr2"
+path = "src/bin/debug_qr2.rs"
+
 [profile.release]
 opt-level = 3
 lto = true

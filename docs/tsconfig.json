@@ -1,0 +1,24 @@
+{
+  "compilerOptions": {
+    "target": "ESNext",
+    "module": "ESNext",
+    "lib": ["ESNext", "DOM"],
+    "moduleResolution": "bundler",
+    "jsx": "react-jsx",
+    "strict": false,
+    "skipLibCheck": true,
+    "esModuleInterop": true,
+    "allowSyntheticDefaultImports": true,
+    "resolveJsonModule": true,
+    "isolatedModules": true,
+    "noEmit": true,
+    "baseUrl": ".",
+    "paths": {
+      "@veaba/qrcode-shared": ["../packages/qrcode-shared/src"],
+      "@veaba/qrcode-js": ["../packages/qrcode-js/src"],
+      "@veaba/qrcode-wasm": ["../packages/qrcode-wasm/pkg"]
+    }
+  },
+  "include": ["**/*.ts", "**/*.tsx", "components/**/*"],
+  "exclude": ["node_modules", "doc_build"]
+}

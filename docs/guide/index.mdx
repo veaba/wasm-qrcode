@@ -2,19 +2,19 @@
 
 import { PackageManagerTabs } from '@rspress/core/theme';
 
-Wasm QRCode 是一个高性能、跨平台的 QRCode 生成库，采用 Rust 编写核心算法，支持编译为 WebAssembly 在浏览器运行，或作为原生库在 Node.js、Bun 和 Rust 环境中使用。
+QRCode 是一个高性能、跨平台的 QRCode 生成库，支持多种运行时环境：浏览器（TypeScript/WASM）、Node.js、Bun 和原生 Rust。
 
-## 为什么选 Wasm QRCode？
+## 为什么选 QRCode？
 
 ### 1. 极致性能
 
-核心算法使用 Rust 实现，编译为 WASM 后在浏览器中运行，性能比传统 JavaScript 实现快 **2-5 倍**。
+核心算法经过优化，各运行时性能表现优异：
 
 ```
 单条生成性能对比（ops/s，越高越好）：
 
-WASM:    ████████████████████████████████████████ 15,005
-JS:      ██████████████████████████████           9,927
+Bun:     ████████████████████████████████████████████████████████ 13,929
+Node.js: ████████████████████████████████████████                 9,662
 ```
 
 ### 2. 统一 API
@@ -24,49 +24,57 @@ JS:      ███████████████████████�
 import { Tab, Tabs } from '@rspress/core/theme';
 
 <Tabs>
+<Tab label="浏览器 (JS)">
+
+```typescript
+// 浏览器 (纯 JS)
+import { QRCode, QRErrorCorrectLevel } from '@veaba/qrcode-js';
+const qr = new QRCode('https://example.com', QRErrorCorrectLevel.H);
+const svg = qr.toSVG();
+```
+
+</Tab>
 <Tab label="浏览器 (WASM)">
 
 ```typescript
 // 浏览器 (WASM)
-import { QRCodeWasm } from '@veaba/qrcode-wasm';
+import init, { QRCodeWasm } from '@veaba/qrcode-wasm';
+await init();
 const qr = new QRCodeWasm();
-qr.make_code('text');
+qr.make_code('https://example.com');
+const svg = qr.get_svg();
 ```
 
 </Tab>
 <Tab label="Node.js">
-```js
+
+```typescript
 // Node.js
-import { QRCode } from '@veaba/qrcode-node';
-const qr = new QRCode();
-qr.make_code('text');
+import { QRCode, QRErrorCorrectLevel } from '@veaba/qrcode-node';
+const qr = new QRCode('https://example.com', QRErrorCorrectLevel.H);
+const svg = qr.toSVG();
 ```
 
 </Tab>
 <Tab label="Bun">
+
 ```typescript
 // Bun
-import { QRCode } from '@veaba/qrcode-bun';
-const qr = new QRCode();
-qr.make_code('text');
+import { QRCode, QRErrorCorrectLevel } from '@veaba/qrcode-bun';
+const qr = new QRCode('https://example.com', QRErrorCorrectLevel.H);
+const svg = qr.toSVG();
 ```
+
 </Tab>
 
 </Tabs>
 
-### 3. 智能缓存
+### 3. 丰富的输出格式
 
-内置 LRU 缓存机制，对于重复文本的生成，性能提升 **10-100 倍**：
-
-```typescript
-import { getCachedQRCode } from '@veaba/qrcode-shared';
-
-// 第一次生成
-const qr1 = getCachedQRCode('https://example.com');
-
-// 第二次生成（从缓存获取，几乎无计算开销）
-const qr2 = getCachedQRCode('https://example.com');
-```
+- **SVG** - 矢量图形，可缩放不失真
+- **PNG** - Node.js/Bun 环境支持原生 PNG Buffer 输出
+- **DataURL** - 前端可直接使用的 base64 格式
+- **样式化 SVG** - 支持渐变、圆角、自定义颜色等
 
 ## 架构设计
 
@@ -75,23 +83,23 @@ const qr2 = getCachedQRCode('https://example.com');
 │                      应用层                               │
 │  ┌─────────────┐  ┌─────────────┐  ┌─────────────────┐  │
 │  │ @veaba/     │  │ @veaba/     │  │ @veaba/         │  │
-│  │ qrcode-wasm │  │ qrcode-js    │  │ qrcode-node     │  │
-│  │ (浏览器)     │  │ (浏览器)     │  │ (Node.js)       │  │
+│  │ qrcode-wasm │  │ qrcode-js   │  │ qrcode-node     │  │
+│  │ (浏览器WASM)│  │ (浏览器JS)  │  │ (Node.js)       │  │
 │  └──────┬──────┘  └──────┬──────┘  └────────┬────────┘  │
 │  ┌─────────────┐  ┌─────────────┐  ┌─────────────────┐  │
 │  │ @veaba/     │  │ @veaba/     │  │ @veaba/         │  │
-│  │ qrcode-bun   │  │ qrcode-rust │  │ shared          │  │
-│  │ (Bun)       │  │ (原生 Rust)  │  │ (共享核心)       │  │
+│  │ qrcode-bun  │  │ qrcode-rust │  │ qrcode-shared   │  │
+│  │ (Bun)       │  │ (原生 Rust) │  │ (共享核心)      │  │
 │  └──────┬──────┘  └──────┬──────┘  └────────┬────────┘  │
 └─────────┼────────────────┼──────────────────┼───────────┘
           │                │                  │
           └────────────────┴──────────────────┘
                              │
                     ┌────────┴────────┐
-                    │   核心算法 (Rust)  │
-                    │  - Reed-Solomon  │
-                    │  - 模块布局        │
-                    │  - 掩码计算        │
+                    │   核心算法       │
+                    │  - Reed-Solomon │
+                    │  - 模块布局      │
+                    │  - 掩码计算      │
                     └─────────────────┘
 ```
 
@@ -99,13 +107,13 @@ const qr2 = getCachedQRCode('https://example.com');
 
 根据你的运行环境选择对应的包：
 
-### 浏览器（推荐 WASM）
-
-<PackageManagerTabs command='install @veaba/qrcode-wasm' />
-
-### 浏览器（纯 JS，无需 WASM）
+### 浏览器（推荐纯 JS）
 
 <PackageManagerTabs command='install @veaba/qrcode-js' />
+
+### 浏览器（WASM 版本）
+
+<PackageManagerTabs command='install @veaba/qrcode-wasm' />
 
 ### Node.js
 
@@ -121,11 +129,21 @@ bun add @veaba/qrcode-bun
 
 ```toml
 [dependencies]
-qrcode-rust = { path = "packages/qrcode-rust" }
+qrcode-rust = { git = "https://github.com/veaba/qrcodes" }
 ```
+
+## 包对比
+
+| 包 | 环境 | 特点 | 包大小 |
+|----|------|------|--------|
+| `@veaba/qrcode-js` | 浏览器 | 纯 JS，无需 WASM，兼容性好 | ~15KB |
+| `@veaba/qrcode-wasm` | 浏览器 | Rust 编译，性能更好 | ~45KB |
+| `@veaba/qrcode-node` | Node.js | 支持 PNG Buffer 输出 | ~20KB |
+| `@veaba/qrcode-bun` | Bun | 批量性能最优 | ~20KB |
+| `@veaba/qrcode-rust` | Rust | 原生性能 | - |
 
 ## 下一步
 
 - [快速开始](./quick-start) - 5 分钟上手教程
-- [性能对比](./performance) - 详细的性能测试数据
+- [性能对比](../bench/) - 详细的性能测试数据
 - [API 参考](../api/) - 完整的 API 文档

@@ -1,36 +1,44 @@
 {
   "name": "@veaba/qrcode-wasm",
-  "version": "0.1.0",
-  "description": "WebAssembly QRCode generator - Rust compiled to WASM",
+  "version": "0.2.0",
+  "description": "WebAssembly QRCode generator - Unified API with qrcode-js",
   "type": "module",
-  "main": "pkg/wasm_qrcode.js",
-  "module": "pkg/wasm_qrcode.js",
-  "types": "pkg/wasm_qrcode.d.ts",
+  "main": "dist/index.js",
+  "module": "dist/index.js",
+  "types": "dist/index.d.ts",
   "exports": {
     ".": {
-      "import": "./pkg/wasm_qrcode.js",
-      "types": "./pkg/wasm_qrcode.d.ts"
+      "import": "./dist/index.js",
+      "types": "./dist/index.d.ts"
     }
   },
   "files": [
+    "dist",
     "pkg"
   ],
   "scripts": {
-    "build": "wasm-pack build --target web --out-dir pkg",
+    "build:wasm": "wasm-pack build --target web --out-dir pkg",
+    "build:ts": "tsc",
+    "build": "npm run build:wasm && npm run build:ts",
     "build:node": "wasm-pack build --target nodejs --out-dir pkg",
-    "build:bundler": "wasm-pack build --target bundler --out-dir pkg"
+    "build:bundler": "wasm-pack build --target bundler --out-dir pkg",
+    "prepare": "npm run build"
   },
   "keywords": [
     "qrcode",
     "rust",
     "wasm",
     "webassembly",
-    "qr"
+    "qr",
+    "barcode"
   ],
   "author": "veaba",
   "license": "MIT",
   "repository": {
     "type": "git",
     "url": "https://github.com/veaba/qrcodes"
+  },
+  "devDependencies": {
+    "typescript": "^5.0.0"
   }
 }

@@ -83,6 +83,12 @@ describe('@veaba/qrcode-node - QRCode Class', () => {
     expect(svg).toContain('linearGradient');
   });
 
+  it('should toStyledSVG with quiet zone', () => {
+    const qr = new QRCode('test');
+    const svg = qr.toStyledSVG({ quietZone: 4 });
+    expect(svg).toContain('<svg');
+  });
+
   it('should toPNGBuffer return Buffer', () => {
     const qr = new QRCode('test');
     const buffer = qr.toPNGBuffer(256);
@@ -141,11 +147,10 @@ describe('@veaba/qrcode-node - Style Generator Functions', () => {
     expect(svg).toContain('#00F2EA');
   });
 
-  it('generateAlipayStyleQRCode should use logo area style', () => {
+  it('generateAlipayStyleQRCode should use Alipay blue', () => {
     const svg = generateAlipayStyleQRCode('test', 256);
-    // Alipay style uses generateQRCodeWithLogoArea internally
+    expect(svg).toContain('#1677FF');
     expect(svg).toContain('<svg');
-    expect(svg).toContain('rect'); // Has logo area
   });
 
   it('generateXiaohongshuStyleQRCode should use Xiaohongshu red', () => {

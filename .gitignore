@@ -18,3 +18,4 @@ dist
 target
 doc_build
 coverage
+.claude/settings.local.json

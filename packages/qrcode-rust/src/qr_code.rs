@@ -153,18 +153,40 @@ impl QRCode {
                 let row = pos[i];
                 let col = pos[j];
                 
+                // 跳过无效位置（0 表示没有位置调整图案）
                 if row == 0 || col == 0 {
                     continue;
                 }
                 
+                // 跳过与位置探测图案重叠的位置
+                // 位置探测图案在：(0,0), (module_count-7, 0), (0, module_count-7)
+                // 每个位置探测图案占 7x7，加上 1 格分隔符是 9x9
+                if row <= 8 && col <= 8 {
+                    continue;  // 左上角区域
+                }
+                if row <= 8 && col >= self.module_count - 8 {
+                    continue;  // 右上角区域
+                }
+                if row >= self.module_count - 8 && col <= 8 {
+                    continue;  // 左下角区域
+                }
+                
+                // 跳过已经设置的位置
                 if self.modules[row as usize][col as usize].is_some() {
                     continue;
                 }
 
                 for r in -2..=2 {
                     for c in -2..=2 {
+                        let new_row = row + r;
+                        let new_col = col + c;
+                        // 确保不越界
+                        if new_row < 0 || new_row >= self.module_count ||
+                           new_col < 0 || new_col >= self.module_count {
+                            continue;
+                        }
                         let is_dark = r == -2 || r == 2 || c == -2 || c == 2 || (r == 0 && c == 0);
-                        self.modules[(row + r) as usize][(col + c) as usize] = Some(is_dark);
+                        self.modules[new_row as usize][new_col as usize] = Some(is_dark);
                     }
                 }
             }
@@ -195,7 +217,7 @@ impl QRCode {
             QRErrorCorrectLevel::Q => 3,
             QRErrorCorrectLevel::H => 2,
         };
-        
+
         let mut data = (correct_level << 3) | mask_pattern;
         let mut d = data << 10;
 
@@ -205,7 +227,7 @@ impl QRCode {
 
         data = ((data << 10) | d) ^ g15_mask;
 
-        // 写入类型信息
+        // 水平类型信息（第 8 行）
         for i in 0..15 {
             let bit = ((data >> i) & 1) == 1;
 
@@ -218,18 +240,19 @@ impl QRCode {
             }
         }
 
-        for i in 0..15 {
+        // 垂直类型信息（第 8 列）- 匹配 JS 实现
+        for i in 0..8 {
             let bit = ((data >> i) & 1) == 1;
-
-            if i < 8 {
-                self.modules[8][(self.module_count - i - 1) as usize] = Some(bit);
-            } else if i < 9 {
-                self.modules[8][(15 - i - 1 + 1) as usize] = Some(bit);
-            } else {
-                self.modules[8][(15 - i - 1) as usize] = Some(bit);
-            }
+            // moduleCount - 1, moduleCount - 2, ..., moduleCount - 8
+            self.modules[8][(self.module_count - 1 - i) as usize] = Some(bit);
+        }
+        for i in 8..15 {
+            let bit = ((data >> i) & 1) == 1;
+            // 15-8=7, 15-9=6, ..., 15-14=1
+            self.modules[8][(15 - i) as usize] = Some(bit);
         }
 
+        // 固定暗模块
         self.modules[(self.module_count - 8) as usize][8] = Some(true);
     }
 
@@ -243,20 +266,16 @@ impl QRCode {
         let mut bit_index = 7;
         let mut byte_index = 0;
 
-        for col in (0..self.module_count).rev().step_by(2) {
-            let mut col = col;
-            if col <= 6 {
+        let mut col = self.module_count - 1;
+        while col > 0 {
+            // Skip column 6 (timing pattern column)
+            if col == 6 {
                 col -= 1;
-            }
-            // Skip invalid column (when col becomes -1 after adjustment)
-            if col < 0 {
-                continue;
             }
 
             loop {
                 for c in 0..2 {
                     let col_idx = col - c;
-                    // Skip invalid column indices
                     if col_idx < 0 || col_idx >= self.module_count {
                         continue;
                     }
@@ -266,7 +285,8 @@ impl QRCode {
                             dark = ((data[byte_index] >> bit_index) & 1) == 1;
                         }
 
-                        let mask = (row + col_idx) % 2 == 0;
+                        // Mask pattern: (row + col - c) % 2 === 0 in JS
+                        let mask = (row + col - c) % 2 == 0;
                         if mask {
                             dark = !dark;
                         }
@@ -290,11 +310,14 @@ impl QRCode {
                     break;
                 }
             }
+
+            col -= 2;
         }
     }
 
     fn create_data(&self) -> Vec<i32> {
         let rs_blocks = get_rs_blocks(self.type_number, self.options.correct_level);
+        
         let mut buffer = BitBuffer::new();
 
         for data in &self.data_list {
@@ -327,7 +350,13 @@ impl QRCode {
             buffer.put(0x11, 8);
         }
 
+        #[cfg(test)]
+        eprintln!("DEBUG: buffer.length={}, buffer.buffer.len={}, total_data_count*8={}", buffer.length, buffer.buffer.len(), total_data_count as usize * 8);
+
         let data = buffer.buffer;
+        
+
+        
         let mut offset = 0;
         let max_dc_count = rs_blocks.iter().map(|b| b.data_count).max().unwrap_or(0);
         let max_ec_count = rs_blocks.iter().map(|b| b.total_count - b.data_count).max().unwrap_or(0);
@@ -342,30 +371,43 @@ impl QRCode {
             dcdata.push(data[offset as usize..(offset + dc_count) as usize].to_vec());
             offset += dc_count;
 
-            let rs_poly = crate::qr_polynomial::Polynomial::new(
-                (0..ec_count).map(|i| crate::qr_math::QRMath::gexp(i)).collect(),
-                0,
-            );
-            
-            let mut raw_poly_coeffs = dcdata.last().unwrap().clone();
-            raw_poly_coeffs.extend(vec![0; ec_count as usize]);
-            let raw_poly = crate::qr_polynomial::Polynomial::new(raw_poly_coeffs, 0);
-            
+            // 生成 Reed-Solomon 纠错码
+            // 数据多项式: d(x) = d_0*x^(n-1) + d_1*x^(n-2) + ... + d_{n-1}
+            // 系数按降序排列（JS 匹配）
+            let rs_poly = crate::qr_polynomial::Polynomial::generate_rs_poly(ec_count);
+
+            // 创建数据多项式并扩展 ec_count 个零
+            // 在降序表示中，在末尾添加零相当于乘以 x^ec_count
+            let dc = dcdata.last().unwrap();
+            let mut raw_coeff = dc.clone();
+            for _ in 0..ec_count {
+                raw_coeff.push(0);
+            }
+            let raw_poly = crate::qr_polynomial::Polynomial::new(raw_coeff, 0);
+
+            // 计算纠错码: (数据多项式 * x^{ec_count}) mod 生成多项式
             let mod_poly = raw_poly.r#mod(&rs_poly);
 
-            let mut ec: Vec<i32> = Vec::new();
+            // 提取纠错码：取 mod_poly 的最后 ec_count 个系数（最低次项）
+            // 降序排列中，最低次项在数组末尾
+            // 匹配 JS 实现: const modIndex = i + modPoly.length - ecCount;
+            let mut ec: Vec<i32> = Vec::with_capacity(ec_count as usize);
             for i in 0..ec_count {
-                let mod_index = i + mod_poly.len() as i32 - ec_count;
-                ec.push(if mod_index >= 0 {
+                let mod_index = i as i32 + mod_poly.len() as i32 - ec_count;
+                let val = if mod_index >= 0 {
                     mod_poly.get(mod_index as usize)
                 } else {
                     0
-                });
+                };
+                #[cfg(test)]
+                if i < 5 { eprintln!("DEBUG: ec[{}] = {} (mod_index={})", i, val, mod_index); }
+                ec.push(val);
             }
             ecdata.push(ec);
         }
 
         let mut result: Vec<i32> = Vec::new();
+        
         for i in 0..max_dc_count {
             for r in 0..rs_blocks.len() {
                 if i < dcdata[r].len() as i32 {
@@ -373,6 +415,9 @@ impl QRCode {
                 }
             }
         }
+        
+
+        
         for i in 0..max_ec_count {
             for r in 0..rs_blocks.len() {
                 if i < ecdata[r].len() as i32 {
@@ -380,6 +425,8 @@ impl QRCode {
                 }
             }
         }
+
+
 
         result
     }

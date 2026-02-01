@@ -13,7 +13,9 @@ hero:
       text: GitHub
       link: https://github.com/veaba/qrcodes
   image:
-    src: /logo.png
+    src: /qrcodes.png
+    # src: /favicon-128.png
+    # src: /favicon.svg
     alt: Wasm QRCode Logo
 
 features:

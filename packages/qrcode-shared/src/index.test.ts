@@ -291,11 +291,10 @@ describe('@veaba/qrcode-shared - Style Generator Functions', () => {
     expect(svg).toContain('#00F2EA');
   });
 
-  it('generateAlipayStyleQRCode should use logo area style', () => {
+  it('generateAlipayStyleQRCode should use Alipay blue', () => {
     const svg = generateAlipayStyleQRCode('test', 256);
-    // Alipay style uses generateQRCodeWithLogoArea internally
+    expect(svg).toContain('#1677FF');
     expect(svg).toContain('<svg');
-    expect(svg).toContain('rect'); // Has logo area
   });
 
   it('generateXiaohongshuStyleQRCode should use Xiaohongshu red', () => {

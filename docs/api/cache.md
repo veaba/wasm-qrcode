@@ -1,5 +1,12 @@
 # 缓存系统
 
+**注意：** `@veaba/qrcode-shared` 是内部私有包。缓存功能通过以下公开包自动提供：
+- `@veaba/qrcode-js`
+- `@veaba/qrcode-node`
+- `@veaba/qrcode-bun`
+
+所有公开包都包含相同的缓存 API，无需单独安装内部包。
+
 `@veaba/qrcode-shared` 提供 LRU (Least Recently Used) 缓存系统，用于优化重复 QRCode 的生成性能。
 
 ## 核心概念
@@ -49,7 +56,10 @@ function getCachedQRCode(
 #### 示例
 
 ```typescript
-import { getCachedQRCode, QRErrorCorrectLevel } from '@veaba/qrcode-shared';
+// 浏览器环境
+import { getCachedQRCode, QRErrorCorrectLevel } from '@veaba/qrcode-js';
+// Node.js 环境
+// import { getCachedQRCode, QRErrorCorrectLevel } from '@veaba/qrcode-node';
 
 // 第一次调用：创建并缓存
 const qr1 = getCachedQRCode('https://github.com/veaba/qrcodes', QRErrorCorrectLevel.H);
@@ -74,7 +84,10 @@ function clearQRCodeCache(): void
 #### 示例
 
 ```typescript
-import { clearQRCodeCache, getCachedQRCode } from '@veaba/qrcode-shared';
+// 浏览器环境
+import { clearQRCodeCache, getCachedQRCode } from '@veaba/qrcode-js';
+// Node.js 环境
+// import { clearQRCodeCache, getCachedQRCode } from '@veaba/qrcode-node';
 
 // 使用缓存
 const qr = getCachedQRCode('https://github.com/veaba/qrcodes');
@@ -110,7 +123,10 @@ function getCacheStats(): {
 #### 示例
 
 ```typescript
-import { getCacheStats, getCachedQRCode } from '@veaba/qrcode-shared';
+// 浏览器环境
+import { getCacheStats, getCachedQRCode } from '@veaba/qrcode-js';
+// Node.js 环境
+// import { getCacheStats, getCachedQRCode } from '@veaba/qrcode-node';
 
 // 生成一些 QRCode
 getCachedQRCode('https://github.com/veaba/qrcodes/1');
@@ -145,7 +161,10 @@ function configureCache(options: CacheOptions): void
 #### 示例
 
 ```typescript
-import { configureCache, getCachedQRCode } from '@veaba/qrcode-shared';
+// 浏览器环境
+import { configureCache, getCachedQRCode } from '@veaba/qrcode-js';
+// Node.js 环境
+// import { configureCache, getCachedQRCode } from '@veaba/qrcode-node';
 
 // 增大缓存容量
 configureCache({ maxSize: 500 });
@@ -165,6 +184,7 @@ configureCache({ enabled: true });
 所有预设样式函数都有带 `Cached` 后缀的版本：
 
 ```typescript
+// 浏览器环境
 import {
   generateRoundedQRCodeCached,
   generateGradientQRCodeCached,
@@ -176,7 +196,10 @@ import {
   generateRetroStyleQRCodeCached,
   generateMinimalStyleQRCodeCached,
   generateXiaohongshuStyleQRCodeCached
-} from '@veaba/qrcode-shared';
+} from '@veaba/qrcode-js';
+
+// Node.js 环境
+// import { ... } from '@veaba/qrcode-node';
 
 // 使用缓存版本
 const svg1 = generateRoundedQRCodeCached('https://github.com/veaba/qrcodes', 256, 8);
@@ -197,7 +220,8 @@ function generateBatchQRCodesCached(
 #### 示例
 
 ```typescript
-import { generateBatchQRCodesCached } from '@veaba/qrcode-shared';
+import { generateBatchQRCodesCached } from '@veaba/qrcode-js';
+// Node.js: import { generateBatchQRCodesCached } from '@veaba/qrcode-node';
 
 const texts = ['url1', 'url2', 'url3', 'url1', 'url2']; // 有重复
 
@@ -267,7 +291,10 @@ get keys(): K[]
 ### 示例
 
 ```typescript
-import { LRUCache } from '@veaba/qrcode-shared';
+// 浏览器环境
+import { LRUCache } from '@veaba/qrcode-js';
+// Node.js 环境
+// import { LRUCache } from '@veaba/qrcode-node';
 
 // 创建缓存
 const cache = new LRUCache<string, any>({ maxSize: 50 });
@@ -321,7 +348,10 @@ cache.clear();
 ### 场景 1：电商商品二维码
 
 ```typescript
-import { getCachedQRCode } from '@veaba/qrcode-shared';
+// 浏览器环境
+import { getCachedQRCode } from '@veaba/qrcode-js';
+// Node.js 环境
+// import { getCachedQRCode } from '@veaba/qrcode-node';
 
 // 热门商品会被缓存，重复访问直接返回
 function getProductQRCode(productId: string) {
@@ -337,7 +367,8 @@ const qr3 = getProductQRCode('123'); // 缓存命中
 ### 场景 2：活动门票批量生成
 
 ```typescript
-import { generateBatchQRCodesCached } from '@veaba/qrcode-shared';
+import { generateBatchQRCodesCached } from '@veaba/qrcode-js';
+// Node.js: import { generateBatchQRCodesCached } from '@veaba/qrcode-node';
 
 // 批量生成门票，相同 URL 会复用
 const tickets = [
@@ -356,7 +387,10 @@ const svgs = generateBatchQRCodesCached(
 ### 场景 3：动态调整缓存
 
 ```typescript
-import { configureCache, getCacheStats } from '@veaba/qrcode-shared';
+// 浏览器环境
+import { configureCache, getCacheStats } from '@veaba/qrcode-js';
+// Node.js 环境
+// import { configureCache, getCacheStats } from '@veaba/qrcode-node';
 
 // 高峰期增大缓存
 function onHighTraffic() {

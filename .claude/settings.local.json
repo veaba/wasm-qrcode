@@ -16,7 +16,18 @@
       "Bash(git push)",
       "Bash(cargo build:*)",
       "Bash(cmd:*)",
-      "Bash(powershell:*)"
+      "Bash(powershell:*)",
+      "Bash(pnpm run test)",
+      "Bash(wasm-pack build:*)",
+      "Bash(ls:*)",
+      "Bash(netstat:*)",
+      "Bash(cargo test:*)",
+      "Bash(node:*)",
+      "Bash(cargo run:*)",
+      "Bash(for:*)",
+      "Bash(do echo:*)",
+      "Bash(done)",
+      "Bash(python:*)"
     ]
   }
 }

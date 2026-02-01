@@ -1,1 +1,267 @@
-# Benchmark
+# 基准测试
+
+import { useState, useMemo } from 'react';
+import { BarChart, ComparisonTable, PerformanceCalculator } from '../components/BenchmarkCharts';
+
+export const BenchmarkDashboard = () => {
+  const [selectedPackages, setSelectedPackages] = useState(['node', 'bun']);
+  const [selectedCategory, setSelectedCategory] = useState('single');
+
+  const allData = {
+    single: [
+      { name: '短文本', node: 10312, bun: 10872, rust: 17300 },
+      { name: '中等文本', node: 9662, bun: 13929, rust: 17300 },
+      { name: '长文本', node: 2447, bun: 5306, rust: 15000 },
+      { name: 'Unicode', node: 4117, bun: 14246, rust: 16000 },
+    ],
+    batch: [
+      { name: '10 条', node: 6110, bun: 15420, rust: 20000 },
+      { name: '100 条', node: 3000, bun: 12200, rust: 22780 },
+      { name: '1000 条', node: 3000, bun: 15000, rust: 25000 },
+    ],
+    output: [
+      { name: 'SVG', node: 9827, bun: 17097, rust: 22270 },
+      { name: 'Styled SVG', node: 4893, bun: 9696, rust: 18000 },
+    ],
+    error: [
+      { name: 'L (低)', node: 8010, bun: 24367, rust: 27000 },
+      { name: 'M (中)', node: 8431, bun: 24074, rust: 27200 },
+      { name: 'Q (较高)', node: 8646, bun: 23341, rust: 30500 },
+      { name: 'H (高)', node: 10427, bun: 19596, rust: 30000 },
+    ],
+  };
+
+  const categories = {
+    single: '单条生成',
+    batch: '批量生成',
+    output: '输出格式',
+    error: '纠错级别',
+  };
+
+  const packages = {
+    node: { name: 'Node.js', color: '#339933' },
+    bun: { name: 'Bun', color: '#fbf0df' },
+    rust: { name: 'Rust', color: '#dea584' },
+  };
+
+  const currentData = allData[selectedCategory];
+
+  const togglePackage = (pkg) => {
+    setSelectedPackages(prev => 
+      prev.includes(pkg) 
+        ? prev.filter(p => p !== pkg)
+        : [...prev, pkg]
+    );
+  };
+
+  const filteredData = useMemo(() => {
+    return currentData.map(item => {
+      const filtered = { name: item.name };
+      selectedPackages.forEach(pkg => {
+        filtered[pkg] = item[pkg];
+      });
+      return filtered;
+    });
+  }, [currentData, selectedPackages]);
+
+  return (
+    <div style={{ padding: '1.5rem', backgroundColor: '#f8fafc', borderRadius: '8px', marginTop: '1.5rem' }}>
+      <h2 style={{ marginTop: 0 }}>🔬 交互式性能比较</h2>
+      
+      {/* 类别选择 */}
+      <div style={{ marginBottom: '1.5rem' }}>
+        <label style={{ display: 'block', marginBottom: '0.5rem', fontSize: '14px', fontWeight: 500 }}>
+          选择测试类别
+        </label>
+        <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap' }}>
+          {Object.entries(categories).map(([key, label]) => (
+            <button
+              key={key}
+              onClick={() => setSelectedCategory(key)}
+              style={{
+                padding: '0.5rem 1rem',
+                borderRadius: '6px',
+                border: 'none',
+                cursor: 'pointer',
+                backgroundColor: selectedCategory === key ? '#3b82f6' : '#e2e8f0',
+                color: selectedCategory === key ? 'white' : '#475569',
+                fontWeight: selectedCategory === key ? 600 : 400,
+                transition: 'all 0.2s'
+              }}
+            >
+              {label}
+            </button>
+          ))}
+        </div>
+      </div>
+
+      {/* 包选择 */}
+      <div style={{ marginBottom: '1.5rem' }}>
+        <label style={{ display: 'block', marginBottom: '0.5rem', fontSize: '14px', fontWeight: 500 }}>
+          选择要比较的包
+        </label>
+        <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap' }}>
+          {Object.entries(packages).map(([key, pkg]) => (
+            <button
+              key={key}
+              onClick={() => togglePackage(key)}
+              style={{
+                padding: '0.5rem 1rem',
+                borderRadius: '6px',
+                border: '2px solid ' + (selectedPackages.includes(key) ? pkg.color : '#e2e8f0'),
+                cursor: 'pointer',
+                backgroundColor: selectedPackages.includes(key) ? pkg.color : 'white',
+                color: selectedPackages.includes(key) ? (key === 'bun' ? '#333' : 'white') : '#475569',
+                fontWeight: selectedPackages.includes(key) ? 600 : 400,
+                transition: 'all 0.2s'
+              }}
+            >
+              {key === 'node' ? '🟢' : key === 'bun' ? '🥟' : '🦀'} {pkg.name}
+            </button>
+          ))}
+        </div>
+      </div>
+
+      {/* 图表 */}
+      {selectedPackages.length > 0 && (
+        <BarChart 
+          data={filteredData} 
+          title={`${categories[selectedCategory]}性能对比 (ops/s)`} 
+        />
+      )}
+
+      {/* 表格 */}
+      {selectedPackages.length > 0 && (
+        <ComparisonTable data={filteredData} />
+      )}
+
+      {selectedPackages.length === 0 && (
+        <div style={{ textAlign: 'center', padding: '2rem', color: '#64748b' }}>
+          请至少选择一个包进行比较
+        </div>
+      )}
+    </div>
+  );
+};
+
+export const QuickStats = () => {
+  const stats = [
+    { label: 'Node.js 最快', value: '纠错级别 H', ops: '10,427 ops/s', color: '#339933' },
+    { label: 'Bun 最快', value: '纠错级别 L', ops: '24,367 ops/s', color: '#fbf0df', textDark: true },
+    { label: 'Rust 最快', value: 'SVG 生成', ops: '22,270 ops/s', color: '#dea584' },
+  ];
+
+  return (
+    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '1rem', marginTop: '1.5rem' }}>
+      {stats.map((stat) => (
+        <div
+          key={stat.label}
+          style={{
+            padding: '1.5rem',
+            backgroundColor: stat.color,
+            borderRadius: '8px',
+            color: stat.textDark ? '#333' : 'white',
+            textAlign: 'center',
+            border: stat.textDark ? '1px solid #d4a373' : 'none'
+          }}
+        >
+          <div style={{ fontSize: '12px', opacity: 0.9, marginBottom: '0.5rem' }}>{stat.label}</div>
+          <div style={{ fontSize: '18px', fontWeight: 'bold', marginBottom: '0.25rem' }}>{stat.value}</div>
+          <div style={{ fontSize: '14px', opacity: 0.8 }}>{stat.ops}</div>
+        </div>
+      ))}
+    </div>
+  );
+};
+
+本章节包含所有 QRCode 包的性能基准测试报告。
+
+---
+
+## 🔬 交互式性能比较
+
+使用下面的工具自定义比较不同包的性能：
+
+<BenchmarkDashboard />
+
+---
+
+## 📊 快速统计
+
+<QuickStats />
+
+---
+
+## 测试报告
+
+### [后端包性能比较](./backend-bench)
+
+比较 `@veaba/qrcode-node` 和 `@veaba/qrcode-bun` 的性能差异。
+
+**主要发现**:
+- Bun 在单条生成上比 Node.js 快 5% - 246%
+- Bun 在批量生成上比 Node.js 快 150% - 400%
+- Bun 在 SVG 输出上比 Node.js 快 74% - 98%
+
+### [前端包性能比较](./front-bench)
+
+比较 `@veaba/qrcode-js` 和 `@veaba/qrcode-wasm` 的性能特点。
+
+**主要内容**:
+- 纯 TypeScript vs WASM 实现的对比
+- 包体积和启动速度分析
+- 使用场景建议
+
+### [Rust 性能比较](./compare-rust)
+
+比较 `@veaba/qrcode-rust` 与流行的 `kennytm-qrcode` 库。
+
+**主要发现**:
+- 单条生成平均耗时: ~57.8 µs
+- SVG 生成平均耗时: ~44.9 µs
+- 不同纠错级别的性能表现
+
+---
+
+## 测试环境
+
+- **平台**: Windows
+- **Node.js**: v20.19.4
+- **Bun**: 1.3.0
+- **Rust**: 最新稳定版
+
+---
+
+## 运行基准测试
+
+```bash
+# 运行所有后端基准测试
+pnpm run benchmark:backend
+
+# 运行 Node.js 基准测试
+pnpm run benchmark:node
+
+# 运行 Bun 基准测试
+pnpm run benchmark:bun
+
+# 运行 Rust 基准测试
+pnpm run benchmark:rust
+
+# 运行前端测试
+pnpm run test:browser
+```
+
+---
+
+## 数据文件
+
+基准测试的原始数据文件保存在：
+
+- `/docs/public/benchmark_node_result.json` - Node.js 测试结果
+- `/docs/public/benchmark_bun_result.json` - Bun 测试结果
+- `/docs/public/benchmark_rust_result.json` - Rust 测试结果
+- `/docs/public/benchmark_summary.json` - 汇总报告
+
+---
+
+*最后更新*: 2026-02-01

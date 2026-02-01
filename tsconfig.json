@@ -1,4 +1,5 @@
 {
+  "$schema": "https://json.schemastore.org/tsconfig",
   "compilerOptions": {
     "target": "ESNext",
     "useDefineForClassFields": true,
@@ -22,18 +23,18 @@
     "baseUrl": ".",
     "paths": {
       "@veaba/qrcode-shared": [
-        "./packages/qrcode-shared/src/index.ts"
+        "./packages/qrcode-shared/src"
       ],
       "@veaba/qrcode-js": [
-        "./packages/qrcode-js/src/index.js"
+        "./packages/qrcode-js/src"
       ],
       "@veaba/qrcode-wasm": [
-        "./packages/qrcode-wasm/pkg/wasm_qrcode.d.ts"
+        "./packages/qrcode-wasm/pkg"
       ]
     }
   },
   "include": [
     "src/**/*.ts",
-    "src/**/*.vue"
+    "docs/**/*.tsx"
   ]
 }

@@ -1,4 +1,4 @@
-// @veaba/qrcode-js 类型声明
+// @veaba/qrcode-js 类型定义
 // Re-exports from @veaba/qrcode-shared with additional cached versions
 
 export {
@@ -41,10 +41,10 @@ export {
   RSBlock,
 } from '@veaba/qrcode-shared';
 
-import { QRCodeCore, QRErrorCorrectLevel, QRCodeOptions, StyledSVGOptions } from '@veaba/qrcode-shared';
+import type { QRCodeCore, QRErrorCorrectLevel, QRCodeOptions, StyledSVGOptions } from '@veaba/qrcode-shared';
 
 // QRCode is an alias for QRCodeCore
-export { QRCodeCore as QRCode };
+export type QRCode = QRCodeCore;
 
 // Cache management
 export declare function getCachedQRCode(text: string, correctLevel: QRErrorCorrectLevel): QRCodeCore;

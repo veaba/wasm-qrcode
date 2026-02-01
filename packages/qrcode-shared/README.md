@@ -4,11 +4,12 @@ QRCode 生成器的共享核心库（私有包）。
 
 ## 简介
 
-这是一个私有子包，为以下包提供共享的核心功能：
+这是一个**私有子包**（`"private": true`），为以下包提供共享的核心功能：
 
-- `qrcode-js-cache` - 带 LRU 缓存的优化版本
-- `qrcode-js-perf` - 无缓存的优化版本
-- `qrcode-node` - Node.js 版本
+- `@veaba/qrcode-js` - 浏览器 JavaScript 版本
+- `@veaba/qrcode-wasm` - WebAssembly 版本
+- `@veaba/qrcode-node` - Node.js 版本
+- `@veaba/qrcode-bun` - Bun 运行时版本
 
 ## 核心功能
 
@@ -98,12 +99,61 @@ const svg = await generateQRCodeAsync('Hello');
 const svgs = await generateBatchAsync(['text1', 'text2']);
 ```
 
+### 缓存系统
+
+```typescript
+import {
+  getCachedQRCode,
+  clearQRCodeCache,
+  getCacheStats,
+  configureCache,
+  generateRoundedQRCodeCached
+} from '@veaba/qrcode-shared';
+
+// 获取缓存的 QRCode
+const qr = getCachedQRCode('text', QRErrorCorrectLevel.H);
+
+// 使用缓存的样式生成
+const svg = generateRoundedQRCodeCached('text', 256, 8);
+
+// 查看缓存统计
+const stats = getCacheStats();
+console.log(stats); // { size: 1, maxSize: 100, keys: [...] }
+
+// 清空缓存
+clearQRCodeCache();
+
+// 配置缓存
+configureCache({ maxSize: 200, enabled: true });
+```
+
 ## 技术特点
 
 - **TypedArray 优化**: 使用 Uint8Array 代替二维数组，内存更高效
 - **SVG Path 合并**: 减少 DOM 节点数，提升渲染性能
+- **LRU 缓存**: 内置缓存系统，重复生成性能提升 10 倍+
 - **TypeScript 支持**: 完整的类型定义
 
 ## 注意事项
 
 这是一个**私有包**（`"private": true`），不对外发布，仅供 workspace 内部使用。
+
+如需在项目中使用，请安装以下公开包之一：
+
+- `@veaba/qrcode-js` - 浏览器 JavaScript 版本
+- `@veaba/qrcode-wasm` - WebAssembly 版本（性能最佳）
+- `@veaba/qrcode-node` - Node.js 版本
+- `@veaba/qrcode-bun` - Bun 运行时版本
+
+## 相关包
+
+- `@veaba/qrcode-js` - 浏览器 JavaScript 版本
+- `@veaba/qrcode-wasm` - WebAssembly 版本
+- `@veaba/qrcode-node` - Node.js 版本
+- `@veaba/qrcode-bun` - Bun 运行时版本
+- `@veaba/qrcode-rust` - 纯 Rust 版本
+- `@veaba/qrcode-fast` - 高性能 Rust 版本
+
+## License
+
+MIT

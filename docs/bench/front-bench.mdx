@@ -1,0 +1,307 @@
+# 前端基准测试报告
+
+import { useState } from 'react';
+
+export const FeatureComparison = () => {
+  const features = [
+    { name: '纯 TypeScript 实现', js: true, wasm: true },
+    { name: '无需 WASM 文件', js: true, wasm: false },
+    { name: '包体积较小', js: true, wasm: false },
+    { name: '启动速度快', js: true, wasm: false },
+    { name: 'WASM 性能优势', js: false, wasm: true },
+    { name: '适合大量生成', js: false, wasm: true },
+    { name: '浏览器兼容性', js: '优秀', wasm: '良好' },
+    { name: 'SVG 输出', js: true, wasm: true },
+    { name: 'DataURL 输出', js: true, wasm: true },
+    { name: '自定义样式', js: true, wasm: true },
+  ];
+
+  return (
+    <table style={{ width: '100%', borderCollapse: 'collapse', marginTop: '1rem' }}>
+      <thead>
+        <tr style={{ backgroundColor: '#f3f4f6' }}>
+          <th style={{ padding: '12px', textAlign: 'left', borderBottom: '2px solid #e5e7eb' }}>特性</th>
+          <th style={{ padding: '12px', textAlign: 'center', borderBottom: '2px solid #e5e7eb' }}>@veaba/qrcode-js</th>
+          <th style={{ padding: '12px', textAlign: 'center', borderBottom: '2px solid #e5e7eb' }}>@veaba/qrcode-wasm</th>
+        </tr>
+      </thead>
+      <tbody>
+        {features.map((f, i) => (
+          <tr key={f.name} style={{ backgroundColor: i % 2 === 0 ? 'white' : '#f9fafb' }}>
+            <td style={{ padding: '12px', borderBottom: '1px solid #e5e7eb' }}>{f.name}</td>
+            <td style={{ padding: '12px', textAlign: 'center', borderBottom: '1px solid #e5e7eb' }}>
+              {typeof f.js === 'boolean' ? (
+                f.js ? <span style={{ color: '#22c55e', fontSize: '20px' }}>✓</span> : <span style={{ color: '#ef4444' }}>✗</span>
+              ) : (
+                <span style={{ color: '#f59e0b', fontWeight: 500 }}>{f.js}</span>
+              )}
+            </td>
+            <td style={{ padding: '12px', textAlign: 'center', borderBottom: '1px solid #e5e7eb' }}>
+              {typeof f.wasm === 'boolean' ? (
+                f.wasm ? <span style={{ color: '#22c55e', fontSize: '20px' }}>✓</span> : <span style={{ color: '#ef4444' }}>✗</span>
+              ) : (
+                <span style={{ color: '#f59e0b', fontWeight: 500 }}>{f.wasm}</span>
+              )}
+            </td>
+          </tr>
+        ))}
+      </tbody>
+    </table>
+  );
+};
+
+export const ScenarioSelector = () => {
+  const [scenario, setScenario] = useState('simple');
+  
+  const scenarios = {
+    simple: {
+      title: '简单应用',
+      recommended: '@veaba/qrcode-js',
+      reason: '包体积小，加载快，适合简单的 QRCode 生成需求',
+      color: '#22c55e'
+    },
+    batch: {
+      title: '大量生成',
+      recommended: '@veaba/qrcode-wasm',
+      reason: 'WASM 性能优势明显，适合需要生成大量 QRCode 的场景',
+      color: '#3b82f6'
+    },
+    firstPaint: {
+      title: '首屏加载敏感',
+      recommended: '@veaba/qrcode-js',
+      reason: '无需等待 WASM 加载，可以立即开始生成 QRCode',
+      color: '#22c55e'
+    },
+    complex: {
+      title: '复杂应用',
+      recommended: '两者皆可',
+      reason: '根据具体需求选择，需要性能选 WASM，需要快速启动选 JS',
+      color: '#f59e0b'
+    }
+  };
+
+  const current = scenarios[scenario];
+
+  return (
+    <div style={{ padding: '1.5rem', backgroundColor: '#f8fafc', borderRadius: '8px', marginTop: '1.5rem' }}>
+      <h3 style={{ marginTop: 0 }}>🎯 场景选择器</h3>
+      
+      <div style={{ display: 'flex', gap: '0.5rem', marginBottom: '1.5rem', flexWrap: 'wrap' }}>
+        {Object.entries(scenarios).map(([key, s]) => (
+          <button
+            key={key}
+            onClick={() => setScenario(key)}
+            style={{
+              padding: '0.5rem 1rem',
+              borderRadius: '6px',
+              border: 'none',
+              cursor: 'pointer',
+              backgroundColor: scenario === key ? '#3b82f6' : '#e2e8f0',
+              color: scenario === key ? 'white' : '#475569',
+              fontWeight: scenario === key ? 600 : 400,
+              transition: 'all 0.2s'
+            }}
+          >
+            {s.title}
+          </button>
+        ))}
+      </div>
+
+      <div style={{ 
+        padding: '1.5rem', 
+        backgroundColor: 'white', 
+        borderRadius: '8px',
+        borderLeft: `4px solid ${current.color}`
+      }}>
+        <div style={{ fontSize: '14px', color: '#64748b', marginBottom: '0.5rem' }}>推荐选择</div>
+        <div style={{ fontSize: '24px', fontWeight: 'bold', color: current.color, marginBottom: '0.5rem' }}>
+          {current.recommended}
+        </div>
+        <div style={{ fontSize: '14px', color: '#475569', lineHeight: 1.6 }}>
+          {current.reason}
+        </div>
+      </div>
+    </div>
+  );
+};
+
+export const BundleSizeVisualizer = () => {
+  const jsSize = 15; // KB
+  const wasmSize = 45; // KB (including WASM file)
+  const maxSize = Math.max(jsSize, wasmSize);
+
+  return (
+    <div style={{ padding: '1.5rem', backgroundColor: '#f8fafc', borderRadius: '8px', marginTop: '1.5rem' }}>
+      <h3 style={{ marginTop: 0 }}>📦 包体积对比</h3>
+      
+      <div style={{ marginBottom: '1.5rem' }}>
+        <div style={{ display: 'flex', alignItems: 'center', marginBottom: '0.5rem' }}>
+          <span style={{ width: '150px', fontSize: '14px' }}>@veaba/qrcode-js</span>
+          <div style={{ flex: 1, height: '30px', backgroundColor: '#e2e8f0', borderRadius: '4px', overflow: 'hidden' }}>
+            <div style={{ 
+              width: `${(jsSize / maxSize) * 100}%`, 
+              height: '100%', 
+              backgroundColor: '#22c55e',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'flex-end',
+              paddingRight: '8px',
+              color: 'white',
+              fontSize: '12px',
+              fontWeight: 600
+            }}>
+              ~{jsSize} KB
+            </div>
+          </div>
+        </div>
+        
+        <div style={{ display: 'flex', alignItems: 'center' }}>
+          <span style={{ width: '150px', fontSize: '14px' }}>@veaba/qrcode-wasm</span>
+          <div style={{ flex: 1, height: '30px', backgroundColor: '#e2e8f0', borderRadius: '4px', overflow: 'hidden' }}>
+            <div style={{ 
+              width: `${(wasmSize / maxSize) * 100}%`, 
+              height: '100%', 
+              backgroundColor: '#3b82f6',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'flex-end',
+              paddingRight: '8px',
+              color: 'white',
+              fontSize: '12px',
+              fontWeight: 600
+            }}>
+              ~{wasmSize} KB
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div style={{ fontSize: '13px', color: '#64748b' }}>
+        * 估算值，实际大小可能因构建配置而异。WASM 版本包含 WASM 二进制文件。
+      </div>
+    </div>
+  );
+};
+
+## 测试环境
+
+- **平台**: Windows
+- **浏览器**: 通过 Vitest Browser 模式测试
+- **测试时间**: 2026-02-01
+
+## 测试包
+
+- `@veaba/qrcode-js` - TypeScript 实现，适用于浏览器
+- `@veaba/qrcode-wasm` - Rust WASM 实现，适用于浏览器
+
+---
+
+## 🎯 场景选择器
+
+不知道选哪个？使用下面的场景选择器：
+
+<ScenarioSelector />
+
+---
+
+## 📊 特性对比
+
+<FeatureComparison />
+
+---
+
+## 📦 包体积对比
+
+<BundleSizeVisualizer />
+
+---
+
+## API 兼容性
+
+`@veaba/qrcode-js` 和 `@veaba/qrcode-wasm` 提供完全相同的 API：
+
+```typescript
+// 两者都支持相同的接口
+import { QRCode } from '@veaba/qrcode-js'; // 或 '@veaba/qrcode-wasm'
+
+const qr = new QRCode('https://example.com');
+const svg = qr.toSVG();
+const dataURL = qr.toDataURL();
+```
+
+## 性能特点
+
+### @veaba/qrcode-js
+
+- **优点**: 
+  - 纯 TypeScript 实现，无需额外加载 WASM 文件
+  - 包体积较小 (~15 KB)
+  - 启动速度快
+  - 兼容性更好
+
+- **适用场景**:
+  - 对包体积敏感的应用
+  - 需要快速启动的场景
+  - 简单的 QRCode 生成需求
+
+### @veaba/qrcode-wasm
+
+- **优点**:
+  - Rust 实现，理论上性能更好
+  - 适合大量 QRCode 生成场景
+
+- **注意事项**:
+  - 需要加载 WASM 文件 (~45 KB 总计)
+  - 首次加载可能有延迟
+
+## 使用建议
+
+| 场景 | 推荐包 | 原因 |
+|------|--------|------|
+| 简单应用 | `@veaba/qrcode-js` | 体积小，加载快 |
+| 大量生成 | `@veaba/qrcode-wasm` | WASM 性能优势 |
+| 首屏加载 | `@veaba/qrcode-js` | 无需等待 WASM 加载 |
+| 复杂应用 | 两者皆可 | 根据具体需求选择 |
+
+## 测试运行方式
+
+```bash
+# 运行前端测试
+pnpm run test:browser
+
+# 运行单元测试
+pnpm run test:unit
+```
+
+## 基准测试数据
+
+> 注：前端基准测试数据通过浏览器环境获取，实际性能会因设备和浏览器版本而异。
+
+### 测试场景
+
+1. **单条 QRCode 生成** - 测试不同长度文本的生成性能
+2. **批量 QRCode 生成** - 测试同时生成多个 QRCode 的性能
+3. **SVG 输出** - 测试生成 SVG 格式的时间
+4. **DataURL 输出** - 测试生成 DataURL 格式的时间
+5. **纠错级别** - 测试不同纠错级别下的性能
+
+### 推荐配置
+
+```javascript
+// vite.config.js 或类似配置
+export default {
+  optimizeDeps: {
+    include: ['@veaba/qrcode-js']
+  },
+  // 对于 WASM 版本，需要配置 wasm 加载
+  server: {
+    fs: {
+      allow: ['..']
+    }
+  }
+}
+```
+
+---
+
+*注意*: 详细的性能数据需要通过浏览器实际测试获取。建议使用 Chrome DevTools 的 Performance 面板进行更详细的性能分析。

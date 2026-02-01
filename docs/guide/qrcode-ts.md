@@ -10,13 +10,13 @@ bun add @veaba/qrcode-bun
 
 ## 为什么选择 Bun？
 
-Bun 相比 Node.js 的优势：
+Bun 相比 Node.js 的优势（基于实际基准测试）：
 
 | 特性 | Bun | Node.js |
 |------|-----|---------|
-| 启动时间 | 快 3-4 倍 | 较慢 |
-| 单条生成性能 | ~15,000 ops/s | ~10,000 ops/s |
-| 批量生成性能 | ~17,000 ops/s | ~6,000 ops/s |
+| 启动时间 | 更快 | 快 |
+| 单条生成性能 (medium) | 13,929 ops/s | 9,662 ops/s |
+| 批量生成性能 (1000 条) | 15,000 ops/s | 3,000 ops/s |
 | TypeScript | 原生支持 | 需转译 |
 | 包管理 | 内置，更快 | npm/yarn/pnpm |
 
@@ -101,74 +101,14 @@ const qrcodes = texts.map(text => {
 });
 
 console.timeEnd('generate');
-// 通常在 600ms 左右完成 10000 条
+// 通常在 600-700ms 左右完成 10000 条
 
 console.log(`Generated ${qrcodes.length} QR codes`);
 ```
 
-### 使用 Worker
-
-Bun 支持 Web Workers，可以并行生成：
-
-```typescript
-// worker.ts
-import { QRCode, QRErrorCorrectLevel } from '@veaba/qrcode-bun';
-
-self.onmessage = (event) => {
-  const { id, text, size } = event.data;
-  
-  const qr = new QRCode(text, QRErrorCorrectLevel.H);
-  const svg = qr.toSVG(size);
-  
-  self.postMessage({ id, svg });
-};
-
-// main.ts
-const workers: Worker[] = [];
-const numWorkers = navigator.hardwareConcurrency || 4;
-
-for (let i = 0; i < numWorkers; i++) {
-  workers.push(new Worker('./worker.ts'));
-}
-
-async function generateWithWorkers(texts: string[], size: number = 256) {
-  const results: string[] = new Array(texts.length);
-  let index = 0;
-  
-  return new Promise<string[]>((resolve) => {
-    let completed = 0;
-    
-    for (const worker of workers) {
-      worker.onmessage = (event) => {
-        const { id, svg } = event.data;
-        results[id] = svg;
-        completed++;
-        
-        if (completed === texts.length) {
-          resolve(results);
-        } else if (index < texts.length) {
-          worker.postMessage({ id: index, text: texts[index], size });
-          index++;
-        }
-      };
-      
-      // 启动第一个任务
-      if (index < texts.length) {
-        worker.postMessage({ id: index, text: texts[index], size });
-        index++;
-      }
-    }
-  });
-}
-
-// 使用
-const texts = Array.from({ length: 1000 }, (_, i) => `https://github.com/veaba/qrcodes/${i}`);
-const results = await generateWithWorkers(texts, 256);
-```
-
 ## 边缘计算部署
 
-### Cloudflare Workers（使用 Bun 构建）
+### Cloudflare Workers
 
 ```typescript
 // index.ts
@@ -259,7 +199,7 @@ http.createServer((req, res) => {
 
 ```bash
 cd packages/qrcode-bun
-bun benchmark/index.ts
+bun run benchmark/index.ts
 ```
 
 预期输出：
@@ -271,15 +211,20 @@ bun benchmark/index.ts
 ============================================================
 
 单条生成 (short):
-  ⚡ 15,262 ops/s
-  ⏱️  0.0655 ms/op
+  ⚡ 10,872 ops/s
+  ⏱️  0.0920 ms/op
+
+单条生成 (medium):
+  ⚡ 13,929 ops/s
+  ⏱️  0.0718 ms/op
 
 批量生成 (1000 条):
-  ⚡ 17,000 ops/s
-  ⏱️  60.5701 ms/op
+  ⚡ 15,000 ops/s
+  ⏱️  68.5033 ms/op
 
-TextEncoder 编码:
-  ⚡ 5,621,451 ops/s
+SVG 输出:
+  ⚡ 17,097 ops/s
+  ⏱️  0.0585 ms/op
 ```
 
 ## 与 @veaba/qrcode-node 的区别
@@ -300,9 +245,23 @@ import { QRCode, QRErrorCorrectLevel } from '@veaba/qrcode-bun';
 |------|-----------------|-------------------|
 | 运行时 | Bun | Node.js |
 | 启动速度 | 更快 | 快 |
-| 批量性能 | 更优 | 优 |
+| 批量性能 | 更优（5倍） | 优 |
 | TypeScript | 原生 | 需 ts-node/tsx |
 | npm 兼容 | 是 | 是 |
+
+## 性能数据
+
+基于实际基准测试：
+
+| 测试项 | Bun | Node.js | 优势 |
+|--------|-----|---------|------|
+| 单条生成 (short) | 10,872 ops/s | 10,312 ops/s | +5.4% |
+| 单条生成 (medium) | 13,929 ops/s | 9,662 ops/s | +44.2% |
+| 单条生成 (long) | 5,306 ops/s | 2,447 ops/s | +116.8% |
+| 批量生成 (1000 条) | 15,000 ops/s | 3,000 ops/s | +400% |
+| SVG 输出 | 17,097 ops/s | 9,827 ops/s | +74% |
+
+*测试环境：Bun 1.3.0 / Node.js v20.19.4, Windows*
 
 ## 何时使用 @veaba/qrcode-bun？
 
@@ -323,14 +282,14 @@ import { QRCode, QRErrorCorrectLevel } from '@veaba/qrcode-bun';
 + import { QRCode } from '@veaba/qrcode-bun';
 ```
 
-1. 文件写入（可选优化）：
+2. 文件写入（可选优化）：
 
 ```diff
 - fs.writeFileSync('file.svg', svg);
 + await Bun.write('file.svg', svg);
 ```
 
-1. 服务器（可选优化）：
+3. 服务器（可选优化）：
 
 ```diff
 - app.listen(3000);

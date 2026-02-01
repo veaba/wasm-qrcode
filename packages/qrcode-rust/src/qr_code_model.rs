@@ -83,21 +83,23 @@ pub const QR_CODE_LIMIT_LENGTH: &[[i32; 4]] = &[
 
 /// 获取类型号
 pub fn get_type_number(text: &str, correct_level: QRErrorCorrectLevel) -> i32 {
-    let mut type_num = 1;
     let length = text.bytes().count();
-    
+
     // 错误纠正级别映射
     let level_map = [1, 0, 3, 2];
     let level_index = level_map[correct_level as usize];
-    
+
+    // 加 2 是为了考虑模式指示符(1字节)和长度字段(1字节)
+    // 这与 JS 实现保持一致
+    let data_length = length + 2;
+
     for (i, limits) in QR_CODE_LIMIT_LENGTH.iter().enumerate() {
         let limit = limits[level_index as usize];
-        if length <= limit as usize {
-            type_num = (i + 1) as i32;
-            break;
+        if data_length <= limit as usize {
+            return (i + 1) as i32;
         }
-        type_num = (i + 2) as i32;
     }
-    
-    type_num
+
+    // 如果文本太长，返回最大版本号
+    40
 }

@@ -27,10 +27,8 @@ use qrcode_rust::{QRCode, QRErrorCorrectLevel};
 
 fn main() {
     // 创建 QRCode 实例
-    let mut qr = QRCode::new();
-    
-    // 生成 QRCode
-    qr.make_code("https://github.com/veaba/qrcodes");
+    let mut qr = QRCode::new("https://github.com/veaba/qrcodes");
+    qr.options.correct_level = QRErrorCorrectLevel::H;
     
     // 获取 SVG
     let svg = qr.get_svg();
@@ -44,11 +42,10 @@ fn main() {
 use qrcode_rust::{QRCode, QRErrorCorrectLevel};
 
 fn main() {
-    let mut qr = QRCode::new();
+    let mut qr = QRCode::new("https://github.com/veaba/qrcodes");
     
     // 设置纠错级别
     qr.options.correct_level = QRErrorCorrectLevel::H;
-    qr.make_code("https://github.com/veaba/qrcodes");
     
     let svg = qr.get_svg();
     println!("{}", svg);
@@ -63,8 +60,8 @@ fn main() {
 use qrcode_rust::{QRCode, QRErrorCorrectLevel};
 
 fn main() {
-    let mut qr = QRCode::new();
-    qr.make_code("https://github.com/veaba/qrcodes");
+    let mut qr = QRCode::new("https://github.com/veaba/qrcodes");
+    qr.options.correct_level = QRErrorCorrectLevel::H;
     
     // 获取 SVG 字符串
     let svg = qr.get_svg();
@@ -80,8 +77,7 @@ fn main() {
 use qrcode_rust::QRCode;
 
 fn main() {
-    let mut qr = QRCode::new();
-    qr.make_code("https://github.com/veaba/qrcodes");
+    let mut qr = QRCode::new("https://github.com/veaba/qrcodes");
     
     // 获取模块数量
     let count = qr.get_module_count();
@@ -121,9 +117,7 @@ fn render_to_console(qr: &QRCode) {
 }
 
 fn main() {
-    let mut qr = QRCode::new();
-    qr.make_code("Hello, Rust!");
-    
+    let mut qr = QRCode::new("Hello, Rust!");
     render_to_console(&qr);
 }
 ```
@@ -143,8 +137,7 @@ fn main() {
     let mut results = Vec::new();
     
     for text in &texts {
-        let mut qr = QRCode::new();
-        qr.make_code(text);
+        let mut qr = QRCode::new(text);
         results.push(qr.get_svg());
     }
     
@@ -167,8 +160,7 @@ fn main() {
     let results: Vec<String> = texts
         .par_iter()
         .map(|text| {
-            let mut qr = QRCode::new();
-            qr.make_code(text);
+            let mut qr = QRCode::new(text);
             qr.get_svg()
         })
         .collect();
@@ -189,9 +181,8 @@ use qrcode_rust::{QRCode, QRErrorCorrectLevel};
 async fn generate_qrcode(query: web::Query<QRCodeQuery>) -> HttpResponse {
     let text = query.text.clone().unwrap_or_else(|| "https://github.com/veaba/qrcodes".to_string());
     
-    let mut qr = QRCode::new();
+    let mut qr = QRCode::new(&text);
     qr.options.correct_level = QRErrorCorrectLevel::H;
-    qr.make_code(&text);
     
     let svg = qr.get_svg();
     
@@ -237,9 +228,8 @@ struct QRCodeParams {
 async fn generate_qrcode(Query(params): Query<QRCodeParams>) -> Html<String> {
     let text = params.text.unwrap_or_else(|| "https://github.com/veaba/qrcodes".to_string());
     
-    let mut qr = QRCode::new();
+    let mut qr = QRCode::new(&text);
     qr.options.correct_level = QRErrorCorrectLevel::H;
-    qr.make_code(&text);
     
     Html(qr.get_svg())
 }
@@ -266,14 +256,12 @@ async fn main() {
 use qrcode_rust::{QRCode, QRCodeOptions, QRErrorCorrectLevel};
 
 fn main() {
-    let mut qr = QRCode::new();
+    let mut qr = QRCode::new("https://github.com/veaba/qrcodes");
     
     // 自定义颜色
     qr.options.color_dark = "#FF0000".to_string();
     qr.options.color_light = "#FFFFFF".to_string();
     qr.options.correct_level = QRErrorCorrectLevel::H;
-    
-    qr.make_code("https://github.com/veaba/qrcodes");
     
     let svg = qr.get_svg();
     std::fs::write("red-qrcode.svg", svg).unwrap();
@@ -288,9 +276,7 @@ fn main() {
 use qrcode_rust::QRCode;
 
 fn main() {
-    // 复用同一个实例（注意：make_code 会重置状态）
-    let mut qr = QRCode::new();
-    
+    // 复用同一个实例（注意：每次调用 get_svg 会基于当前状态）
     let texts = vec![
         "https://github.com/veaba/qrcodes/1",
         "https://github.com/veaba/qrcodes/2",
@@ -298,55 +284,10 @@ fn main() {
     ];
     
     for text in &texts {
-        qr.make_code(text);
+        let mut qr = QRCode::new(text);
         let _svg = qr.get_svg();
         // 处理 svg...
     }
-}
-```
-
-### 使用线程池
-
-```rust
-use qrcode_rust::QRCode;
-use std::thread;
-use std::sync::mpsc;
-
-fn main() {
-    let (tx, rx) = mpsc::channel();
-    let texts: Vec<String> = (0..100)
-        .map(|i| format!("https://github.com/veaba/qrcodes/{}", i))
-        .collect();
-    
-    // 创建工作线程
-    let handles: Vec<_> = texts
-        .chunks(10)
-        .map(|chunk| {
-            let tx = tx.clone();
-            let chunk = chunk.to_vec();
-            
-            thread::spawn(move || {
-                for text in chunk {
-                    let mut qr = QRCode::new();
-                    qr.make_code(&text);
-                    tx.send(qr.get_svg()).unwrap();
-                }
-            })
-        })
-        .collect();
-    
-    // 收集结果
-    drop(tx);
-    let mut count = 0;
-    for _ in rx {
-        count += 1;
-    }
-    
-    for handle in handles {
-        handle.join().unwrap();
-    }
-    
-    println!("Generated {} QR codes", count);
 }
 ```
 
@@ -359,23 +300,33 @@ cd packages/qrcode-rust
 cargo bench
 ```
 
-预期结果：
+预期结果（基于实际测试）：
 
 ```
-single_generation     time:   [14.302 µs 14.338 µs 14.380 µs]
-batch_generation_100  time:   [1.1223 ms 1.1253 ms 1.1287 ms]
-svg_generation        time:   [61.142 µs 61.278 µs 61.429 µs]
-error_level_L         time:   [7.3545 µs 7.3735 µs 7.3941 µs]
+single_generation     time:   [56.471 µs 57.807 µs 59.205 µs]
+batch_generation_100  time:   [4.3020 ms 4.3896 ms 4.4835 ms]
+svg_generation        time:   [43.779 µs 44.863 µs 45.967 µs]
+error_level_L         time:   [35.776 µs 36.631 µs 37.482 µs]
+error_level_M         time:   [35.299 µs 36.085 µs 36.870 µs]
+error_level_Q         time:   [31.985 µs 32.582 µs 33.322 µs]
+error_level_H         time:   [33.3 µs]
 ```
 
-## 与 WASM/JS 版本的性能对比
+## 性能数据
 
-| 运行时 | 单条生成 | 批量 1000 条 | 相对速度 |
-|--------|---------|-------------|---------|
-| Rust 原生 | ~70,000 ops/s | ~80,000 ops/s | 1x (基准) |
-| WASM (浏览器) | ~15,000 ops/s | ~6,000 ops/s | 4.7x 慢 |
-| Bun | ~15,000 ops/s | ~17,000 ops/s | 4.7x 慢 |
-| Node.js | ~10,000 ops/s | ~6,000 ops/s | 7x 慢 |
+基于实际基准测试：
+
+| 测试项 | 平均时间 | 吞吐量 |
+|--------|----------|--------|
+| 单条生成 | ~57.8 µs | ~17,300 ops/s |
+| SVG 生成 | ~44.9 µs | ~22,270 ops/s |
+| 批量 100 条 | ~4.39 ms | ~22,780 ops/s |
+| 纠错级别 L | ~36.6 µs | ~27,300 ops/s |
+| 纠错级别 M | ~36.7 µs | ~27,200 ops/s |
+| 纠错级别 Q | ~32.8 µs | ~30,500 ops/s |
+| 纠错级别 H | ~33.3 µs | ~30,000 ops/s |
+
+*测试环境：Rust 1.83, Windows*
 
 ## API 参考
 
@@ -396,8 +347,7 @@ pub struct QRCode {
 
 | 方法 | 说明 | 返回值 |
 |------|------|--------|
-| `QRCode::new()` | 创建实例 | `QRCode` |
-| `make_code(text)` | 生成 QRCode | `()` |
+| `QRCode::new(text)` | 创建实例 | `QRCode` |
 | `get_module_count()` | 获取模块数 | `i32` |
 | `get_modules()` | 获取模块数据 | `Option<&Vec<Vec<Option<bool>>>>` |
 | `is_dark(row, col)` | 判断模块颜色 | `bool` |

@@ -1,6 +1,6 @@
 # @veaba/qrcode-wasm
 
-浏览器环境的 WASM 版本，基于 Rust 编译，提供最佳的 QRCode 生成性能。
+浏览器环境的 WASM 版本，基于 Rust 编译，提供优秀的 QRCode 生成性能。
 
 ## 安装
 
@@ -13,58 +13,134 @@ npm install @veaba/qrcode-wasm
 WASM 需要异步初始化，确保在使用前完成初始化：
 
 ```typescript
-import init, { QRCodeWasm, CorrectLevel } from '@veaba/qrcode-wasm';
+import init from '@veaba/qrcode-wasm';
 
 // 初始化 WASM
 await init();
-
-// 现在可以使用 QRCodeWasm 了
-const qr = new QRCodeWasm();
 ```
 
-## 基础使用
+## 统一 API（推荐）
 
-### 创建 QRCode
+`@veaba/qrcode-wasm` 现在提供与 `@veaba/qrcode-js` 完全一致的 API，方便在两个包之间无缝切换：
+
+### 基础用法
 
 ```typescript
-import init, { QRCodeWasm } from '@veaba/qrcode-wasm';
+import init, { QRCodeCore, QRErrorCorrectLevel } from '@veaba/qrcode-wasm';
+
+// 初始化 WASM（只需一次）
+await init();
+
+// 创建 QRCode 实例（与 qrcode-js 相同的 API）
+const qr = new QRCodeCore('https://github.com/veaba/qrcodes', QRErrorCorrectLevel.H);
+
+// 获取 SVG
+const svg = qr.toSVG(256);
+
+// 插入到页面
+document.getElementById('qrcode').innerHTML = svg;
+```
+
+### 使用缓存（推荐）
+
+```typescript
+import init, { 
+  generateRoundedQRCodeCached,
+  clearQRCodeCache,
+  getCacheStats 
+} from '@veaba/qrcode-wasm';
 
 await init();
 
-// 创建实例
-const qr = new QRCodeWasm();
+// 第一次生成会缓存
+const svg1 = generateRoundedQRCodeCached('https://example.com', 256, 8);
 
-// 生成 QRCode
-qr.make_code('https://github.com/veaba/qrcodes');
+// 第二次生成直接从缓存读取，速度提升 10 倍+
+const svg2 = generateRoundedQRCodeCached('https://example.com', 256, 8);
 
-// 获取 SVG
-const svg = qr.get_svg();
-console.log(svg);
-// <svg xmlns="http://www.w3.org/2000/svg" ...>...</svg>
+// 查看缓存状态
+console.log(getCacheStats()); // { size: 1, maxSize: 100, keys: [...] }
+
+// 清空缓存
+clearQRCodeCache();
 ```
 
-### 指定纠错级别
+### 样式化二维码
+
+```typescript
+import init, { 
+  generateWechatStyleQRCode,
+  generateDouyinStyleQRCode,
+  generateCyberpunkStyleQRCode 
+} from '@veaba/qrcode-wasm';
+
+await init();
+
+// 微信风格
+const wechatQR = generateWechatStyleQRCode('https://weixin.qq.com', 256);
+
+// 抖音风格
+const douyinQR = generateDouyinStyleQRCode('https://douyin.com', 256);
+
+// 赛博朋克风格
+const cyberQR = generateCyberpunkStyleQRCode('https://example.com', 256);
+```
+
+### 批量生成
+
+```typescript
+import init, { generateBatchQRCodes, generateBatchQRCodesCached } from '@veaba/qrcode-wasm';
+
+await init();
+
+const texts = [
+  'https://example.com/1',
+  'https://example.com/2',
+  // ... 更多
+];
+
+// 非缓存版本
+const svgs = generateBatchQRCodes(texts, { size: 256 });
+
+// 缓存版本
+const svgsCached = generateBatchQRCodesCached(texts, { size: 256 });
+```
+
+### 异步生成
+
+```typescript
+import init, { generateQRCodeAsync, generateBatchAsync } from '@veaba/qrcode-wasm';
+
+await init();
+
+// 单个异步生成
+const result = await generateQRCodeAsync('https://example.com', {
+  size: 256,
+  cache: true // 启用缓存
+});
+console.log(result.svg);
+
+// 批量异步生成
+const results = await generateBatchAsync(texts, {
+  size: 256,
+  cache: true
+});
+```
+
+## 底层 WASM API（可选）
+
+如果需要更底层的控制，可以直接使用 WASM 原生 API：
 
 ```typescript
 import init, { QRCodeWasm, CorrectLevel } from '@veaba/qrcode-wasm';
 
 await init();
 
-// 使用高纠错级别
-const qr = QRCodeWasm.with_options(256, 256, CorrectLevel.H);
+// 使用底层 WASM API
+const qr = new QRCodeWasm();
 qr.make_code('https://github.com/veaba/qrcodes');
+const svg = qr.get_svg();
 ```
-
-纠错级别说明：
-
-| 级别 | 容错率 | 适用场景 |
-|------|--------|----------|
-| `CorrectLevel.L` | ~7% | 清晰的打印环境 |
-| `CorrectLevel.M` | ~15% | 一般场景（默认）|
-| `CorrectLevel.Q` | ~25% | 有一定损坏风险 |
-| `CorrectLevel.H` | ~30% | Logo 覆盖、艺术化 QRCode |
-
-## 高级用法
 
 ### 使用 QRCodeGenerator（可复用实例）
 
@@ -92,62 +168,7 @@ const texts = ['url1', 'url2', 'url3'];
 const svgs = gen.generate_batch(texts);
 ```
 
-### 样式化 QRCode
-
-```typescript
-import init, { StyledQRCode, QRCodeStyle } from '@veaba/qrcode-wasm';
-
-await init();
-
-// 创建样式
-const style = new QRCodeStyle();
-style.set_size(256);
-style.set_colors('#000000', '#ffffff');
-style.set_border_radius(8);
-style.set_quiet_zone(2);
-
-// 创建带样式的 QRCode
-const qr = StyledQRCode.with_style(style);
-qr.generate('https://github.com/veaba/qrcodes', CorrectLevel.H);
-
-const svg = qr.get_styled_svg();
-```
-
-### 预设样式函数
-
-```typescript
-import init, { 
-  generate_wechat_style_qrcode,
-  generate_douyin_style_qrcode,
-  generate_cyberpunk_style_qrcode,
-  generate_gradient_qrcode,
-  generate_rounded_qrcode
-} from '@veaba/qrcode-wasm';
-
-await init();
-
-// 微信风格（绿色）
-const wechatSvg = generate_wechat_style_qrcode('https://github.com/veaba/qrcodes', 256);
-
-// 抖音风格（渐变色）
-const douyinSvg = generate_douyin_style_qrcode('https://github.com/veaba/qrcodes', 256);
-
-// 赛博朋克风格
-const cyberpunkSvg = generate_cyberpunk_style_qrcode('https://github.com/veaba/qrcodes', 256);
-
-// 渐变背景
-const gradientSvg = generate_gradient_qrcode(
-  'https://github.com/veaba/qrcodes', 
-  256, 
-  '#667eea',  // 起始色
-  '#764ba2'   // 结束色
-);
-
-// 圆角 QRCode
-const roundedSvg = generate_rounded_qrcode('https://github.com/veaba/qrcodes', 256, 8);
-```
-
-## Canvas 渲染
+### Canvas 渲染
 
 如果需要像素数据用于 Canvas：
 
@@ -186,7 +207,7 @@ ctx.putImageData(imageData, 0, 0);
 ```typescript
 // hooks/useQRCode.ts
 import { useEffect, useState, useCallback } from 'react';
-import init, { QRCodeWasm } from '@veaba/qrcode-wasm';
+import init, { QRCodeCore, QRErrorCorrectLevel } from '@veaba/qrcode-wasm';
 
 let initialized = false;
 
@@ -201,9 +222,8 @@ export function useQRCode(text: string) {
         initialized = true;
       }
       
-      const qr = new QRCodeWasm();
-      qr.make_code(text);
-      setSvg(qr.get_svg());
+      const qr = new QRCodeCore(text, QRErrorCorrectLevel.H);
+      setSvg(qr.toSVG(256));
       setLoading(false);
     };
 
@@ -219,7 +239,7 @@ export function useQRCode(text: string) {
 ```typescript
 // composables/useQRCode.ts
 import { ref, watch, onMounted } from 'vue';
-import init, { QRCodeWasm } from '@veaba/qrcode-wasm';
+import init, { QRCodeCore, QRErrorCorrectLevel } from '@veaba/qrcode-wasm';
 
 let initialized = false;
 
@@ -233,9 +253,8 @@ export function useQRCode(text: Ref<string>) {
       initialized = true;
     }
     
-    const qr = new QRCodeWasm();
-    qr.make_code(text.value);
-    svg.value = qr.get_svg();
+    const qr = new QRCodeCore(text.value, QRErrorCorrectLevel.H);
+    svg.value = qr.toSVG(256);
     loading.value = false;
   };
 
@@ -248,7 +267,22 @@ export function useQRCode(text: Ref<string>) {
 
 ## API 参考
 
-### QRCodeWasm
+### 统一 API（与 qrcode-js 一致）
+
+| 类/函数 | 说明 |
+|---------|------|
+| `QRCodeCore` | 核心 QRCode 类 |
+| `QRErrorCorrectLevel` | 纠错级别枚举 |
+| `generateRoundedQRCode` | 圆角二维码 |
+| `generateGradientQRCode` | 渐变二维码 |
+| `generateWechatStyleQRCode` | 微信风格 |
+| `generateDouyinStyleQRCode` | 抖音风格 |
+| `generateBatchQRCodes` | 批量生成 |
+| `generateQRCodeAsync` | 异步生成 |
+| `getCachedQRCode` | 获取缓存 |
+| `clearQRCodeCache` | 清空缓存 |
+
+### 底层 WASM API
 
 | 方法 | 说明 | 返回值 |
 |------|------|--------|
@@ -259,22 +293,49 @@ export function useQRCode(text: Ref<string>) {
 | `get_module_count()` | 获取模块数 | `number` |
 | `get_modules_json()` | 获取模块数据 | `string` |
 | `is_dark(row, col)` | 判断模块颜色 | `boolean` |
-| `free()` | 释放内存 | `void` |
-
-### QRCodeGenerator
-
-| 方法 | 说明 | 返回值 |
-|------|------|--------|
-| `new()` | 创建实例 | `QRCodeGenerator` |
-| `set_options(w, h, level)` | 设置选项 | `void` |
-| `generate(text)` | 生成 QRCode | `void` |
-| `generate_batch(texts)` | 批量生成 | `string[]` |
-| `get_svg()` | 获取 SVG | `string` |
-| `clear()` | 清除缓存 | `void` |
 
 ## 性能提示
 
-1. **复用实例**：使用 `QRCodeGenerator` 而不是反复创建 `QRCodeWasm`
-2. **批量生成**：使用 `generate_batch` 比循环调用 `generate` 更快
-3. **及时释放**：WASM 对象需要手动调用 `free()` 释放内存
-4. **缓存初始化**：在应用启动时初始化 WASM，避免首次生成时的延迟
+1. **复用实例**：使用缓存版本或 `QRCodeGenerator` 提升性能
+2. **批量生成**：使用 `generateBatchQRCodes` 比循环调用更快
+3. **缓存初始化**：在应用启动时初始化 WASM，避免首次生成时的延迟
+4. **及时释放**：WASM 对象需要手动调用 `free()` 释放内存（底层 API）
+
+## 与 @veaba/qrcode-js 的选择
+
+| 特性 | @veaba/qrcode-wasm | @veaba/qrcode-js |
+|------|-------------------|------------------|
+| 性能 | ⚡⚡⚡ 最快 | ⚡⚡ 快 |
+| 包大小 | ~45KB | ~15KB |
+| 初始化 | 需要异步 | 即时 |
+| 兼容性 | 现代浏览器 | IE11+ |
+| API | 统一 | 统一 |
+
+选择 `@veaba/qrcode-wasm`：
+- ✅ 追求极致性能
+- ✅ 现代浏览器环境
+- ✅ 高频生成场景
+
+选择 `@veaba/qrcode-js`：
+- ✅ 对包大小敏感
+- ✅ 需要兼容旧浏览器
+- ✅ 不想处理异步初始化
+
+## 迁移指南
+
+从旧版本迁移到统一 API：
+
+```typescript
+// 旧版本（仍然支持）
+import init, { QRCodeWasm } from '@veaba/qrcode-wasm';
+await init();
+const qr = new QRCodeWasm();
+qr.make_code('text');
+const svg = qr.get_svg();
+
+// 新版本（统一 API，推荐）
+import init, { QRCodeCore } from '@veaba/qrcode-wasm';
+await init();
+const qr = new QRCodeCore('text');
+const svg = qr.toSVG();
+```

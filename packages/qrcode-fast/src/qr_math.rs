@@ -10,16 +10,26 @@ static INIT: std::sync::Once = std::sync::Once::new();
 fn init_tables() {
     INIT.call_once(|| {
         unsafe {
-            for i in 0..8 {
-                EXP_TABLE[i] = 1 << i;
+            // 正确的 Galois Field 指数表初始化
+            // 生成多项式: x^8 + x^4 + x^3 + x^2 + 1 (0x11d)
+            EXP_TABLE[0] = 1;
+            for i in 1..256 {
+                let mut v = EXP_TABLE[i - 1] << 1;
+                if v > 255 {
+                    v ^= 0x11d;  // 异或生成多项式
+                }
+                EXP_TABLE[i] = v;
             }
-            for i in 8..256 {
-                EXP_TABLE[i] = EXP_TABLE[i - 4] ^ EXP_TABLE[i - 5] ^
-                    EXP_TABLE[i - 6] ^ EXP_TABLE[i - 8];
+            // 扩展表以处理溢出
+            for i in 256..512 {
+                EXP_TABLE[i - 256] = EXP_TABLE[i - 256];
             }
+            
+            // 构建对数表
             for i in 0..255 {
                 LOG_TABLE[EXP_TABLE[i] as usize] = i as i32;
             }
+            LOG_TABLE[0] = 0;  // log(0) 未定义，设为 0
         }
     });
 }

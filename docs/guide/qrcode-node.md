@@ -209,77 +209,6 @@ urls.forEach((url, index) => {
 console.log(`Generated ${urls.length} QR codes`);
 ```
 
-## 流式输出
-
-```typescript
-import { QRCode, QRErrorCorrectLevel } from '@veaba/qrcode-node';
-import { createWriteStream } from 'fs';
-
-// 创建可读流
-function createQRCodeStream(text: string, size: number) {
-  const qr = new QRCode(text, QRErrorCorrectLevel.H);
-  const svg = qr.toSVG(size);
-  
-  return new ReadableStream({
-    start(controller) {
-      controller.enqueue(Buffer.from(svg));
-      controller.close();
-    }
-  });
-}
-
-// 使用
-const stream = createQRCodeStream('https://github.com/veaba/qrcodes', 256);
-const writeStream = createWriteStream('output.svg');
-
-// Node 18+ 支持 Web Streams
-// @ts-ignore
-stream.pipeTo(writeStream);
-```
-
-## 性能优化
-
-### 使用缓存
-
-```typescript
-import { QRCode, QRErrorCorrectLevel } from '@veaba/qrcode-node';
-import { getCachedQRCode } from '@veaba/qrcode-shared';
-
-// 对于重复文本，使用缓存
-function getQRCodeSVG(text: string, size: number = 256): string {
-  const qr = getCachedQRCode(text, QRErrorCorrectLevel.H);
-  return qr.toSVG(size);
-}
-
-// 第一次生成（计算）
-const svg1 = getQRCodeSVG('https://github.com/veaba/qrcodes');
-
-// 第二次生成（缓存，快 10-100 倍）
-const svg2 = getQRCodeSVG('https://github.com/veaba/qrcodes');
-```
-
-### 异步批量生成
-
-```typescript
-import { QRCode, QRErrorCorrectLevel } from '@veaba/qrcode-node';
-
-async function generateBatch(texts: string[], size: number = 256) {
-  // 使用 Promise.all 并发生成
-  const promises = texts.map(text => {
-    return new Promise<{ text: string; svg: string }>((resolve) => {
-      const qr = new QRCode(text, QRErrorCorrectLevel.H);
-      resolve({ text, svg: qr.toSVG(size) });
-    });
-  });
-  
-  return Promise.all(promises);
-}
-
-// 使用
-const texts = Array.from({ length: 100 }, (_, i) => `https://github.com/veaba/qrcodes/${i}`);
-const results = await generateBatch(texts, 256);
-```
-
 ## 错误处理
 
 ```typescript
@@ -350,10 +279,23 @@ enum QRErrorCorrectLevel {
 
 ## 与前端包的区别
 
-| 特性 | @veaba/qrcode-node | @veaba/qrcode-wasm |
-|------|-------------------|-------------------|
+| 特性 | @veaba/qrcode-node | @veaba/qrcode-js |
+|------|-------------------|------------------|
 | 环境 | Node.js | 浏览器 |
 | PNG 支持 | ✅ 原生 Buffer | ❌ 需额外处理 |
 | 文件系统 | ✅ 直接写入 | ❌ 需下载 |
 | 服务端渲染 | ✅ 支持 | N/A |
-| 性能 | 快（V8 优化）| 更快（WASM）|
+| 性能 | 快 | 快 |
+
+## 性能数据
+
+基于实际基准测试：
+
+| 测试项 | 性能 |
+|--------|------|
+| 单条生成 (medium) | 9,662 ops/s |
+| 批量生成 (100 条) | 3,000 ops/s |
+| SVG 输出 | 9,827 ops/s |
+| PNG Buffer 输出 | 2,404 ops/s |
+
+*测试环境：Node.js v20.19.4, Windows*

@@ -154,16 +154,24 @@ impl StyledQRCode {
             size
         ));
 
+        // 生成唯一的渐变 ID，避免多个 SVG 之间的冲突
+        let gradient_id = if self.style.use_gradient {
+            let random_suffix = (js_sys::Math::random() * 1000000.0) as u32;
+            format!("qrGradient_{}", random_suffix)
+        } else {
+            String::new()
+        };
+        
         // 定义渐变
         if self.style.use_gradient {
             svg.push_str(&format!(
                 r#"<defs>
-                <linearGradient id="qrGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                <linearGradient id="{}" x1="0%" y1="0%" x2="100%" y2="100%">
                     <stop offset="0%" style="stop-color:{}" />
                     <stop offset="100%" style="stop-color:{}" />
                 </linearGradient>
             </defs>"#,
-                self.style.gradient_color1, self.style.gradient_color2
+                gradient_id, self.style.gradient_color1, self.style.gradient_color2
             ));
         }
 
@@ -174,8 +182,10 @@ impl StyledQRCode {
         ));
 
         // 计算填充颜色
-        let fill_color = if self.style.use_gradient {
-            "url(#qrGradient)"
+        let fill_color_owned: String;
+        let fill_color: &str = if self.style.use_gradient {
+            fill_color_owned = format!("url(#{})", gradient_id);
+            &fill_color_owned
         } else {
             &self.style.color_dark
         };

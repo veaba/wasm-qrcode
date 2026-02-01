@@ -2,15 +2,16 @@ import { defineConfig } from 'rspress/config';
 
 export default defineConfig({
   root: './docs',
-  title: 'Wasm QRCode',
+  title: 'QRCodes',
   description: '高性能 QRCode 生成库 - 支持 WASM、Node.js、Bun 和 Rust',
-  // icon: '/logo.png',
-  // logo: '/logo.png',
-  logoText: 'Wasm QRCode',
+  icon: '/favicon.png',
+  logo: '/favicon.png',
+  logoText: 'QRCodes',
   themeConfig: {
     nav: [
       { text: '首页', link: '/' },
       { text: '指南', link: '/guide/' },
+      { text: '演示', link: '/demo' },
       { text: 'API', link: '/api/' },
       { text: '基准测试', link: '/bench/' },
     ],

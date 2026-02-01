@@ -1,6 +1,12 @@
 # QRCodeCore
 
-`QRCodeCore` 是 `@veaba/qrcode-shared` 和 `@veaba/qrcode-js` 的核心类，提供纯 JavaScript 的 QRCode 生成功能。
+`QRCodeCore` 是项目的核心 QRCode 生成类。它通过以下公开包提供：
+
+- **`@veaba/qrcode-js`** - 浏览器环境
+- **`@veaba/qrcode-node`** - Node.js 环境
+- **`@veaba/qrcode-bun`** - Bun 环境
+
+所有公开包都导出相同的 API，`QRCodeCore` 是内部私有包 `@veaba/qrcode-shared` 的核心类。
 
 ## 构造函数
 
@@ -21,7 +27,14 @@ constructor(
 ### 示例
 
 ```typescript
-import { QRCodeCore, QRErrorCorrectLevel } from '@veaba/qrcode-shared';
+// 浏览器环境
+import { QRCodeCore, QRErrorCorrectLevel } from '@veaba/qrcode-js';
+
+// Node.js 环境
+// import { QRCodeCore, QRErrorCorrectLevel } from '@veaba/qrcode-node';
+
+// Bun 环境
+// import { QRCodeCore, QRErrorCorrectLevel } from '@veaba/qrcode-bun';
 
 // 默认纠错级别 H
 const qr1 = new QRCodeCore('https://github.com/veaba/qrcodes');
@@ -192,14 +205,15 @@ for (let row = 0; row < count; row++) {
 
 ## 静态方法
 
-`QRCodeCore` 没有静态方法，但 `@veaba/qrcode-shared` 提供了相关的工具函数。
+`QRCodeCore` 没有静态方法，但公开包提供了相关的工具函数（如 `generateBatchQRCodes`）。
 
 ## 完整示例
 
 ### 基础使用
 
 ```typescript
-import { QRCodeCore, QRErrorCorrectLevel } from '@veaba/qrcode-shared';
+import { QRCodeCore, QRErrorCorrectLevel } from '@veaba/qrcode-js';
+// Node.js: import { QRCodeCore, QRErrorCorrectLevel } from '@veaba/qrcode-node';
 
 const qr = new QRCodeCore('https://github.com/veaba/qrcodes', QRErrorCorrectLevel.H);
 
@@ -211,7 +225,7 @@ document.getElementById('qrcode').innerHTML = svg;
 ### 自定义样式
 
 ```typescript
-import { QRCodeCore, QRErrorCorrectLevel } from '@veaba/qrcode-shared';
+import { QRCodeCore, QRErrorCorrectLevel } from '@veaba/qrcode-js';
 
 const qr = new QRCodeCore('https://github.com/veaba/qrcodes', QRErrorCorrectLevel.H);
 
@@ -233,7 +247,7 @@ document.getElementById('qrcode').innerHTML = styledSvg;
 ### 自定义渲染
 
 ```typescript
-import { QRCodeCore, QRErrorCorrectLevel } from '@veaba/qrcode-shared';
+import { QRCodeCore, QRErrorCorrectLevel } from '@veaba/qrcode-js';
 
 const qr = new QRCodeCore('https://github.com/veaba/qrcodes', QRErrorCorrectLevel.H);
 const count = qr.getModuleCount();
@@ -268,6 +282,7 @@ const svgs = texts.map(text => {
 });
 
 // 推荐：批量生成
-import { generateBatchQRCodes } from '@veaba/qrcode-shared';
+import { generateBatchQRCodes } from '@veaba/qrcode-js';
+// Node.js: import { generateBatchQRCodes } from '@veaba/qrcode-node';
 const svgs = generateBatchQRCodes(texts, { size: 256 });
 ```

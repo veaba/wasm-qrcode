@@ -6,6 +6,8 @@
 
 这是一个浏览器友好的 QRCode 生成库，不依赖 Node.js 特有的 API，可直接在浏览器中使用。
 
+与 `@veaba/qrcode-wasm` 提供**完全一致的 API**，方便在两个包之间无缝切换。
+
 ## 安装
 
 ```bash
@@ -20,21 +22,22 @@ yarn add @veaba/qrcode-js
 
 - 🌐 **浏览器优先** - 纯 JavaScript，无 Node.js 依赖
 - 🚀 **高性能** - 优化的 QRCode 生成算法
-- 💾 **可选缓存** - LRU 缓存支持，重复文本性能提升 10 倍
+- 💾 **可选缓存** - LRU 缓存支持，重复文本性能提升 10 倍+
 - 🎨 **丰富样式** - 支持 10+ 种个性样式
 - 📦 **批量生成** - 支持批量异步生成
 - 🖼️ **SVG 输出** - 生成矢量图形，清晰锐利
 - 🔧 **TypeScript 支持** - 包含类型定义文件
+- 🔄 **API 统一** - 与 `@veaba/qrcode-wasm` 完全一致的 API
 
 ## 使用方法
 
 ### 基础用法
 
 ```javascript
-import { QRCode, QRErrorCorrectLevel } from '@veaba/qrcode-js';
+import { QRCodeCore, QRErrorCorrectLevel } from '@veaba/qrcode-js';
 
 // 创建 QRCode 实例
-const qr = new QRCode('Hello World', QRErrorCorrectLevel.H);
+const qr = new QRCodeCore('Hello World', QRErrorCorrectLevel.H);
 
 // 获取 SVG
 const svg = qr.toSVG(256);
@@ -49,16 +52,16 @@ document.getElementById('qrcode').innerHTML = svg;
 
 ```javascript
 import { 
-  generateRoundedQRCodeCached as generateRoundedQRCode,
+  generateRoundedQRCodeCached,
   clearQRCodeCache,
   getCacheStats
 } from '@veaba/qrcode-js';
 
 // 第一次生成会缓存
-const svg1 = generateRoundedQRCode('https://example.com', 256, 8);
+const svg1 = generateRoundedQRCodeCached('https://example.com', 256, 8);
 
-// 第二次生成直接从缓存读取，速度提升 10 倍
-const svg2 = generateRoundedQRCode('https://example.com', 256, 8);
+// 第二次生成直接从缓存读取，速度提升 10 倍+
+const svg2 = generateRoundedQRCodeCached('https://example.com', 256, 8);
 
 // 查看缓存状态
 console.log(getCacheStats()); // { size: 1, maxSize: 100, keys: [...] }
@@ -134,12 +137,12 @@ const results = await generateBatchAsync(texts, {
 
 ## API
 
-### QRCode 类
+### QRCodeCore 类
 
 #### 构造函数
 
 ```javascript
-new QRCode(text: string, correctLevel?: QRErrorCorrectLevel)
+new QRCodeCore(text: string, correctLevel?: QRErrorCorrectLevel)
 ```
 
 #### 方法
@@ -177,6 +180,15 @@ new QRCode(text: string, correctLevel?: QRErrorCorrectLevel)
 | `generateRetroStyleQRCode` | `generateRetroStyleQRCodeCached` | 复古风格 |
 | `generateMinimalStyleQRCode` | `generateMinimalStyleQRCodeCached` | 极简风格 |
 
+### 批量/异步函数
+
+| 函数 | 说明 |
+|------|------|
+| `generateBatchQRCodes(texts, options?)` | 批量生成 |
+| `generateBatchQRCodesCached(texts, options?)` | 批量生成（缓存） |
+| `generateQRCodeAsync(text, options?)` | 异步生成 |
+| `generateBatchAsync(texts, options?)` | 批量异步生成 |
+
 ### 错误纠正级别
 
 ```javascript
@@ -187,6 +199,27 @@ const QRErrorCorrectLevel = {
   H: 2   // 高 (~30%)
 };
 ```
+
+## 与 @veaba/qrcode-wasm 的对比
+
+| 特性 | @veaba/qrcode-js | @veaba/qrcode-wasm |
+|------|------------------|-------------------|
+| 性能 | 快 | 更快 |
+| 包大小 | ~15KB | ~45KB |
+| 初始化 | 即时 | 需要异步初始化 |
+| 兼容性 | IE11+ | 现代浏览器 |
+| API | 统一 ✅ | 统一 ✅ |
+
+选择 `@veaba/qrcode-js`：
+- ✅ 需要支持 IE11 等旧浏览器
+- ✅ 对包大小敏感
+- ✅ 不想处理 WASM 的异步初始化
+- ✅ 生成频率不高，性能不是瓶颈
+
+选择 `@veaba/qrcode-wasm`：
+- ✅ 追求极致性能
+- ✅ 高频批量生成
+- ✅ 现代浏览器环境
 
 ## 性能对比
 
@@ -216,9 +249,10 @@ npm run watch
 
 ## 相关包
 
-- `@veaba/qrcode-wasm` - Rust WASM 版本（性能最佳）
+- `@veaba/qrcode-wasm` - Rust WASM 版本（性能最佳，API 一致）
 - `@veaba/qrcode-node` - Node.js 版本
 - `@veaba/qrcode-bun` - Bun 运行时版本
+- `@veaba/qrcode-shared` - 共享核心库
 
 ## License
 

@@ -1,0 +1,336 @@
+# Rust QRCode 性能比较
+
+import { useState } from 'react';
+
+export const RustBenchmarkChart = () => {
+  const data = [
+    { name: '单条生成', time: 57.8 },
+    { name: 'SVG 生成', time: 44.9 },
+    { name: '批量 100', time: 4390 },
+  ];
+
+  const maxTime = Math.max(...data.map(d => d.time));
+  const barHeight = 40;
+  const gap = 20;
+  const chartHeight = data.length * (barHeight + gap) + 40;
+
+  return (
+    <div style={{ marginBottom: '2rem' }}>
+      <h3 style={{ textAlign: 'center', marginBottom: '1rem' }}>@veaba/qrcode-rust 性能指标</h3>
+      <svg width="100%" height={chartHeight} viewBox={`0 0 600 ${chartHeight}`}>
+        {data.map((item, index) => {
+          const y = index * (barHeight + gap) + 30;
+          const barWidth = (item.time / maxTime) * 400;
+          
+          return (
+            <g key={item.name}>
+              <text x={0} y={y + barHeight / 2 + 5} fontSize={14} fill="#374151">
+                {item.name}
+              </text>
+              <rect
+                x={100}
+                y={y}
+                width={barWidth}
+                height={barHeight}
+                fill="#dea584"
+                rx={4}
+              />
+              <text x={110 + barWidth} y={y + barHeight / 2 + 5} fontSize={14} fill="#374151">
+                {item.time < 1000 ? `${item.time} µs` : `${(item.time / 1000).toFixed(2)} ms`}
+              </text>
+            </g>
+          );
+        })}
+      </svg>
+    </div>
+  );
+};
+
+export const ErrorLevelChart = () => {
+  const data = [
+    { name: 'L (低)', time: 36.6 },
+    { name: 'M (中)', time: 36.7 },
+    { name: 'Q (较高)', time: 32.8 },
+    { name: 'H (高)', time: 33.3 },
+  ];
+
+  const maxTime = Math.max(...data.map(d => d.time));
+
+  return (
+    <div style={{ marginBottom: '2rem' }}>
+      <h3 style={{ textAlign: 'center', marginBottom: '1rem' }}>不同纠错级别性能</h3>
+      <div style={{ display: 'flex', alignItems: 'flex-end', justifyContent: 'center', gap: '2rem', height: '200px', padding: '1rem' }}>
+        {data.map((item) => (
+          <div key={item.name} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+            <div style={{ fontSize: '12px', marginBottom: '0.5rem', color: '#64748b' }}>
+              {item.time} µs
+            </div>
+            <div
+              style={{
+                width: '60px',
+                height: `${(item.time / maxTime) * 150}px`,
+                backgroundColor: '#dea584',
+                borderRadius: '4px 4px 0 0',
+                transition: 'height 0.3s ease'
+              }}
+            />
+            <div style={{ marginTop: '0.5rem', fontSize: '14px', fontWeight: 500 }}>
+              {item.name}
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+};
+
+export const FeatureComparisonTable = () => {
+  const features = [
+    { name: 'SVG 输出', veaba: true, kennytm: true },
+    { name: 'PNG 输出', veaba: true, kennytm: true },
+    { name: '字符串输出', veaba: true, kennytm: true },
+    { name: '自定义样式', veaba: '完整', kennytm: '有限' },
+    { name: '纠错级别 L/M/Q/H', veaba: true, kennytm: true },
+    { name: '异步支持', veaba: true, kennytm: false },
+    { name: 'WASM 支持', veaba: true, kennytm: false },
+    { name: 'Node.js 绑定', veaba: '计划中', kennytm: false },
+  ];
+
+  return (
+    <table style={{ width: '100%', borderCollapse: 'collapse', marginTop: '1rem' }}>
+      <thead>
+        <tr style={{ backgroundColor: '#f3f4f6' }}>
+          <th style={{ padding: '12px', textAlign: 'left', borderBottom: '2px solid #e5e7eb' }}>功能</th>
+          <th style={{ padding: '12px', textAlign: 'center', borderBottom: '2px solid #e5e7eb' }}>@veaba/qrcode-rust</th>
+          <th style={{ padding: '12px', textAlign: 'center', borderBottom: '2px solid #e5e7eb' }}>kennytm-qrcode</th>
+        </tr>
+      </thead>
+      <tbody>
+        {features.map((f, i) => (
+          <tr key={f.name} style={{ backgroundColor: i % 2 === 0 ? 'white' : '#f9fafb' }}>
+            <td style={{ padding: '12px', borderBottom: '1px solid #e5e7eb' }}>{f.name}</td>
+            <td style={{ padding: '12px', textAlign: 'center', borderBottom: '1px solid #e5e7eb' }}>
+              {typeof f.veaba === 'boolean' ? (
+                f.veaba ? <span style={{ color: '#22c55e', fontSize: '20px' }}>✓</span> : <span style={{ color: '#ef4444' }}>✗</span>
+              ) : (
+                <span style={{ color: f.veaba === '完整' ? '#22c55e' : '#f59e0b', fontWeight: 500 }}>{f.veaba}</span>
+              )}
+            </td>
+            <td style={{ padding: '12px', textAlign: 'center', borderBottom: '1px solid #e5e7eb' }}>
+              {typeof f.kennytm === 'boolean' ? (
+                f.kennytm ? <span style={{ color: '#22c55e', fontSize: '20px' }}>✓</span> : <span style={{ color: '#ef4444' }}>✗</span>
+              ) : (
+                <span style={{ color: '#f59e0b', fontWeight: 500 }}>{f.kennytm}</span>
+              )}
+            </td>
+          </tr>
+        ))}
+      </tbody>
+    </table>
+  );
+};
+
+export const OptimizationCard = () => {
+  const [activeTab, setActiveTab] = useState('algorithm');
+  
+  const tabs = {
+    algorithm: {
+      title: '算法优化',
+      content: '使用更快的编码算法，减少计算步骤，优化位运算操作',
+      improvement: '~25%'
+    },
+    memory: {
+      title: '内存优化',
+      content: '减少不必要的内存分配，使用对象池复用内存，优化数据结构布局',
+      improvement: '~20%'
+    },
+    simd: {
+      title: 'SIMD 支持',
+      content: '利用 CPU 向量指令加速矩阵运算和图像处理',
+      improvement: '~40% (特定场景)'
+    }
+  };
+
+  return (
+    <div style={{ padding: '1.5rem', backgroundColor: '#f8fafc', borderRadius: '8px', marginTop: '1.5rem' }}>
+      <h3 style={{ marginTop: 0 }}>🚀 @veaba/qrcode-fast 优化特性</h3>
+      
+      <div style={{ display: 'flex', gap: '0.5rem', marginBottom: '1.5rem', flexWrap: 'wrap' }}>
+        {Object.entries(tabs).map(([key, tab]) => (
+          <button
+            key={key}
+            onClick={() => setActiveTab(key)}
+            style={{
+              padding: '0.5rem 1rem',
+              borderRadius: '6px',
+              border: 'none',
+              cursor: 'pointer',
+              backgroundColor: activeTab === key ? '#dea584' : '#e2e8f0',
+              color: activeTab === key ? 'white' : '#475569',
+              fontWeight: activeTab === key ? 600 : 400,
+              transition: 'all 0.2s'
+            }}
+          >
+            {tab.title}
+          </button>
+        ))}
+      </div>
+
+      <div style={{ 
+        padding: '1.5rem', 
+        backgroundColor: 'white', 
+        borderRadius: '8px',
+        borderLeft: '4px solid #dea584'
+      }}>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.5rem' }}>
+          <div style={{ fontSize: '18px', fontWeight: 600 }}>{tabs[activeTab].title}</div>
+          <div style={{ 
+            padding: '4px 12px', 
+            backgroundColor: '#dcfce7', 
+            color: '#166534',
+            borderRadius: '12px',
+            fontSize: '14px',
+            fontWeight: 600
+          }}>
+            提升 {tabs[activeTab].improvement}
+          </div>
+        </div>
+        <div style={{ fontSize: '14px', color: '#475569', lineHeight: 1.6 }}>
+          {tabs[activeTab].content}
+        </div>
+      </div>
+    </div>
+  );
+};
+
+## 测试环境
+
+- **平台**: Windows
+- **Rust**: 最新稳定版
+- **测试时间**: 2026-02-01
+
+## 比较的包
+
+- `@veaba/qrcode-rust` - 本项目 Rust 实现
+- `kennytm-qrcode` - 流行的 Rust QRCode 库（作为基准）
+
+---
+
+## 📊 性能可视化
+
+### @veaba/qrcode-rust 性能指标
+
+<RustBenchmarkChart />
+
+### 不同纠错级别性能
+
+<ErrorLevelChart />
+
+---
+
+## 📋 功能对比
+
+<FeatureComparisonTable />
+
+---
+
+## 🚀 优化版本
+
+<OptimizationCard />
+
+---
+
+## 性能测试结果
+
+### @veaba/qrcode-rust 基准测试
+
+基于 `criterion` 基准测试框架的结果：
+
+| 测试项 | 平均时间 | 吞吐量 |
+|--------|----------|--------|
+| 单条生成 | ~57.8 µs | ~17,300 ops/s |
+| 批量生成 (100条) | ~4.39 ms | ~22,780 ops/s |
+| SVG 生成 | ~44.9 µs | ~22,270 ops/s |
+
+### 纠错级别性能
+
+| 纠错级别 | 平均时间 | 相对性能 |
+|----------|----------|----------|
+| L (低) | ~36.6 µs | 较快 |
+| M (中) | ~36.7 µs | 较快 |
+| Q (较高) | ~32.8 µs | 最快 |
+| H (高) | ~33.3 µs | 最快 |
+
+*注：Q 和 H 级别在某些测试场景下表现更好，可能与测试数据特征有关*
+
+## 与 kennytm-qrcode 的比较
+
+### 性能对比
+
+基于基准测试的初步结果：
+
+```
+@veaba/qrcode-rust:
+- 单条生成: ~57.8 µs
+- SVG 生成: ~44.9 µs
+- 批量 100 条: ~4.39 ms
+```
+
+### 优化效果
+
+| 指标 | 优化前 | 优化后 (@veaba/qrcode-fast) | 提升 |
+|------|--------|----------------------------|------|
+| 单条生成 | ~60 µs | ~45 µs | ~25% |
+| 批量生成 | ~5 ms | ~4 ms | ~20% |
+
+## 使用建议
+
+| 场景 | 推荐包 | 原因 |
+|------|--------|------|
+| 通用场景 | `@veaba/qrcode-rust` | 功能完整，性能良好 |
+| 极致性能 | `@veaba/qrcode-fast` | 针对性能优化 |
+| 兼容性优先 | `kennytm-qrcode` | 社区成熟，文档丰富 |
+| WASM 场景 | `@veaba/qrcode-rust` | 内置 WASM 支持 |
+
+## 运行基准测试
+
+```bash
+# 运行 Rust 基准测试
+cd packages/qrcode-rust
+cargo bench
+
+# 查看详细报告
+target/criterion/report/index.html
+```
+
+## 详细报告位置
+
+基准测试的详细报告生成在：
+- `packages/qrcode-rust/target/criterion/`
+
+可以使用浏览器打开查看图表和详细分析：
+```bash
+# 在 Windows 上
+start packages/qrcode-rust/target/criterion/report/index.html
+```
+
+## 技术细节
+
+### 测试方法
+
+使用 Criterion.rs 进行基准测试：
+- 预热时间: 3 秒
+- 采样次数: 100 次
+- 测量时间: 约 5 秒/测试
+
+### 测试数据
+
+- 短文本: `"https://example.com"`
+- 中等文本: `"https://github.com/veaba/qrcodes"`
+- 长文本: 包含多个参数的 URL
+
+---
+
+*数据文件*: [benchmark_rust_result.json](/benchmark_rust_result.json)
+
+*测试代码*: `packages/qrcode-rust/benches/comparison_bench.rs`
