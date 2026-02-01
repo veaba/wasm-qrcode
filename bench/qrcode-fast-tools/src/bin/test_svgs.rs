@@ -4,7 +4,7 @@ use std::fs;
 
 fn main() {
     // Test qrcode-fast output
-    let fast_svg = fs::read_to_string("bench/qrcode-fast-tools/veaba_qrcode_fast.svg");
+    let fast_svg = fs::read_to_string("bench/rust-tools/veaba_qrcode_fast.svg");
     if let Ok(svg) = fast_svg {
         println!("Testing qrcode-fast SVG...");
         match validate_qr_code(&svg, "Hello World") {
@@ -16,7 +16,7 @@ fn main() {
     }
 
     // Test qrcode-rust output
-    let rust_svg = fs::read_to_string("bench/qrcode-fast-tools/veaba_qrcode_rust.svg");
+    let rust_svg = fs::read_to_string("bench/rust-tools/veaba_qrcode_rust.svg");
     if let Ok(svg) = rust_svg {
         println!("\nTesting qrcode-rust SVG...");
         match validate_qr_code(&svg, "Hello World") {

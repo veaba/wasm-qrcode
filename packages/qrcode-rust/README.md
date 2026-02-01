@@ -183,7 +183,7 @@ cargo test -- --nocapture
 项目包含完整的验证工具，可以验证生成的 QRCode 是否能被正确扫描：
 
 ```bash
-cd ../bench/qrcode-fast-tools
+cd ../bench/rust-tools
 
 # 验证生成结果
 cargo run --release --features validation --bin veaba-qr -- "你的文本"

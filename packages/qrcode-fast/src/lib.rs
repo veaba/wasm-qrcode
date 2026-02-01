@@ -1,8 +1,8 @@
 //! QR Code Fast - 极致性能版本
-//! 
+//!
 //! 目标：在 SVG 生成性能上超越 kennytm/qrcode
-//! 
-//! 注意: 验证和比较工具已迁移到 bench/qrcode-fast-tools
+//!
+//! 注意: 验证和比较工具已迁移到 bench/rust-tools
 
 pub mod qr_code;
 pub mod qr_code_model;

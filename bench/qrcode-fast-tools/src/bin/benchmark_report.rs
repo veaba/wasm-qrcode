@@ -3,7 +3,7 @@
 // 运行方式:
 //   cargo bench --bench svg_benchmark
 //
-// 此工具已迁移到 bench/qrcode-fast-tools
+// 此工具已迁移到 bench/rust-tools
 
 fn main() {
     println!("正在运行基准测试，请稍候...\n");

@@ -3,7 +3,7 @@
 // 使用方法:
 //   cargo run --release --bin compare-svgs -- "你的文本"
 //
-// 注意: 此工具已迁移到 bench/qrcode-fast-tools
+// 注意: 此工具已迁移到 bench/rust-tools
 // 原 qrcode-fast 库已简化为性能测试版本
 
 use qrcode_kennytm::{QrCode, render::svg};
@@ -68,5 +68,5 @@ fn main() {
     println!();
     println!("📁 生成的 SVG 文件: qrcode_kennytm_output.svg ({} bytes)", svg.len());
     println!();
-    println!("提示: 完整的对比工具请查看 bench/qrcode-fast-tools");
+    println!("提示: 完整的对比工具请查看 bench/rust-tools");
 }

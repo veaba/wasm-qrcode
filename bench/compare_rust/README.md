@@ -7,7 +7,7 @@
 ```
 bench/
 ├── compare_rust/          # 本目录 - 基础对比测试
-├── qrcode-fast-tools/     # qrcode-fast 的验证和比较工具
+├── rust-tools/     # qrcode-fast 的验证和比较工具
 ├── kennytm-qrcode/        # kennytm/qrcode 的 git submodule
 └── benchmark-cross-backend/ # 跨后端性能测试
 ```
@@ -24,7 +24,7 @@ cargo bench
 ### 运行 qrcode-fast 工具
 
 ```bash
-cd bench/qrcode-fast-tools
+cd bench/rust-tools
 
 # 生成并验证二维码
 cargo run --release --features validation --bin fast-qr -- "Hello World"
@@ -44,7 +44,7 @@ cargo run --release --features validation --bin verify-kennytm -- "Hello World"
 | qrcode (kennytm) | crates.io | 社区最流行的实现 |
 | qrcode-fast | `../../packages/qrcode-fast` | 我们的高性能版本 |
 
-## 🛠️ 可用工具 (qrcode-fast-tools)
+## 🛠️ 可用工具 (rust-tools)
 
 | 工具 | 说明 |
 |------|------|
@@ -58,14 +58,14 @@ cargo run --release --features validation --bin verify-kennytm -- "Hello World"
 
 ## 📈 性能数据
 
-参见 `qrcode-fast-tools` 生成的报告或运行：
+参见 `rust-tools` 生成的报告或运行：
 
 ```bash
-cd bench/qrcode-fast-tools
+cd bench/rust-tools
 cargo run --bin benchmark-report
 ```
 
 ## 📝 历史记录
 
-- **2026-01-31**: 将 qrcode-fast 的验证和比较工具迁移到 `bench/qrcode-fast-tools`
+- **2026-01-31**: 将 qrcode-fast 的验证和比较工具迁移到 `bench/rust-tools`
 - **2026-01-31**: 简化 qrcode-fast 主包，保持核心功能

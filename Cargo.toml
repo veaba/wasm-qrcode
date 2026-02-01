@@ -1,3 +1,3 @@
 [workspace]
-members = ["packages/qrcode-rust", "packages/qrcode-fast", "packages/qrcode-wasm", "bench/qrcode-fast-tools"]
+members = ["packages/qrcode-rust", "packages/qrcode-fast", "packages/qrcode-wasm", "bench/rust-tools"]
 resolver = "2"

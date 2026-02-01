@@ -10,22 +10,26 @@ description: QRCode monorepo development guide. Use when working with the @veaba
 This is a pnpm monorepo containing QRCode generators for multiple runtimes and platforms:
 
 ### Frontend Packages (Browser)
+
 - `@veaba/qrcode-js` - TypeScript, bundled with tsdown, browser-compatible
 - `@veaba/qrcode-wasm` - Rust compiled to WASM for browser use
 
 **Note**: Both frontend packages must have identical APIs.
 
 ### Backend Packages (Node.js/Bun)
+
 - `@veaba/qrcode-node` - Node.js runtime, ES modules
 - `@veaba/qrcode-bun` - Bun runtime, TypeScript
 
 ### Rust Crates (Pure Rust, published to crates.io)
+
 - `@veaba/qrcode-rust` - Pure Rust QRCode generator (Rust port of qrcode-js)
 - `@veaba/qrcode-fast` - Optimized Rust QRCode generator (competes with kennytm-qrcode)
 
 **Note**: These are pure Rust libraries without WASM bindings. Use `cargo` to build and test.
 
 ### Shared Package
+
 - `@veaba/qrcode-shared` - Core logic, private (not published)
 
 ## Environment Requirements
@@ -40,6 +44,7 @@ This is a pnpm monorepo containing QRCode generators for multiple runtimes and p
 ## Common Commands
 
 ### Development
+
 ```bash
 # Install dependencies
 pnpm install
@@ -52,6 +57,7 @@ pnpm run watch
 ```
 
 ### Testing
+
 ```bash
 # Run all tests
 pnpm test
@@ -74,6 +80,7 @@ cd packages/qrcode-fast && cargo test
 ```
 
 ### Benchmarking
+
 ```bash
 # All benchmarks
 pnpm run benchmark
@@ -95,6 +102,7 @@ cd packages/qrcode-fast && cargo bench
 ```
 
 ### Documentation
+
 ```bash
 # Dev server
 pnpm run docs:dev
@@ -107,6 +115,7 @@ pnpm run docs:preview
 ```
 
 ### Publishing
+
 ```bash
 # Check publish readiness
 pnpm run publish:check
@@ -121,6 +130,7 @@ pnpm run publish:all
 ## Package-Specific Builds
 
 ### @veaba/qrcode-js
+
 ```bash
 cd packages/qrcode-js
 pnpm run build    # tsdown
@@ -128,6 +138,7 @@ pnpm run watch    # tsdown --watch
 ```
 
 ### @veaba/qrcode-wasm
+
 ```bash
 cd packages/qrcode-wasm
 pnpm run build           # wasm-pack build --target web
@@ -136,6 +147,7 @@ pnpm run build:bundler   # wasm-pack build --target bundler
 ```
 
 ### @veaba/qrcode-node
+
 ```bash
 cd packages/qrcode-node
 pnpm run build    # tsc
@@ -143,6 +155,7 @@ pnpm run watch    # tsc --watch
 ```
 
 ### @veaba/qrcode-bun
+
 ```bash
 cd packages/qrcode-bun
 pnpm run build    # tsc
@@ -151,6 +164,7 @@ pnpm run benchmark # bun run benchmark.ts
 ```
 
 ### @veaba/qrcode-rust (Pure Rust)
+
 ```bash
 cd packages/qrcode-rust
 cargo build --release
@@ -159,6 +173,7 @@ cargo bench               # Run benchmarks
 ```
 
 ### @veaba/qrcode-fast (Pure Rust)
+
 ```bash
 cd packages/qrcode-fast
 cargo build --release
@@ -169,22 +184,26 @@ cargo bench               # Run benchmarks
 ## API Consistency
 
 ### Frontend Packages
+
 **Critical**: `@veaba/qrcode-js` and `@veaba/qrcode-wasm` must have identical APIs.
 
 When modifying either:
+
 1. Check the other package's API
 2. Update both if needed
 3. Verify with tests
 
 ### Backend Packages
+
 **Critical**: `@veaba/qrcode-node` and `@veaba/qrcode-bun` must have identical public APIs (except runtime-specific methods).
 
 Verified API consistency (2026-02-02):
+
 - ✅ Core QRCode class: `text`, `correctLevel`, `typeNumber`, `moduleCount`, `isDark()`, `getModuleCount()`, `toSVG()`, `toStyledSVG()`
 - ✅ Constants: `QRErrorCorrectLevel`, `QRMode`
 - ✅ Style generators: `generateRoundedQRCode`, `generateQRCodeWithLogoArea`, `generateGradientQRCode`, `generateWechatStyleQRCode`, `generateDouyinStyleQRCode`, `generateAlipayStyleQRCode`, `generateXiaohongshuStyleQRCode`, `generateCyberpunkStyleQRCode`, `generateRetroStyleQRCode`, `generateMinimalStyleQRCode`
 - ✅ Batch/Async: `generateBatchQRCodes`, `generateQRCodeAsync`, `generateBatchAsync`
-- ⚠️ Platform-specific: 
+- ⚠️ Platform-specific:
   - `qrcode-node`: `toPNGBuffer()` - returns Node.js Buffer
   - `qrcode-bun`: `saveToFile()`, `savePNGToFile()`, `getModulesJSON()` - Bun file operations
 
@@ -193,16 +212,17 @@ Test coverage: 218 tests passing across both packages.
 ## Benchmark Reports
 
 Reports are generated in:
+
 - `/docs/bench/backend-bench.md` - Backend package comparison
 - `/docs/bench/frontend-bench.md` - Frontend package comparison
 - `/docs/bench/compare-rust.md` - kennytm-qrcode vs qrcode-fast
 - `/docs/public/` - JSON data and generated assets
 
-### bench/qrcode-fast-tools
+### bench/rust-tools
 
 Rust benchmark tools for comparing QRCode implementations.
 
-**Location**: `bench/qrcode-fast-tools/`
+**Location**: `bench/rust-tools/`
 
 **Available Tools** (13 binaries):
 
@@ -223,8 +243,9 @@ Rust benchmark tools for comparing QRCode implementations.
 | `benchmark-report` | Generate benchmark reports |
 
 **Usage**:
+
 ```bash
-cd bench/qrcode-fast-tools
+cd bench/rust-tools
 
 # Build all tools
 cargo build --release
@@ -260,6 +281,7 @@ cargo run --release --bin debug-finder -- logic
 ## Scripts Directory
 
 `/scripts` contains automation for:
+
 - `test.js` - Test runner
 - `benchmark.js` - Benchmark runner
 - `benchmark-clean.js` - Clean benchmark artifacts

@@ -3,7 +3,7 @@
 // 使用方法:
 //   cargo run --release --features validation --bin fast-qr -- "你的文本"
 //
-// 此工具已迁移到 bench/qrcode-fast-tools
+// 此工具已迁移到 bench/rust-tools
 
 use qrcode_kennytm::QrCode;
 #[cfg(feature = "validation")]

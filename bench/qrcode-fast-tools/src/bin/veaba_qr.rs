@@ -1,5 +1,5 @@
 // 使用 @veaba/qrcode-rust 和 @veaba/qrcode-fast 生成二维码
-// 并使用 qrcode-fast-tools/bin/validate_qr.rs 验证
+// 并使用 rust-tools/bin/validate_qr.rs 验证
 //
 // 使用方法:
 //   cargo run --release --features validation --bin veaba-qr -- "你的文本"

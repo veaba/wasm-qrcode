@@ -16,7 +16,7 @@ qrcodes/
 │   ├── bench/              # Benchmark reports
 │   └── public/             # Static assets
 ├── bench/                  # Benchmark code
-│   ├── qrcode-fast-tools/  # Rust benchmark tools
+│   ├── rust-tools/  # Rust benchmark tools
 │   ├── benchmark-cross-backend/
 │   ├── frontend-benchmark/
 │   └── kennytm-qrcode/
@@ -63,20 +63,23 @@ qrcode-fast (Rust crate, independent)
 ## Technology Stack
 
 ### JavaScript/TypeScript
+
 - **Bundler**: tsdown (for qrcode-js), tsc (for others)
 - **Test**: Vitest + Playwright
 - **Docs**: Rspress
 
 ### Rust
+
 - **Build**: cargo, wasm-pack
 - **WASM**: wasm-bindgen
 - **Benchmark**: criterion
 
 ### Package Management
+
 - **Manager**: pnpm
 - **Workspace**: pnpm-workspace.yaml
 
-## Benchmark Tools (bench/qrcode-fast-tools)
+## Benchmark Tools (bench/rust-tools)
 
 Rust-based benchmark tools for comparing QRCode implementations.
 
@@ -101,7 +104,7 @@ Rust-based benchmark tools for comparing QRCode implementations.
 ### Usage
 
 ```bash
-cd bench/qrcode-fast-tools
+cd bench/rust-tools
 cargo build --release
 cargo run --release --bin simple-qr -- "Hello World"
 ```

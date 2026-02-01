@@ -54,7 +54,7 @@ bench/
 │   └── dist/
 ├── kennytm-qrcode/               # 外部对比包（社区 Rust QRCode，勿动）
 │   └── src/
-└── qrcode-fast-tools/            # 二维码验证工具集
+└── rust-tools/            # 二维码验证工具集
     └── src/bin/
         ├── validate-qr.rs         # 二维码生成+验证工具
         └── verified-qr.rs         # 高性能二维码生成器
@@ -84,12 +84,14 @@ PK 测试对比以下 3 个后端包：
 | `@veaba/qrcode-fast` | Rust | 优化的 Rust 实现 |
 
 **测试维度**：
+
 - 单条生成（short/medium/long/unicode）
 - 批量生成（10/100/1000 条）
 - SVG 输出
 - 纠错级别（L/M/Q/H）
 
 **运行命令**：
+
 ```bash
 # 完整 PK 测试（包含 Rust benchmark，耗时约 5 分钟）
 cd bench/backend-benchmark-pk

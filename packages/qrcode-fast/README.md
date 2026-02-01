@@ -1,7 +1,7 @@
 # qrcode-fast 🚀
 
 > **高性能 Rust QRCode 生成库**
-> 
+>
 > 🔥 **比 kennytm/qrcode 快 3 倍！**
 
 [![Rust](https://img.shields.io/badge/Rust-1.70%2B-orange.svg)](https://www.rust-lang.org/)
@@ -15,7 +15,7 @@
 此包已精简为核心库。验证和比较工具已迁移到：
 
 ```
-bench/qrcode-fast-tools/
+bench/rust-tools/
 ```
 
 ## 🚀 使用方法
@@ -32,10 +32,10 @@ let svg = qr.get_svg();
 
 ### 使用命令行工具
 
-工具已迁移到 `bench/qrcode-fast-tools`：
+工具已迁移到 `bench/rust-tools`：
 
 ```bash
-cd bench/qrcode-fast-tools
+cd bench/rust-tools
 
 # 生成并验证二维码
 cargo run --release --features validation --bin fast-qr -- "Hello World"
@@ -73,19 +73,19 @@ packages/qrcode-fast/
 
 ## 🛠️ 工具迁移说明
 
-原 `src/bin/` 下的工具已迁移至 `bench/qrcode-fast-tools/src/bin/`：
+原 `src/bin/` 下的工具已迁移至 `bench/rust-tools/src/bin/`：
 
 | 原位置 | 新位置 |
 |--------|--------|
-| `src/bin/svg_gen.rs` | `bench/qrcode-fast-tools/src/bin/svg_gen.rs` |
-| `src/bin/compare_svgs.rs` | `bench/qrcode-fast-tools/src/bin/compare_svgs.rs` |
-| `src/bin/validate_qr.rs` | `bench/qrcode-fast-tools/src/bin/validate_qr.rs` |
-| `src/bin/fast_qr.rs` | `bench/qrcode-fast-tools/src/bin/fast_qr.rs` |
-| `src/bin/simple_qr.rs` | `bench/qrcode-fast-tools/src/bin/simple_qr.rs` |
-| `src/bin/verify_kennytm.rs` | `bench/qrcode-fast-tools/src/bin/verify_kennytm.rs` |
-| `src/bin/verified_qr.rs` | `bench/qrcode-fast-tools/src/bin/verified_qr.rs` |
-| `src/bin/benchmark_report.rs` | `bench/qrcode-fast-tools/src/bin/benchmark_report.rs` |
-| `src/validation.rs` | `bench/qrcode-fast-tools/src/validation.rs` |
+| `src/bin/svg_gen.rs` | `bench/rust-tools/src/bin/svg_gen.rs` |
+| `src/bin/compare_svgs.rs` | `bench/rust-tools/src/bin/compare_svgs.rs` |
+| `src/bin/validate_qr.rs` | `bench/rust-tools/src/bin/validate_qr.rs` |
+| `src/bin/fast_qr.rs` | `bench/rust-tools/src/bin/fast_qr.rs` |
+| `src/bin/simple_qr.rs` | `bench/rust-tools/src/bin/simple_qr.rs` |
+| `src/bin/verify_kennytm.rs` | `bench/rust-tools/src/bin/verify_kennytm.rs` |
+| `src/bin/verified_qr.rs` | `bench/rust-tools/src/bin/verified_qr.rs` |
+| `src/bin/benchmark_report.rs` | `bench/rust-tools/src/bin/benchmark_report.rs` |
+| `src/validation.rs` | `bench/rust-tools/src/validation.rs` |
 
 ## 📄 License
 
