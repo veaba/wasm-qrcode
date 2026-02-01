@@ -16,6 +16,10 @@ qrcodes/
 │   ├── bench/              # Benchmark reports
 │   └── public/             # Static assets
 ├── bench/                  # Benchmark code
+│   ├── qrcode-fast-tools/  # Rust benchmark tools
+│   ├── benchmark-cross-backend/
+│   ├── frontend-benchmark/
+│   └── kennytm-qrcode/
 ├── scripts/                # Automation scripts
 └── skills/                 # Development skills
 ```
@@ -71,3 +75,35 @@ qrcode-fast (Rust crate, independent)
 ### Package Management
 - **Manager**: pnpm
 - **Workspace**: pnpm-workspace.yaml
+
+## Benchmark Tools (bench/qrcode-fast-tools)
+
+Rust-based benchmark tools for comparing QRCode implementations.
+
+### Available Binaries
+
+| Binary | Category | Purpose |
+|--------|----------|---------|
+| `simple-qr` | Generate | Basic kennytm QR generation |
+| `fast-qr` | Generate | Optimized QR generation |
+| `real-qr` | Generate | Full-featured QR generation |
+| `validate-qr` | Generate | Generate with validation |
+| `veaba-qr` | Generate | Test @veaba packages |
+| `compare-impls` | Compare | Compare qrcode-rust vs qrcode-fast |
+| `compare-svgs` | Compare | SVG performance comparison |
+| `debug-qr` | Debug | QR code debugging |
+| `debug-finder` | Debug | Finder pattern debugging |
+| `debug-compare` | Debug | Implementation comparison |
+| `verify-kennytm` | Verify | Verify kennytm output |
+| `test-svgs` | Verify | Test SVG files |
+| `benchmark-report` | Report | Generate benchmark reports |
+
+### Usage
+
+```bash
+cd bench/qrcode-fast-tools
+cargo build --release
+cargo run --release --bin simple-qr -- "Hello World"
+```
+
+**Note**: Consolidated from 29 to 13 binaries (2026-02-02).

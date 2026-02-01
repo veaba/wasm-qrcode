@@ -25,9 +25,8 @@
     "publish:dry-run": "node scripts/publish.js --dry-run",
     "publish:help": "echo '查看 PUBLISH.md 获取详细发包指南'",
     "docs:dev": "rspress dev",
-    "docs:dev1": "cd docs && rspress dev",
-    "docs:build": "cd docs && rspress build",
-    "docs:preview": "cd docs && rspress preview"
+    "docs:build": "rspress build",
+    "docs:preview": "rspress preview"
   },
   "devDependencies": {
     "@types/node": "^25.1.0",

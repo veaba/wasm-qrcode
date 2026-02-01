@@ -27,7 +27,9 @@
       "Bash(for:*)",
       "Bash(do echo:*)",
       "Bash(done)",
-      "Bash(python:*)"
+      "Bash(python:*)",
+      "Bash(git stash:*)",
+      "Bash(git checkout:*)"
     ]
   }
 }

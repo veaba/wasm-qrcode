@@ -168,12 +168,27 @@ cargo bench               # Run benchmarks
 
 ## API Consistency
 
+### Frontend Packages
 **Critical**: `@veaba/qrcode-js` and `@veaba/qrcode-wasm` must have identical APIs.
 
 When modifying either:
 1. Check the other package's API
 2. Update both if needed
 3. Verify with tests
+
+### Backend Packages
+**Critical**: `@veaba/qrcode-node` and `@veaba/qrcode-bun` must have identical public APIs (except runtime-specific methods).
+
+Verified API consistency (2026-02-02):
+- ✅ Core QRCode class: `text`, `correctLevel`, `typeNumber`, `moduleCount`, `isDark()`, `getModuleCount()`, `toSVG()`, `toStyledSVG()`
+- ✅ Constants: `QRErrorCorrectLevel`, `QRMode`
+- ✅ Style generators: `generateRoundedQRCode`, `generateQRCodeWithLogoArea`, `generateGradientQRCode`, `generateWechatStyleQRCode`, `generateDouyinStyleQRCode`, `generateAlipayStyleQRCode`, `generateXiaohongshuStyleQRCode`, `generateCyberpunkStyleQRCode`, `generateRetroStyleQRCode`, `generateMinimalStyleQRCode`
+- ✅ Batch/Async: `generateBatchQRCodes`, `generateQRCodeAsync`, `generateBatchAsync`
+- ⚠️ Platform-specific: 
+  - `qrcode-node`: `toPNGBuffer()` - returns Node.js Buffer
+  - `qrcode-bun`: `saveToFile()`, `savePNGToFile()`, `getModulesJSON()` - Bun file operations
+
+Test coverage: 218 tests passing across both packages.
 
 ## Benchmark Reports
 
@@ -182,6 +197,45 @@ Reports are generated in:
 - `/docs/bench/frontend-bench.md` - Frontend package comparison
 - `/docs/bench/compare-rust.md` - kennytm-qrcode vs qrcode-fast
 - `/docs/public/` - JSON data and generated assets
+
+### bench/qrcode-fast-tools
+
+Rust benchmark tools for comparing QRCode implementations.
+
+**Location**: `bench/qrcode-fast-tools/`
+
+**Available Tools** (13 binaries):
+
+| Binary | Purpose |
+|--------|---------|
+| `simple-qr` | Basic QR generation with kennytm |
+| `fast-qr` | Optimized QR generation |
+| `real-qr` | Full-featured QR generation |
+| `validate-qr` | Generate and validate QR codes |
+| `veaba-qr` | Test @veaba packages |
+| `compare-impls` | Compare qrcode-rust vs qrcode-fast (modes: modules, full) |
+| `compare-svgs` | SVG performance comparison |
+| `debug-qr` | QR code debugging |
+| `debug-finder` | Finder pattern debugging (modes: basic, logic) |
+| `debug-compare` | Detailed implementation comparison (modes: basic, detail) |
+| `verify-kennytm` | Verify kennytm output |
+| `test-svgs` | Test SVG files |
+| `benchmark-report` | Generate benchmark reports |
+
+**Usage**:
+```bash
+cd bench/qrcode-fast-tools
+
+# Build all tools
+cargo build --release
+
+# Run specific tool
+cargo run --release --bin simple-qr -- "Hello World"
+cargo run --release --bin compare-impls -- modules "Test"
+cargo run --release --bin debug-finder -- logic
+```
+
+**Note**: Tools were consolidated from 29 to 13 binaries (2026-02-02). Removed obsolete scripts that depended on private APIs.
 
 ## Testing Outputs
 

@@ -1,0 +1,15 @@
+{
+  "name": "backend-benchmark-pk",
+  "version": "1.0.0",
+  "description": "后端 QRCode 包 PK 基准测试 - 对比多个后端实现的性能",
+  "type": "module",
+  "scripts": {
+    "bench": "tsx index.ts",
+    "bench:node": "tsx index.ts --node",
+    "bench:bun": "bun run index.ts",
+    "bench:rust": "cd ../../packages/qrcode-rust && cargo bench --bench comparison_bench"
+  },
+  "devDependencies": {
+    "tsx": "^4.0.0"
+  }
+}

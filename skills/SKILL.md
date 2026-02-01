@@ -39,17 +39,86 @@
 
 - `/bench` 目录基准测试的代码
 - `/scripts` 是用于测试的脚本
+- **详细指南**: 参见 `skills/BENCHMARK.md`
 
-### rust 版本比较
+### 基准测试结构（已整理）
 
-- 查看 `bench/kennytm-qrcode`  和  `qrcode-fast-tools`，对于两者，我们进行基准测试，比较 `@veaba/qrcode-fast` 和 `kennytm-qrcode`
+```
+bench/
+├── backend-benchmark-pk/          # 后端包 PK 基准测试（多包对比）
+│   ├── index.ts                   # 主测试脚本，对比 3 个包
+│   └── package.json
+├── frontend-benchmark/            # 前端包基准测试
+│   ├── index.ts                   # TypeScript 版本（需构建后运行）
+│   ├── benchmark.cjs              # CommonJS 版本（直接运行）
+│   └── dist/
+├── kennytm-qrcode/               # 外部对比包（社区 Rust QRCode，勿动）
+│   └── src/
+└── qrcode-fast-tools/            # 二维码验证工具集
+    └── src/bin/
+        ├── validate-qr.rs         # 二维码生成+验证工具
+        └── verified-qr.rs         # 高性能二维码生成器
+```
 
-### bench 报告的输出
+**注意**: `benchmark-cross-backend/` 目录已删除（功能被 PK 测试覆盖）
 
-- `/docs/bench/backend-bench.md` 用于后端包的比较
-- `/docs/bench/frontend-bench.md` 用于前端包的比较
-- `/docs/bench/compare-rust.md` 用于比较 `kennytm-qrcode` 和 `qrcode-fast` 的性能
-- 有产生的 `markdown`报告可以放在 `/docs/public` 中
+### 各包基准测试位置
+
+| 包名 | 基准测试路径 | 测试框架 | 输出文件 |
+|------|-------------|---------|---------|
+| `@veaba/qrcode-node` | `packages/qrcode-node/benchmark/index.js` | 自定义 | `benchmark/benchmark_result.json` |
+| `@veaba/qrcode-bun` | `packages/qrcode-bun/benchmark/index.ts` | 自定义 | `benchmark_result.json` |
+| `@veaba/qrcode-js` | `bench/frontend-benchmark/benchmark.cjs` | 自定义 | `frontend_benchmark_result.json` |
+| `@veaba/qrcode-rust` | `packages/qrcode-rust/benches/` | Criterion | `target/criterion/` |
+| `@veaba/qrcode-fast` | `packages/qrcode-fast/benches/` | Criterion | `target/criterion/` |
+| `kennytm-qrcode` | `bench/kennytm-qrcode/` | Criterion | - |
+
+### PK 基准测试（多包对比）
+
+PK 测试对比以下 3 个后端包：
+
+| 包名 | 运行时 | 说明 |
+|------|--------|------|
+| `@veaba/qrcode-node` | Node.js | JavaScript 实现 |
+| `@veaba/qrcode-bun` | Bun | TypeScript 实现 |
+| `@veaba/qrcode-fast` | Rust | 优化的 Rust 实现 |
+
+**测试维度**：
+- 单条生成（short/medium/long/unicode）
+- 批量生成（10/100/1000 条）
+- SVG 输出
+- 纠错级别（L/M/Q/H）
+
+**运行命令**：
+```bash
+# 完整 PK 测试（包含 Rust benchmark，耗时约 5 分钟）
+cd bench/backend-benchmark-pk
+npx tsx index.ts
+
+# 快速 PK 测试（使用缓存的 Rust 结果）
+npx tsx index-fast.ts
+```
+
+### 输出文件位置
+
+所有基准测试结果保存在 `docs/public/` 目录：
+
+| 文件 | 说明 | 大小(典型) |
+|------|------|-----------|
+| `frontend_benchmark_result.json` | 前端 @veaba/qrcode-js 测试结果 | ~2 KB |
+| `benchmark_node_result.json` | Node.js 后端测试结果 | ~2.5 KB |
+| `benchmark_bun_result.json` | Bun 后端测试结果 | ~2.8 KB |
+| `backend_benchmark_pk.json` | PK 完整对比结果 | ~13 KB |
+| `backend_benchmark_pk_summary.json` | PK 摘要结果 | ~7 KB |
+| `benchmark_summary.json` | 所有测试汇总 | ~0.1 KB |
+
+### bench 文档
+
+- `/docs/bench/index.mdx` - 基准测试总览
+- `/docs/bench/front-bench.mdx` - 前端包比较
+- `/docs/bench/backend-bench.mdx` - 后端包比较（Node.js vs Bun）
+- `/docs/bench/backend-pk.mdx` - 后端包 PK 对比（多包对比）
+- `/docs/bench/compare-rust.mdx` - Rust 包对比（kennytm vs qrcode-fast）
 
 ## 测试
 
@@ -60,9 +129,11 @@
 ## 文档
 
 - `/docs` 目录，包含文档，使用  `rspress` 来驱动
-- `/docs/bench` 中包含下面三个文件
-  - `/docs/bench/backend-bench.md` 用于后端包的比较
-  - `/docs/bench/frontend-bench.md` 用于前端包的比较
-  - `/docs/bench/compare-rust.md` 用于比较 `kennytm-qrcode` 和 `qrcode-fast` 的性能
+- `/docs/bench` 中包含下面文件
+  - `/docs/bench/index.mdx` - 基准测试总览
+  - `/docs/bench/front-bench.mdx` - 前端包比较
+  - `/docs/bench/backend-bench.mdx` - 后端包比较
+  - `/docs/bench/backend-pk.mdx` - PK 多包对比
+  - `/docs/bench/compare-rust.mdx` - Rust 包对比
 - `/docs` 中的 `.mdx` 可以使用  `react+markdown` 语法
 - `/docs/public`目录，可以放一些必要的基准测试数据，比如对后端版本产生的 `json` 数据
