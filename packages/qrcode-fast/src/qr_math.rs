@@ -3,6 +3,71 @@
 /// Galois Field 数学运算
 pub struct QRMath;
 
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_gexp_basic() {
+        // gexp(0) 应该等于 1
+        assert_eq!(QRMath::gexp(0), 1);
+        // gexp(1) 应该等于 2 (α^1)
+        assert_eq!(QRMath::gexp(1), 2);
+        // gexp(2) 应该等于 4 (α^2)
+        assert_eq!(QRMath::gexp(2), 4);
+    }
+
+    #[test]
+    fn test_gexp_overflow() {
+        // gexp(255) 应该等于 1 (α^255 = 1)
+        assert_eq!(QRMath::gexp(255), 1);
+        // gexp(256) 应该等于 2 (α^256 = α^1)
+        assert_eq!(QRMath::gexp(256), 2);
+    }
+
+    #[test]
+    fn test_gexp_negative() {
+        // gexp(-1) 应该等于 α^254
+        assert_eq!(QRMath::gexp(-1), QRMath::gexp(254));
+    }
+
+    #[test]
+    fn test_glog_basic() {
+        // glog(1) 应该等于 0
+        assert_eq!(QRMath::glog(1), 0);
+        // glog(2) 应该等于 1
+        assert_eq!(QRMath::glog(2), 1);
+        // glog(4) 应该等于 2
+        assert_eq!(QRMath::glog(4), 2);
+    }
+
+    #[test]
+    fn test_glog_gexp_inverse() {
+        // glog(gexp(x)) == x (mod 255)
+        for i in 0..255 {
+            let exp = QRMath::gexp(i);
+            let log = QRMath::glog(exp);
+            assert_eq!(log, i, "glog(gexp({})) failed", i);
+        }
+    }
+
+    #[test]
+    fn test_gexp_glog_inverse() {
+        // gexp(glog(x)) == x (for x != 0)
+        for i in 1..256 {
+            let log = QRMath::glog(i);
+            let exp = QRMath::gexp(log);
+            assert_eq!(exp, i, "gexp(glog({})) failed", i);
+        }
+    }
+
+    #[test]
+    #[should_panic(expected = "glog(0)")]
+    fn test_glog_zero_panics() {
+        QRMath::glog(0);
+    }
+}
+
 static mut EXP_TABLE: [i32; 256] = [0; 256];
 static mut LOG_TABLE: [i32; 256] = [0; 256];
 static INIT: std::sync::Once = std::sync::Once::new();

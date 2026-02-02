@@ -191,13 +191,39 @@ mod tests {
             "Email: test@example.com | Phone: +1-234-567-8900",
             "WiFi:T:WPA;S:MyNetwork;P:MyPassword;;",
         ];
-        
+
         for text in test_cases {
             let mut qr = QRCode::new();
             qr.make_code(text);
-            
+
             assert!(qr.module_count > 0, "文本 '{}' 应该生成二维码", text);
             println!("文本 '{}' -> 类型号 {}, 模块数 {}", text, qr.type_number, qr.module_count);
+        }
+    }
+
+    #[test]
+    fn test_get_rs_blocks() {
+        use crate::qr_rs_block::get_rs_blocks;
+
+        // 测试类型号 1，所有纠错级别
+        for level in [QRErrorCorrectLevel::L, QRErrorCorrectLevel::M,
+                      QRErrorCorrectLevel::Q, QRErrorCorrectLevel::H] {
+            let blocks = get_rs_blocks(1, level);
+            assert!(!blocks.is_empty(), "类型号 1 纠错级别 {:?} 应该有 RS 块", level);
+        }
+
+        // 测试类型号 2，所有纠错级别
+        for level in [QRErrorCorrectLevel::L, QRErrorCorrectLevel::M,
+                      QRErrorCorrectLevel::Q, QRErrorCorrectLevel::H] {
+            let blocks = get_rs_blocks(2, level);
+            assert!(!blocks.is_empty(), "类型号 2 纠错级别 {:?} 应该有 RS 块", level);
+        }
+
+        // 测试类型号 10，所有纠错级别
+        for level in [QRErrorCorrectLevel::L, QRErrorCorrectLevel::M,
+                      QRErrorCorrectLevel::Q, QRErrorCorrectLevel::H] {
+            let blocks = get_rs_blocks(10, level);
+            assert!(!blocks.is_empty(), "类型号 10 纠错级别 {:?} 应该有 RS 块", level);
         }
     }
 }

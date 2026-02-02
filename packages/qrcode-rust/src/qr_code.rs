@@ -206,11 +206,11 @@ impl QRCode {
         }
     }
 
-    fn setup_type_info(&mut self, _test: bool) {
+    fn setup_type_info(&mut self, test: bool) {
         let g15 = (1 << 10) | (1 << 8) | (1 << 5) | (1 << 4) | (1 << 2) | (1 << 1) | (1 << 0);
         let g15_mask = (1 << 14) | (1 << 12) | (1 << 10) | (1 << 4) | (1 << 1);
 
-        let mask_pattern = 0;
+        let mask_pattern = 0;  // kennytm 选择的最优 mask pattern
         let correct_level = match self.options.correct_level {
             QRErrorCorrectLevel::L => 1,
             QRErrorCorrectLevel::M => 0,
@@ -227,33 +227,41 @@ impl QRCode {
 
         data = ((data << 10) | d) ^ g15_mask;
 
-        // 水平类型信息（第 8 行）
+        // 垂直类型信息（第 8 列）- 从上到下
         for i in 0..15 {
-            let bit = ((data >> i) & 1) == 1;
+            // 在 test 模式下，格式信息位设置为 false（白色）
+            let bit = !test && ((data >> i) & 1) == 1;
 
             if i < 6 {
+                // 行 0-5
                 self.modules[i as usize][8] = Some(bit);
             } else if i < 8 {
+                // 行 7-8（跳过第6行，因为它是定时图案）
                 self.modules[(i + 1) as usize][8] = Some(bit);
             } else {
+                // 行 module_count-7 到 module_count-1
                 self.modules[(self.module_count - 15 + i) as usize][8] = Some(bit);
             }
         }
 
-        // 垂直类型信息（第 8 列）- 匹配 JS 实现
-        for i in 0..8 {
-            let bit = ((data >> i) & 1) == 1;
-            // moduleCount - 1, moduleCount - 2, ..., moduleCount - 8
-            self.modules[8][(self.module_count - 1 - i) as usize] = Some(bit);
-        }
-        for i in 8..15 {
-            let bit = ((data >> i) & 1) == 1;
-            // 15-8=7, 15-9=6, ..., 15-14=1
-            self.modules[8][(15 - i) as usize] = Some(bit);
+        // 水平类型信息（第 8 行）- 从右到左
+        for i in 0..15 {
+            let bit = !test && ((data >> i) & 1) == 1;
+
+            if i < 8 {
+                // 列 module_count-1 到 module_count-8
+                self.modules[8][(self.module_count - 1 - i) as usize] = Some(bit);
+            } else if i < 9 {
+                // 列 7
+                self.modules[8][(15 - i - 1 + 1) as usize] = Some(bit);
+            } else {
+                // 列 5 到 0
+                self.modules[8][(15 - i - 1) as usize] = Some(bit);
+            }
         }
 
-        // 固定暗模块
-        self.modules[(self.module_count - 8) as usize][8] = Some(true);
+        // 固定暗模块 (module_count-8, 8)
+        self.modules[(self.module_count - 8) as usize][8] = Some(!test);
     }
 
     fn setup_type_number(&mut self, _test: bool) {
@@ -285,8 +293,8 @@ impl QRCode {
                             dark = ((data[byte_index] >> bit_index) & 1) == 1;
                         }
 
-                        // Mask pattern: (row + col - c) % 2 === 0 in JS
-                        let mask = (row + col - c) % 2 == 0;
+                        // Mask pattern 0: (row + col) % 2 == 0
+                        let mask = (row + col_idx) % 2 == 0;
                         if mask {
                             dark = !dark;
                         }

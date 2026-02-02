@@ -24,6 +24,8 @@ image-support = ["image"]
 criterion = { version = "0.5", features = ["html_reports"] }
 # kennytm 的 qrcode crate 用于对比测试
 qrcode-kennytm = { package = "qrcode", version = "0.14" }
+# 本地 qrcode-fast 用于对比测试
+qrcode-fast = { path = "../qrcode-fast" }
 
 [[bench]]
 name = "qrcode_bench"

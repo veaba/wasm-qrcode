@@ -38,6 +38,7 @@ export default defineConfig({
             { text: '@veaba/qrcode-node', link: '/guide/qrcode-node' },
             { text: '@veaba/qrcode-bun (Bun)', link: '/guide/qrcode-bun' },
             { text: '@veaba/qrcode-rust', link: '/guide/qrcode-rust' },
+            { text: '@veaba/qrcode-fast ⚡', link: '/guide/qrcode-fast' },
           ],
         },
         {

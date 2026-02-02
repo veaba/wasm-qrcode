@@ -172,7 +172,7 @@ impl QRCode {
     }
 
     /// 设置类型信息
-    fn setup_type_info(&mut self, _test: bool) {
+    fn setup_type_info(&mut self, test: bool) {
         let g15 = (1 << 10) | (1 << 8) | (1 << 5) | (1 << 4) | (1 << 2) | (1 << 1) | (1 << 0);
         let g15_mask = (1 << 14) | (1 << 12) | (1 << 10) | (1 << 4) | (1 << 1);
 
@@ -193,9 +193,9 @@ impl QRCode {
 
         data = ((data << 10) | d) ^ g15_mask;
 
-        // 水平类型信息
+        // 垂直类型信息（第 8 列）- 从上到下
         for i in 0..15 {
-            let bit = ((data >> i) & 1) == 1;
+            let bit = !test && ((data >> i) & 1) == 1;
             if i < 6 {
                 self.set_module(i, 8, bit);
             } else if i < 8 {
@@ -205,18 +205,20 @@ impl QRCode {
             }
         }
 
-        // 垂直类型信息
-        for i in 0..8 {
-            let bit = ((data >> i) & 1) == 1;
-            self.set_module(8, self.module_count - 1 - i, bit);
-        }
-        for i in 8..15 {
-            let bit = ((data >> i) & 1) == 1;
-            self.set_module(8, 15 - i, bit);
+        // 水平类型信息（第 8 行）- 从右到左
+        for i in 0..15 {
+            let bit = !test && ((data >> i) & 1) == 1;
+            if i < 8 {
+                self.set_module(8, self.module_count - 1 - i, bit);
+            } else if i < 9 {
+                self.set_module(8, 15 - i - 1 + 1, bit);
+            } else {
+                self.set_module(8, 15 - i - 1, bit);
+            }
         }
 
         // 固定暗模块
-        self.set_module(self.module_count - 8, 8, true);
+        self.set_module(self.module_count - 8, 8, !test);
     }
 
     /// 设置类型号（版本 7+）
@@ -359,7 +361,8 @@ impl QRCode {
                             dark = ((data[byte_index] >> bit_index) & 1) == 1;
                         }
 
-                        let mask = (row + col - c) % 2 == 0;
+                        // Mask pattern 0: (row + col) % 2 == 0
+                        let mask = (row + col_idx) % 2 == 0;
                         if mask {
                             dark = !dark;
                         }

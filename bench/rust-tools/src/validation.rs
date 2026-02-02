@@ -110,8 +110,8 @@ mod tests {
     fn test_is_valid_qr_svg_valid() {
         let valid_svg = concat!(
             r#"<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256">"#,
-            r#"<path d="M0 0h256v256H0z" fill="#ffffff"/>"#,
-            r#"<path fill="#000000" d="M10 10h20v20h-20z"/>"#,
+            r##"<path d="M0 0h256v256H0z" fill="#ffffff"/>"##,
+            r##"<path fill="#000000" d="M10 10h20v20h-20z"/>"##,
             r#"</svg>"#
         );
 

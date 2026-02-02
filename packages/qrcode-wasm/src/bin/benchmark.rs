@@ -1,5 +1,5 @@
 // QRCode 基准测试 - 分离矩阵生成和 SVG 渲染
-use wasm_qrcode::QRCodeGenerator;
+use qrcodes::QRCodeGenerator;
 use std::time::Instant;
 
 fn main() {
