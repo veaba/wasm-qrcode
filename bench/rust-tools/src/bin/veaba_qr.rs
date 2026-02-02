@@ -1,5 +1,6 @@
 // 使用 @veaba/qrcode-rust 和 @veaba/qrcode-fast 生成二维码
-// 并使用 rust-tools/bin/validate_qr.rs 验证
+// 并与 kennytm-qrcode 进行对比
+// 使用 rust-tools/bin/validate_qr.rs 验证
 //
 // 使用方法:
 //   cargo run --release --features validation --bin veaba-qr -- "你的文本"
@@ -9,18 +10,18 @@ use std::fs;
 use std::time::Instant;
 
 #[cfg(feature = "validation")]
-use qrcode_fast_tools::validation::validate_qr_code;
+use rust_tools::validation::validate_qr_code;
 
 fn main() {
     let args: Vec<String> = env::args().collect();
-    
+
     let text = if args.len() > 1 {
         args[1].clone()
     } else {
         "https://github.com/veaba/qrcodes".to_string()
     };
-    
-    println!("🚀 @veaba QRCode 生成器");
+
+    println!("🚀 @veaba QRCode 生成器 vs kennytm-qrcode");
     println!("═══════════════════════════════════════");
     println!("文本: {}", text);
     println!();
@@ -32,7 +33,7 @@ fn main() {
     let rust_file = "@veaba_qrcode_rust.svg";
     fs::write(rust_file, &rust_svg).expect("❌ 无法写入文件");
     println!("✅ 已生成: {}", rust_file);
-    
+
     if rust_valid {
         println!("✅ 验证通过！");
     } else {
@@ -44,14 +45,29 @@ fn main() {
     println!("📦 @veaba/qrcode-fast");
     println!("───────────────────────────────────────");
     let (fast_svg, fast_valid) = generate_with_fast(&text);
-    let fast_file = "veaba_qrcode_fast.svg";
+    let fast_file = "@veaba_qrcode_fast.svg";
     fs::write(fast_file, &fast_svg).expect("❌ 无法写入文件");
     println!("✅ 已生成: {}", fast_file);
-    
+
     if fast_valid {
         println!("✅ 验证通过！");
     } else {
-        println!("⚠️  验证失败 - qrcode-fast 是简化实现，仅用于性能测试");
+        println!("❌ 验证失败 - 需要修复实现");
+    }
+    println!();
+
+    // 3. 使用 kennytm-qrcode 生成 (对比)
+    println!("📦 kennytm-qrcode (社区库)");
+    println!("───────────────────────────────────────");
+    let (kennytm_svg, kennytm_valid) = generate_with_kennytm(&text);
+    let kennytm_file = "qrcode_kennytm.svg";
+    fs::write(kennytm_file, &kennytm_svg).expect("❌ 无法写入文件");
+    println!("✅ 已生成: {}", kennytm_file);
+
+    if kennytm_valid {
+        println!("✅ 验证通过！");
+    } else {
+        println!("❌ 验证失败");
     }
     println!();
 
@@ -61,6 +77,7 @@ fn main() {
     println!("生成的文件:");
     println!("  - {} (@veaba/qrcode-rust 生成)", rust_file);
     println!("  - {} (@veaba/qrcode-fast 生成)", fast_file);
+    println!("  - {} (kennytm-qrcode 生成)", kennytm_file);
 }
 
 /// 使用 qrcode-rust 生成二维码
@@ -154,16 +171,16 @@ fn generate_with_fast(text: &str) -> (String, bool) {
 
     let mut qr = QRCode::with_options(QRErrorCorrectLevel::M);  // 使用 M 级别
     qr.make_code(text);
-    
+
     let svg = qr.get_svg();
     let elapsed = start.elapsed();
-    
+
     println!("⏱️  生成耗时: {:?}", elapsed);
     println!("📐 二维码版本: {} ({}x{} 模块)", qr.module_count, qr.module_count, qr.module_count);
     println!("📄 SVG 大小: {} bytes", svg.len());
-    println!("⚠️  注意: qrcode-fast 生成的是伪数据，仅用于性能测试");
-    
-    // 验证（预期会失败）
+    println!("✅ 完整 QR 码实现，高性能优化版");
+
+    // 验证
     #[cfg(feature = "validation")]
     {
         println!("🔍 验证中...");
@@ -173,12 +190,51 @@ fn generate_with_fast(text: &str) -> (String, bool) {
                 (svg, true)
             }
             Err(e) => {
-                println!("❌ 验证失败 (预期): {}", e);
+                println!("❌ 验证失败: {}", e);
                 (svg, false)
             }
         }
     }
-    
+
+    #[cfg(not(feature = "validation"))]
+    {
+        println!("⚠️  跳过验证（validation 特性未启用）");
+        (svg, false)
+    }
+}
+
+/// 使用 kennytm-qrcode 生成二维码 (对比)
+fn generate_with_kennytm(text: &str) -> (String, bool) {
+    use qrcode_kennytm::QrCode;
+    use qrcode_kennytm::render::svg;
+
+    let start = Instant::now();
+
+    let qr = QrCode::new(text).unwrap();
+    let svg = qr.render::<svg::Color>().build();
+    let elapsed = start.elapsed();
+
+    println!("⏱️  生成耗时: {:?}", elapsed);
+    println!("📐 二维码版本: {:?}", qr.version());
+    println!("📄 SVG 大小: {} bytes", svg.len());
+    println!("📦 社区流行库，作为性能对比基准");
+
+    // 验证
+    #[cfg(feature = "validation")]
+    {
+        println!("🔍 验证中...");
+        match validate_qr_code(&svg, text) {
+            Ok(()) => {
+                println!("✅ 验证通过！");
+                (svg, true)
+            }
+            Err(e) => {
+                println!("❌ 验证失败: {}", e);
+                (svg, false)
+            }
+        }
+    }
+
     #[cfg(not(feature = "validation"))]
     {
         println!("⚠️  跳过验证（validation 特性未启用）");

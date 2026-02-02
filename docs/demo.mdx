@@ -8,19 +8,19 @@ import QRCodeDemo from './components/QRCodeDemo';
 
 本演示展示了 `@veaba/qrcode-shared` 包提供的各种预设样式：
 
-| 样式 | 说明 | 使用场景 |
-|------|------|----------|
-| **基础** | 标准黑白二维码 | 通用场景，打印友好 |
-| **圆角** | 带圆角的模块 | 现代 UI 设计 |
-| **渐变** | 渐变色填充 | 品牌展示，营销活动 |
-| **Logo区域** | 中心留空，可放置 Logo | 企业品牌推广 |
-| **微信绿** | 微信风格绿色 | 微信生态相关应用 |
-| **抖音** | 抖音风格渐变 | 短视频平台相关 |
-| **支付宝** | 支付宝风格，带 Logo 区 | 支付相关应用 |
-| **小红书** | 小红书风格红色 | 社交电商相关 |
-| **赛博朋克** | 霓虹色风格 | 科技感，游戏相关 |
-| **复古** | 棕色复古风格 | 文艺，怀旧主题 |
-| **极简** | 灰色调简约风格 | 极简设计风格 |
+| 样式         | 说明                   | 使用场景           |
+| ------------ | ---------------------- | ------------------ |
+| **基础**     | 标准黑白二维码         | 通用场景，打印友好 |
+| **圆角**     | 带圆角的模块           | 现代 UI 设计       |
+| **渐变**     | 渐变色填充             | 品牌展示，营销活动 |
+| **Logo区域** | 中心留空，可放置 Logo  | 企业品牌推广       |
+| **微信绿**   | 微信风格绿色           | 微信生态相关应用   |
+| **抖音**     | 抖音风格渐变           | 短视频平台相关     |
+| **支付宝**   | 支付宝风格，带 Logo 区 | 支付相关应用       |
+| **小红书**   | 小红书风格红色         | 社交电商相关       |
+| **赛博朋克** | 霓虹色风格             | 科技感，游戏相关   |
+| **复古**     | 棕色复古风格           | 文艺，怀旧主题     |
+| **极简**     | 灰色调简约风格         | 极简设计风格       |
 
 ## 安装
 
@@ -55,11 +55,7 @@ document.getElementById('qrcode').innerHTML = svg;
 ### 使用预设样式
 
 ```typescript
-import {
-  generateRoundedQRCode,
-  generateGradientQRCode,
-  generateWechatStyleQRCode,
-} from '@veaba/qrcode-js';
+import { generateRoundedQRCode, generateGradientQRCode, generateWechatStyleQRCode } from '@veaba/qrcode-js';
 
 // 圆角样式
 const roundedSvg = generateRoundedQRCode('https://github.com/veaba/qrcodes', 256, 8);
@@ -81,15 +77,17 @@ const qr = new QRCodeCore('https://github.com/veaba/qrcodes', QRErrorCorrectLeve
 // 自定义样式
 const styledSvg = qr.toStyledSVG({
   size: 256,
-  colorDark: '#FF2442',      // 深色模块颜色
-  colorLight: '#ffffff',     // 浅色背景颜色
-  borderRadius: 12,          // 模块圆角
-  quietZone: 2,              // 边距（模块数）
-  gradient: {                // 渐变配置
+  colorDark: '#FF2442', // 深色模块颜色
+  colorLight: '#ffffff', // 浅色背景颜色
+  borderRadius: 12, // 模块圆角
+  quietZone: 2, // 边距（模块数）
+  gradient: {
+    // 渐变配置
     color1: '#FF00FF',
     color2: '#00FFFF',
   },
-  logoRegions: [             // Logo 区域
+  logoRegions: [
+    // Logo 区域
     { row: 8, col: 8, size: 5 },
   ],
 });
@@ -106,9 +104,7 @@ import { useMemo } from 'react';
 function QRCode({ text, size = 256, style = 'rounded' }) {
   const svg = useMemo(() => {
     const qr = new QRCodeCore(text, QRErrorCorrectLevel.H);
-    return style === 'rounded'
-      ? qr.toStyledSVG({ size, borderRadius: 8, quietZone: 2 })
-      : qr.toSVG(size);
+    return style === 'rounded' ? qr.toStyledSVG({ size, borderRadius: 8, quietZone: 2 }) : qr.toSVG(size);
   }, [text, size, style]);
 
   return <div dangerouslySetInnerHTML={{ __html: svg }} />;
@@ -155,30 +151,30 @@ constructor(text: string, correctLevel?: QRErrorCorrectLevel)
 
 #### 方法
 
-| 方法 | 说明 |
-|------|------|
-| `toSVG(size?: number): string` | 生成基础 SVG |
-| `toStyledSVG(options: StyledSVGOptions): string` | 生成样式化 SVG |
-| `isDark(row: number, col: number): boolean` | 检查模块是否为深色 |
-| `getModuleCount(): number` | 获取模块数量 |
+| 方法                                             | 说明               |
+| ------------------------------------------------ | ------------------ |
+| `toSVG(size?: number): string`                   | 生成基础 SVG       |
+| `toStyledSVG(options: StyledSVGOptions): string` | 生成样式化 SVG     |
+| `isDark(row: number, col: number): boolean`      | 检查模块是否为深色 |
+| `getModuleCount(): number`                       | 获取模块数量       |
 
 ### 预设函数
 
-| 函数 | 说明 |
-|------|------|
-| `generateRoundedQRCode(text, size, radius)` | 圆角样式 |
-| `generateGradientQRCode(text, size, color1, color2)` | 渐变样式 |
-| `generateQRCodeWithLogoArea(text, size, logoRatio)` | Logo 区域样式 |
-| `generateWechatStyleQRCode(text, size)` | 微信样式 |
-| `generateDouyinStyleQRCode(text, size)` | 抖音样式 |
-| `generateAlipayStyleQRCode(text, size)` | 支付宝样式 |
-| `generateXiaohongshuStyleQRCode(text, size)` | 小红书样式 |
-| `generateCyberpunkStyleQRCode(text, size)` | 赛博朋克样式 |
-| `generateRetroStyleQRCode(text, size)` | 复古样式 |
-| `generateMinimalStyleQRCode(text, size)` | 极简样式 |
+| 函数                                                 | 说明          |
+| ---------------------------------------------------- | ------------- |
+| `generateRoundedQRCode(text, size, radius)`          | 圆角样式      |
+| `generateGradientQRCode(text, size, color1, color2)` | 渐变样式      |
+| `generateQRCodeWithLogoArea(text, size, logoRatio)`  | Logo 区域样式 |
+| `generateWechatStyleQRCode(text, size)`              | 微信样式      |
+| `generateDouyinStyleQRCode(text, size)`              | 抖音样式      |
+| `generateAlipayStyleQRCode(text, size)`              | 支付宝样式    |
+| `generateXiaohongshuStyleQRCode(text, size)`         | 小红书样式    |
+| `generateCyberpunkStyleQRCode(text, size)`           | 赛博朋克样式  |
+| `generateRetroStyleQRCode(text, size)`               | 复古样式      |
+| `generateMinimalStyleQRCode(text, size)`             | 极简样式      |
 
 ## 相关文档
 
 - [快速开始](./guide/quick-start)
-- [@veaba/qrcode-js 使用指南](./guide/qrcodejs)
+- [@veaba/qrcode-js 使用指南](./guide/qrcode-js)
 - [性能对比](./bench/index)

@@ -75,14 +75,15 @@ static INIT: std::sync::Once = std::sync::Once::new();
 fn init_tables() {
     INIT.call_once(|| {
         unsafe {
-            // Galois Field 指数表初始化 - 匹配 JavaScript 实现
-            // 算法: EXP_TABLE[i] = EXP_TABLE[i - 4] ^ EXP_TABLE[i - 5] ^ EXP_TABLE[i - 6] ^ EXP_TABLE[i - 8]
-            // 前 8 个值: 1, 2, 4, 8, 16, 32, 64, 128
-            for i in 0..8 {
-                EXP_TABLE[i] = 1 << i;
-            }
-            for i in 8..256 {
-                EXP_TABLE[i] = EXP_TABLE[i - 4] ^ EXP_TABLE[i - 5] ^ EXP_TABLE[i - 6] ^ EXP_TABLE[i - 8];
+            // Galois Field 指数表初始化 - QR 码标准
+            // 生成多项式: x^8 + x^4 + x^3 + x^2 + 1 (0x11d)
+            EXP_TABLE[0] = 1;
+            for i in 1..256 {
+                let mut v = EXP_TABLE[i - 1] << 1;
+                if v > 255 {
+                    v ^= 0x11d;  // 异或生成多项式
+                }
+                EXP_TABLE[i] = v;
             }
 
             // 构建对数表

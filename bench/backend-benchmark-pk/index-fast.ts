@@ -1,6 +1,7 @@
 /**
  * 快速 PK 基准测试 - 使用缓存的 Rust 结果
- * 用于验证 PK 测试逻辑，不重新运行耗时的 Rust benchmark
+ * 对比 @veaba/qrcode-node、@veaba/qrcode-bun、@veaba/qrcode-fast、@veaba/qrcode-rust
+ * 以及外部包 bench/kennytm-qrcode
  */
 
 import { execSync } from 'child_process';
@@ -94,16 +95,48 @@ interface ComparisonResult {
 // 使用标准化的测试名称以便跨包对比
 function getFastResults(): BenchmarkResult[] {
   return [
+    { name: '单条生成 (short)', ops: 54283, avgTime: 18.42, category: 'single' },
     { name: '单条生成 (medium)', ops: 38696, avgTime: 25.84, category: 'single' },
+    { name: '单条生成 (long)', ops: 9303, avgTime: 107.49, category: 'single' },
     { name: '批量生成 (100 条)', ops: 439, avgTime: 2278.7, category: 'batch' },
     { name: 'SVG 输出', ops: 92486, avgTime: 10.81, category: 'svg' },
     { name: '纠错级别 L (低)', ops: 61368, avgTime: 16.30, category: 'error_level' },
     { name: '纠错级别 M (中)', ops: 41950, avgTime: 23.84, category: 'error_level' },
     { name: '纠错级别 Q (较高)', ops: 49062, avgTime: 20.38, category: 'error_level' },
     { name: '纠错级别 H (高)', ops: 47436, avgTime: 21.08, category: 'error_level' },
-    { name: '单条生成 (short)', ops: 54283, avgTime: 18.42, category: 'single' },
-    { name: '单条生成 (medium)', ops: 37305, avgTime: 26.81, category: 'single' },
-    { name: '单条生成 (long)', ops: 9303, avgTime: 107.49, category: 'single' },
+  ];
+}
+
+// qrcode-rust 的缓存数据（来自 comparison_bench）
+// 实际运行时间: 2026-02-02
+function getRustResults(): BenchmarkResult[] {
+  return [
+    { name: '单条生成 (short)', ops: 21635, avgTime: 46.22, category: 'single' },
+    { name: '单条生成 (medium)', ops: 10135, avgTime: 98.66, category: 'single' },
+    { name: '单条生成 (long)', ops: 4803, avgTime: 208.18, category: 'single' },
+    { name: '批量生成 (100 条)', ops: 192, avgTime: 5201.8, category: 'batch' },
+    { name: 'SVG 输出', ops: 20966, avgTime: 47.70, category: 'svg' },
+    { name: '纠错级别 L (低)', ops: 24678, avgTime: 40.52, category: 'error_level' },
+    { name: '纠错级别 M (中)', ops: 25014, avgTime: 39.98, category: 'error_level' },
+    { name: '纠错级别 Q (较高)', ops: 18398, avgTime: 54.35, category: 'error_level' },
+    { name: '纠错级别 H (高)', ops: 16720, avgTime: 59.81, category: 'error_level' },
+  ];
+}
+
+// kennytm-qrcode 的缓存数据（来自 comparison_bench）
+// 注意: kennytm 的 "SVG 输出" 实际生成的是字符矩阵，不是 SVG 字符串
+// 实际运行时间: 2026-02-02
+function getKennytmResults(): BenchmarkResult[] {
+  return [
+    { name: '单条生成 (short)', ops: 3998, avgTime: 250.11, category: 'single' },
+    { name: '单条生成 (medium)', ops: 1655, avgTime: 604.18, category: 'single' },
+    { name: '单条生成 (long)', ops: 861, avgTime: 1161.20, category: 'single' },
+    { name: '批量生成 (100 条)', ops: 20, avgTime: 51134.0, category: 'batch' },
+    { name: 'SVG 输出', ops: 153827, avgTime: 6.50, category: 'svg' },
+    { name: '纠错级别 L (低)', ops: 1847, avgTime: 541.45, category: 'error_level' },
+    { name: '纠错级别 M (中)', ops: 1864, avgTime: 536.45, category: 'error_level' },
+    { name: '纠错级别 Q (较高)', ops: 2300, avgTime: 434.81, category: 'error_level' },
+    { name: '纠错级别 H (高)', ops: 1583, avgTime: 631.65, category: 'error_level' },
   ];
 }
 
@@ -204,12 +237,12 @@ async function benchmarkBun(): Promise<PackageResult | null> {
 async function benchmarkFast(): Promise<PackageResult | null> {
   try {
     console.log('⚡ 测试 @veaba/qrcode-fast (使用缓存结果)...');
-    
+
     let rustVersion = 'unknown';
     try {
       rustVersion = execSync('rustc --version', { encoding: 'utf-8' }).trim();
     } catch {}
-    
+
     return {
       packageName: PACKAGES.fast.name,
       version: '1.0.0',
@@ -219,6 +252,56 @@ async function benchmarkFast(): Promise<PackageResult | null> {
     };
   } catch (error) {
     console.error('  ❌ qrcode-fast 基准测试失败:', error);
+    return null;
+  }
+}
+
+/**
+ * 获取 qrcode-rust 结果
+ */
+async function benchmarkRust(): Promise<PackageResult | null> {
+  try {
+    console.log('🦀 测试 @veaba/qrcode-rust (使用缓存结果)...');
+
+    let rustVersion = 'unknown';
+    try {
+      rustVersion = execSync('rustc --version', { encoding: 'utf-8' }).trim();
+    } catch {}
+
+    return {
+      packageName: PACKAGES.rust.name,
+      version: '1.0.0',
+      runtime: 'Rust',
+      runtimeVersion: rustVersion,
+      results: getRustResults(),
+    };
+  } catch (error) {
+    console.error('  ❌ qrcode-rust 基准测试失败:', error);
+    return null;
+  }
+}
+
+/**
+ * 获取 kennytm-qrcode 结果
+ */
+async function benchmarkKennytm(): Promise<PackageResult | null> {
+  try {
+    console.log('📦 测试 kennytm-qrcode (使用缓存结果)...');
+
+    let rustVersion = 'unknown';
+    try {
+      rustVersion = execSync('rustc --version', { encoding: 'utf-8' }).trim();
+    } catch {}
+
+    return {
+      packageName: PACKAGES.kennytm.name,
+      version: '0.14.0',
+      runtime: 'Rust',
+      runtimeVersion: rustVersion,
+      results: getKennytmResults(),
+    };
+  } catch (error) {
+    console.error('  ❌ kennytm-qrcode 基准测试失败:', error);
     return null;
   }
 }
@@ -412,21 +495,32 @@ async function runPKBenchmark(): Promise<void> {
   
   console.log('─'.repeat(80));
   console.log('开始运行各包基准测试...\n');
-  
+
   const nodeResult = await benchmarkNode();
   if (nodeResult) suite.packages.push(nodeResult);
-  
+
   const bunResult = await benchmarkBun();
   if (bunResult) {
     suite.packages.push(bunResult);
     suite.environment.bunVersion = bunResult.runtimeVersion;
   }
-  
+
   const fastResult = await benchmarkFast();
   if (fastResult) {
     suite.packages.push(fastResult);
     suite.environment.rustVersion = fastResult.runtimeVersion;
   }
+
+  const rustResult = await benchmarkRust();
+  if (rustResult) {
+    suite.packages.push(rustResult);
+    if (!suite.environment.rustVersion) {
+      suite.environment.rustVersion = rustResult.runtimeVersion;
+    }
+  }
+
+  const kennytmResult = await benchmarkKennytm();
+  if (kennytmResult) suite.packages.push(kennytmResult);
   
   console.log('\n─'.repeat(80));
   console.log('生成对比结果...\n');

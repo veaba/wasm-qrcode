@@ -1,0 +1,117 @@
+{
+  "test_cases": [
+    {
+      "kennytm": {
+        "avg_time_us": 222.0,
+        "max_time_us": 240.0,
+        "min_time_us": 213.0,
+        "module_count": 21,
+        "svg_size": 4270,
+        "valid": true
+      },
+      "name": "Simple",
+      "qrcode_fast": {
+        "avg_time_us": 10.0,
+        "max_time_us": 12.0,
+        "min_time_us": 10.0,
+        "module_count": 21,
+        "svg_size": 4187,
+        "valid": true
+      },
+      "qrcode_rust": {
+        "avg_time_us": 26.0,
+        "max_time_us": 29.0,
+        "min_time_us": 23.0,
+        "module_count": 21,
+        "svg_size": 13798,
+        "valid": true
+      },
+      "text": "Hello World"
+    },
+    {
+      "kennytm": {
+        "avg_time_us": 337.0,
+        "max_time_us": 352.0,
+        "min_time_us": 326.0,
+        "module_count": 25,
+        "svg_size": 6164,
+        "valid": true
+      },
+      "name": "Complex",
+      "qrcode_fast": {
+        "avg_time_us": 17.0,
+        "max_time_us": 20.0,
+        "min_time_us": 16.0,
+        "module_count": 25,
+        "svg_size": 5705,
+        "valid": false
+      },
+      "qrcode_rust": {
+        "avg_time_us": 36.0,
+        "max_time_us": 48.0,
+        "min_time_us": 33.0,
+        "module_count": 25,
+        "svg_size": 18842,
+        "valid": false
+      },
+      "text": "Test QR Code 123"
+    },
+    {
+      "kennytm": {
+        "avg_time_us": 501.0,
+        "max_time_us": 647.0,
+        "min_time_us": 467.0,
+        "module_count": 29,
+        "svg_size": 8328,
+        "valid": true
+      },
+      "name": "URL",
+      "qrcode_fast": {
+        "avg_time_us": 23.0,
+        "max_time_us": 28.0,
+        "min_time_us": 21.0,
+        "module_count": 29,
+        "svg_size": 6879,
+        "valid": true
+      },
+      "qrcode_rust": {
+        "avg_time_us": 54.0,
+        "max_time_us": 65.0,
+        "min_time_us": 51.0,
+        "module_count": 29,
+        "svg_size": 26218,
+        "valid": true
+      },
+      "text": "https://github.com/veaba/qrcodes"
+    },
+    {
+      "kennytm": {
+        "avg_time_us": 830.0,
+        "max_time_us": 860.0,
+        "min_time_us": 818.0,
+        "module_count": 37,
+        "svg_size": 13448,
+        "valid": true
+      },
+      "name": "Long",
+      "qrcode_fast": {
+        "avg_time_us": 37.0,
+        "max_time_us": 41.0,
+        "min_time_us": 36.0,
+        "module_count": 37,
+        "svg_size": 10704,
+        "valid": false
+      },
+      "qrcode_rust": {
+        "avg_time_us": 89.0,
+        "max_time_us": 119.0,
+        "min_time_us": 82.0,
+        "module_count": 37,
+        "svg_size": 41043,
+        "valid": false
+      },
+      "text": "Email: test@example.com | Phone: +1-234-567-8900 | Address: 123 Main St"
+    }
+  ],
+  "timestamp": "2026-02-03T01:53:47.763716700+08:00"
+}

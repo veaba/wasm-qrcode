@@ -7,7 +7,7 @@
 
 use qrcode_kennytm::QrCode;
 #[cfg(feature = "validation")]
-use qrcode_fast_tools::validation::validate_qr_code;
+use rust_tools::validation::validate_qr_code;
 
 use std::env;
 use std::fs;

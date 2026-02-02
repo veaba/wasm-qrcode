@@ -402,28 +402,28 @@ async function benchmarkKennytm(): Promise<PackageResult | null> {
 }
 
 /**
- * 解析 Rust benchmark 输出
- * 支持多个前缀和带斜杠的测试名称
+ * 解析 Rust benchmark 输出 (Criterion 格式)
+ * Criterion 输出格式: "veaba_single_generation time:   [63.747 µs 64.392 µs 65.077 µs]"
  */
 function parseRustBenchmarkOutput(output: string, prefixes: string[]): Array<{name: string; ops: number; avgTime: number}> {
   const results: Array<{name: string; ops: number; avgTime: number}> = [];
   const lines = output.split('\n');
-  
+
   for (const line of lines) {
-    // 匹配类似: "veaba_single_generation ... 53.7 µs/iter" 或 "fast_error_levels/L ... 16.3 µs/iter"
-    const match = line.match(/([\w/]+)\s+\.\.\.\s+([\d.]+)\s+(ns|µs|ms|s)\/iter(?:\s+\(([\d.]+)\s+ops\/s\))?/);
+    // 匹配 Criterion 格式: "test_name time:   [low mean high]" 或 "test_name time:   [low mean high]"
+    const match = line.match(/^([\w/]+)\s+time:\s+\[[\d.]+\s+([\d.]+)\s+(µs|ms|ns|s)\s/);
     if (match) {
-      const [, testName, timeValue, unit, opsStr] = match;
-      
+      const [, testName, timeValue, unit] = match;
+
       // 检查是否匹配任一前缀
-      const matchesPrefix = prefixes.some(prefix => 
+      const matchesPrefix = prefixes.some(prefix =>
         testName.toLowerCase().startsWith(prefix.toLowerCase())
       );
-      
+
       if (!matchesPrefix) {
         continue;
       }
-      
+
       // 转换时间为微秒
       let avgTime = parseFloat(timeValue);
       switch (unit) {
@@ -432,10 +432,10 @@ function parseRustBenchmarkOutput(output: string, prefixes: string[]): Array<{na
         case 'ms': avgTime = avgTime * 1000; break;
         case 's': avgTime = avgTime * 1000000; break;
       }
-      
+
       // 计算 ops/s
-      const ops = opsStr ? parseFloat(opsStr) : Math.round(1000000 / avgTime);
-      
+      const ops = Math.round(1000000 / avgTime);
+
       results.push({
         name: testName,
         ops,
@@ -443,7 +443,7 @@ function parseRustBenchmarkOutput(output: string, prefixes: string[]): Array<{na
       });
     }
   }
-  
+
   return results;
 }
 

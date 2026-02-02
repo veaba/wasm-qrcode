@@ -46,9 +46,7 @@ impl Polynomial {
         for i in 0..self.len() {
             for j in 0..e.len() {
                 // In GF(256), addition is XOR
-                num[i + j] ^= QRMath::gexp(
-                    QRMath::glog(self.get(i)) + QRMath::glog(e.get(j))
-                );
+                num[i + j] ^= QRMath::gexp(QRMath::glog(self.get(i)) + QRMath::glog(e.get(j)));
             }
         }
 
@@ -142,16 +140,16 @@ mod tests {
     fn test_multiply_simple() {
         // (x + 2) * (x + 3) = x^2 + 5x + 6
         // 在 GF(256) 中，加法是异或
-        let p1 = Polynomial::new(vec![1, 2], 0);  // x + 2
-        let p2 = Polynomial::new(vec![1, 3], 0);  // x + 3
+        let p1 = Polynomial::new(vec![1, 2], 0); // x + 2
+        let p2 = Polynomial::new(vec![1, 3], 0); // x + 3
         let result = p1.multiply(&p2);
 
         // 1*1 = 1 (x^2 term)
         // 1*3 + 2*1 = 3 + 2 = 1 (x term, 异或)
         // 2*3 = 6 (constant term)
-        assert_eq!(result.get(0), 1);  // x^2
-        assert_eq!(result.get(1), 1);  // x term (3 ^ 2 = 1)
-        assert_eq!(result.get(2), 6);  // constant
+        assert_eq!(result.get(0), 1); // x^2
+        assert_eq!(result.get(1), 1); // x term (3 ^ 2 = 1)
+        assert_eq!(result.get(2), 6); // constant
     }
 
     #[test]
@@ -171,8 +169,13 @@ mod tests {
     fn test_generate_rs_poly_increasing_degree() {
         for ec_count in 1..=10 {
             let poly = Polynomial::generate_rs_poly(ec_count);
-            assert_eq!(poly.len(), ec_count as usize + 1,
-                "ec_count={} 应该产生次数为 {} 的多项式", ec_count, ec_count);
+            assert_eq!(
+                poly.len(),
+                ec_count as usize + 1,
+                "ec_count={} 应该产生次数为 {} 的多项式",
+                ec_count,
+                ec_count
+            );
             // 最高次项系数总是 1（在第一个索引处）
             assert_eq!(poly.get(0), 1);
         }
@@ -181,8 +184,8 @@ mod tests {
     #[test]
     fn test_mod_simple() {
         // 简单测试
-        let dividend = Polynomial::new(vec![1, 0, 0], 0);  // x^2
-        let divisor = Polynomial::new(vec![1, 1], 0);      // x + 1
+        let dividend = Polynomial::new(vec![1, 0, 0], 0); // x^2
+        let divisor = Polynomial::new(vec![1, 1], 0); // x + 1
         let remainder = dividend.r#mod(&divisor);
 
         // 余数的次数应该小于除数的次数
@@ -192,10 +195,10 @@ mod tests {
     #[test]
     fn test_mod_result_degree() {
         // 测试余数的次数总是小于除数的次数
-        let divisor = Polynomial::generate_rs_poly(4);  // 次数为 4
+        let divisor = Polynomial::generate_rs_poly(4); // 次数为 4
 
         for test_data in vec![
-            vec![1, 2, 3, 4, 5, 6, 7, 8],  // 次数为 8
+            vec![1, 2, 3, 4, 5, 6, 7, 8], // 次数为 8
             vec![1, 0, 0, 0, 0, 0, 0, 0],
             vec![255, 254, 253, 252],
         ] {
@@ -203,8 +206,11 @@ mod tests {
             let remainder = dividend.r#mod(&divisor);
 
             // 余数的次数应该小于除数的次数（4）
-            assert!(remainder.len() <= 4,
-                "余数长度 {} 应该 <= 4", remainder.len());
+            assert!(
+                remainder.len() <= 4,
+                "余数长度 {} 应该 <= 4",
+                remainder.len()
+            );
         }
     }
 }

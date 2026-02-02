@@ -198,7 +198,23 @@ fn main() {
     // 获取 SVG
     let svg = qr.get_svg();
     println!("{}", svg);
+
+    // 保存到文件
+    std::fs::write("qrcode.svg", svg).expect("Failed to write file");
 }
+```
+
+### 3. 验证生成的 SVG
+
+```bash
+cd bench/rust-tools
+cargo run --release --features validation --bin veaba-qr -- "https://example.com"
+
+# 输出：
+# 📦 @veaba/qrcode-rust
+# ⏱️  生成耗时: ~66µs
+# 🔍 验证中...
+# ✅ 验证通过！
 ```
 
 ## 样式化 QRCode
@@ -237,11 +253,7 @@ const gradientSvg = qr.toStyledSVG({
 import { QRCode, QRErrorCorrectLevel } from '@veaba/qrcode-js';
 // 或 Node.js/Bun 环境
 
-const texts = [
-  'https://example.com/1',
-  'https://example.com/2',
-  'https://example.com/3',
-];
+const texts = ['https://example.com/1', 'https://example.com/2', 'https://example.com/3'];
 
 // 批量生成
 const svgs = texts.map((text) => {
@@ -250,8 +262,20 @@ const svgs = texts.map((text) => {
 });
 ```
 
+## 性能对比
+
+各运行时的性能对比（单条生成，ops/s）：
+
+| 包                   | 性能         | 适用场景     |
+| -------------------- | ------------ | ------------ |
+| `@veaba/qrcode-rust` | 54,283 ops/s | 极致性能     |
+| `@veaba/qrcode-bun`  | 18,902 ops/s | Bun 后端     |
+| `@veaba/qrcode-node` | 12,078 ops/s | Node.js 后端 |
+| `@veaba/qrcode-js`   | 9,662 ops/s  | 浏览器       |
+
 ## 下一步
 
 - 了解更多 [API 参考](../api/)
 - 查看 [性能对比](../bench/)
-- 探索 [样式化 QRCode](./qrcodejs#样式化)
+- 探索 [样式化 QRCode](./qrcode-js#样式化)
+- 查看 [Rust 指南](./qrcode-rust) 了解原生 Rust 使用

@@ -1,7 +1,7 @@
 //! QR Code 模型和常量
 
 /// 纠错级别
-#[derive(Clone, Copy, PartialEq, Eq)]
+#[derive(Clone, Copy, PartialEq, Eq, Debug)]
 pub enum QRErrorCorrectLevel {
     L = 1,
     M = 0,

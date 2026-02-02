@@ -6,7 +6,7 @@
 // 此工具已迁移到 bench/rust-tools
 
 #[cfg(feature = "validation")]
-use qrcode_fast_tools::validation::validate_qr_code;
+use rust_tools::validation::validate_qr_code;
 use qrcode_kennytm::QrCode;
 
 use std::env;

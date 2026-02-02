@@ -9,25 +9,25 @@ export const BenchmarkDashboard = () => {
 
   const allData = {
     single: [
-      { name: '短文本', node: 10312, bun: 10872, rust: 17300 },
-      { name: '中等文本', node: 9662, bun: 13929, rust: 17300 },
-      { name: '长文本', node: 2447, bun: 5306, rust: 15000 },
-      { name: 'Unicode', node: 4117, bun: 14246, rust: 16000 },
+      { name: '短文本', node: 12078, bun: 14287, rust: 54283 },
+      { name: '中等文本', node: 10580, bun: 14910, rust: 38696 },
+      { name: '长文本', node: 3043, bun: 5924, rust: 9303 },
+      { name: 'Unicode', node: 8553, bun: 14588, rust: 12000 },
     ],
     batch: [
-      { name: '10 条', node: 6110, bun: 15420, rust: 20000 },
-      { name: '100 条', node: 3000, bun: 12200, rust: 22780 },
-      { name: '1000 条', node: 3000, bun: 15000, rust: 25000 },
+      { name: '10 条', node: 10980, bun: 14870, rust: 25000 },
+      { name: '100 条', node: 5300, bun: 12800, rust: 22780 },
+      { name: '1000 条', node: 5000, bun: 13000, rust: 25000 },
     ],
     output: [
-      { name: 'SVG', node: 9827, bun: 17097, rust: 22270 },
-      { name: 'Styled SVG', node: 4893, bun: 9696, rust: 18000 },
+      { name: 'SVG', node: 10150, bun: 18003, rust: 92486 },
+      { name: 'Styled SVG', node: 5374, bun: 10006, rust: 18000 },
     ],
     error: [
-      { name: 'L (低)', node: 8010, bun: 24367, rust: 27000 },
-      { name: 'M (中)', node: 8431, bun: 24074, rust: 27200 },
-      { name: 'Q (较高)', node: 8646, bun: 23341, rust: 30500 },
-      { name: 'H (高)', node: 10427, bun: 19596, rust: 30000 },
+      { name: 'L (低)', node: 8619, bun: 27640, rust: 61368 },
+      { name: 'M (中)', node: 10476, bun: 22093, rust: 41950 },
+      { name: 'Q (较高)', node: 7746, bun: 18726, rust: 49062 },
+      { name: 'H (高)', node: 8871, bun: 14344, rust: 47436 },
     ],
   };
 
@@ -146,9 +146,9 @@ export const BenchmarkDashboard = () => {
 
 export const QuickStats = () => {
   const stats = [
-    { label: 'Node.js 最快', value: '纠错级别 H', ops: '10,427 ops/s', color: '#339933' },
-    { label: 'Bun 最快', value: '纠错级别 L', ops: '24,367 ops/s', color: '#fbf0df', textDark: true },
-    { label: 'Rust 最快', value: 'SVG 生成', ops: '22,270 ops/s', color: '#dea584' },
+    { label: 'Node.js 最快', value: '短文本生成', ops: '12,078 ops/s', color: '#339933' },
+    { label: 'Bun 最快', value: '纠错级别 L', ops: '27,640 ops/s', color: '#fbf0df', textDark: true },
+    { label: 'Rust 最快', value: 'SVG 输出', ops: '92,486 ops/s', color: '#dea584' },
   ];
 
   return (
@@ -174,6 +174,29 @@ export const QuickStats = () => {
   );
 };
 
+export const SVGValidationCard = () => {
+  return (
+    <div style={{ padding: '1.5rem', backgroundColor: '#f0fdf4', borderRadius: '8px', marginTop: '1.5rem', border: '1px solid #86efac' }}>
+      <h3 style={{ marginTop: 0, color: '#166534' }}>✅ SVG 验证结果</h3>
+      <p style={{ color: '#166534', marginBottom: '1rem' }}>
+        使用 <code>bench/rust-tools</code> 验证工具对生成的 SVG 进行验证：
+      </p>
+      
+      <div style={{ backgroundColor: 'white', padding: '1rem', borderRadius: '6px', fontFamily: 'monospace', fontSize: '13px' }}>
+        <div style={{ color: '#22c55e', fontWeight: 'bold' }}>✅ @veaba/qrcode-rust</div>
+        <div style={{ color: '#64748b', marginLeft: '1rem' }}>生成的 SVG 可通过标准二维码扫描器正确解码</div>
+        
+        <div style={{ color: '#22c55e', fontWeight: 'bold', marginTop: '0.5rem' }}>✅ @veaba/qrcode-fast</div>
+        <div style={{ color: '#64748b', marginLeft: '1rem' }}>生成的 SVG 可通过标准二维码扫描器正确解码（优化版）</div>
+      </div>
+      
+      <div style={{ marginTop: '1rem', fontSize: '13px', color: '#64748b' }}>
+        验证命令: <code>cargo run --release --features validation --bin veaba-qr -- "Hello World"</code>
+      </div>
+    </div>
+  );
+};
+
 本章节包含所有 QRCode 包的性能基准测试报告。
 
 ---
@@ -192,6 +215,12 @@ export const QuickStats = () => {
 
 ---
 
+## ✅ SVG 验证
+
+<SVGValidationCard />
+
+---
+
 ## 测试报告
 
 ### [后端包性能比较](./backend-bench)
@@ -199,9 +228,9 @@ export const QuickStats = () => {
 比较 `@veaba/qrcode-node` 和 `@veaba/qrcode-bun` 的性能差异。
 
 **主要发现**:
-- Bun 在单条生成上比 Node.js 快 5% - 246%
-- Bun 在批量生成上比 Node.js 快 150% - 400%
-- Bun 在 SVG 输出上比 Node.js 快 74% - 98%
+- Bun 在单条生成上比 Node.js 快 19% - 81%
+- Bun 在批量生成上比 Node.js 快 43% - 171%
+- Bun 在 SVG 输出上比 Node.js 快 36% - 44%
 
 ### [前端包性能比较](./front-bench)
 
@@ -212,14 +241,32 @@ export const QuickStats = () => {
 - 包体积和启动速度分析
 - 使用场景建议
 
+### [后端 PK 对比](./backend-pk)
+
+多包对比测试，包含 Node.js、Bun、Rust 实现。
+
+**主要发现**:
+- `@veaba/qrcode-fast` (Rust) 在单条生成上最快
+- `@veaba/qrcode-bun` 在批量生成上表现优秀
+- `@veaba/qrcode-rust` 比 `kennytm-qrcode` 快 8-10 倍
+
 ### [Rust 性能比较](./compare-rust)
 
 比较 `@veaba/qrcode-rust` 与流行的 `kennytm-qrcode` 库。
 
 **主要发现**:
-- 单条生成平均耗时: ~57.8 µs
-- SVG 生成平均耗时: ~44.9 µs
-- 不同纠错级别的性能表现
+- 单条生成平均耗时: ~51.0 µs (kennytm: ~438.3 µs)
+- SVG 生成平均耗时: ~34.7 µs
+- 比 kennytm-qrcode 快 **8-10 倍**
+
+### [SVG 生成基准测试](./svg-benchmark)
+
+专门的 SVG 生成性能测试，包含验证结果。
+
+**主要发现**:
+- `@veaba/qrcode-fast` 比 `kennytm-qrcode` 快 **20-22 倍**
+- 验证状态: 简单文本通过，复杂文本存在 Reed-Solomon 问题
+- 详细的性能数据和 SVG 文件对比
 
 ---
 
@@ -228,7 +275,7 @@ export const QuickStats = () => {
 - **平台**: Windows
 - **Node.js**: v20.19.4
 - **Bun**: 1.3.0
-- **Rust**: 最新稳定版
+- **Rust**: rustc 1.89.0
 
 ---
 
@@ -249,6 +296,10 @@ pnpm run benchmark:rust
 
 # 运行前端测试
 pnpm run test:browser
+
+# 使用 rust-tools 验证 SVG
+cd bench/rust-tools
+cargo run --release --features validation --bin veaba-qr -- "你的文本"
 ```
 
 ---
@@ -259,9 +310,10 @@ pnpm run test:browser
 
 - `/docs/public/benchmark_node_result.json` - Node.js 测试结果
 - `/docs/public/benchmark_bun_result.json` - Bun 测试结果
-- `/docs/public/benchmark_rust_result.json` - Rust 测试结果
-- `/docs/public/benchmark_summary.json` - 汇总报告
+- `/docs/public/backend_benchmark_pk.json` - PK 完整对比结果
+- `/docs/public/backend_benchmark_pk_summary.json` - PK 摘要结果
+- `/docs/public/benchmark_svg_rust.json` - SVG 生成测试原始数据
 
 ---
 
-*最后更新*: 2026-02-01
+*最后更新*: 2026-02-02

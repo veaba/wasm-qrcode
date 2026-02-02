@@ -268,6 +268,56 @@ mod tests {
     }
 
     #[test]
+    fn test_complex_text_hello_world_123() {
+        // 测试复杂文本 "Test QR Code 123"
+        let text = "Test QR Code 123";
+        let mut qr = QRCode::new();
+        qr.make_code(text);
+        
+        assert!(qr.module_count > 0, "复杂文本应该生成二维码");
+        assert!(qr.type_number >= 2, "此文本应该使用类型号 >= 2");
+        
+        // 打印调试信息
+        println!("\n=== test_complex_text_hello_world_123 (qrcode-rust) ===");
+        println!("文本: {}", text);
+        println!("类型号: {}", qr.type_number);
+        println!("模块数: {}", qr.module_count);
+        
+        // 检查 data_cache
+        if let Some(ref data) = qr.data_cache {
+            println!("data_cache 长度: {} 字节", data.len());
+            println!("数据字节 (前 32 字节):");
+            for i in 0..32.min(data.len()) {
+                print!("{:02X} ", data[i]);
+                if (i + 1) % 16 == 0 {
+                    println!();
+                }
+            }
+            println!();
+        }
+    }
+
+    #[test]
+    fn test_complex_text_various() {
+        // 测试多种复杂文本
+        let test_cases = vec![
+            "Test QR Code 123",
+            "Hello World! 2024",
+            "https://example.com/path?query=1&foo=bar",
+            "Email: test@example.com | Phone: +1-234-567-8900",
+            "WiFi:T:WPA;S:MyNetwork;P:MyPassword;;",
+        ];
+        
+        for text in test_cases {
+            let mut qr = QRCode::new();
+            qr.make_code(text);
+            
+            assert!(qr.module_count > 0, "文本 '{}' 应该生成二维码", text);
+            println!("文本 '{}' -> 类型号 {}, 模块数 {}", text, qr.type_number, qr.module_count);
+        }
+    }
+
+    #[test]
     fn test_get_rs_blocks() {
         use qr_rs_block::get_rs_blocks;
         

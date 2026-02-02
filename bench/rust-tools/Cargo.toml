@@ -7,15 +7,18 @@ edition = "2021"
 qrcode-fast = { path = "../../packages/qrcode-fast" }
 qrcode-rust = { path = "../../packages/qrcode-rust" }
 qrcode-kennytm = { package = "qrcode", version = "0.14" }
+serde = { version = "1.0", features = ["derive"] }
+serde_json = "1.0"
 
 # 验证依赖
 resvg = { version = "0.44", optional = true }
 rqrr = { version = "0.7", optional = true }
 image = { version = "0.25", optional = true }
+chrono = { version = "0.4", optional = true }
 
 [features]
 default = ["validation"]
-validation = ["resvg", "rqrr", "image"]
+validation = ["resvg", "rqrr", "image", "chrono"]
 
 # ==================== 生成工具 ====================
 [[bin]]
@@ -43,10 +46,6 @@ path = "src/bin/veaba_qr.rs"
 name = "compare-impls"
 path = "src/bin/compare_impls.rs"
 
-[[bin]]
-name = "compare-svgs"
-path = "src/bin/compare_svgs.rs"
-
 # ==================== 调试工具 ====================
 [[bin]]
 name = "debug-qr"
@@ -65,14 +64,18 @@ path = "src/bin/debug_compare.rs"
 name = "verify-kennytm"
 path = "src/bin/verify_kennytm.rs"
 
-[[bin]]
-name = "test-svgs"
-path = "src/bin/test_svgs.rs"
-
 # ==================== 报告工具 ====================
 [[bin]]
 name = "benchmark-report"
 path = "src/bin/benchmark_report.rs"
+
+[[bin]]
+name = "benchmark-kennytm"
+path = "src/bin/benchmark_kennytm.rs"
+
+[[bin]]
+name = "benchmark-full"
+path = "src/bin/benchmark_full.rs"
 
 [profile.release]
 opt-level = 3

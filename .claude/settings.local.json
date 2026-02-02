@@ -29,7 +29,11 @@
       "Bash(done)",
       "Bash(python:*)",
       "Bash(git stash:*)",
-      "Bash(git checkout:*)"
+      "Bash(git checkout:*)",
+      "Bash(cargo bench:*)",
+      "Bash(echo:*)",
+      "Bash(npm install:*)",
+      "Bash(npm run bench:*)"
     ]
   }
 }

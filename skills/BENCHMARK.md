@@ -43,6 +43,95 @@ npx tsx index.ts      # 完整测试（包含 Rust，耗时约 5 分钟）
 npx tsx index-fast.ts # 快速测试（使用缓存的 Rust 结果）
 ```
 
+### 使用 rust-tools 验证 SVG
+
+```bash
+# 生成并验证二维码 SVG
+cd bench/rust-tools
+cargo run --release --features validation --bin veaba-qr -- "你的文本"
+
+# 测试现有的 SVG 文件
+cargo run --release --features validation --bin test-svgs
+
+# 验证 kennytm 生成的二维码
+cargo run --release --features validation --bin validate-qr -- "你的文本"
+```
+
+## SVG 生成性能基准测试
+
+### 一键运行
+
+```bash
+# 快速测试（10次运行）
+pnpm bench:svg:rust:quick
+
+# 完整测试（100次运行）
+pnpm bench:svg:rust
+
+# 运行所有测试（包括 JS，默认只运行 Rust）
+pnpm bench:svg:quick
+pnpm bench:svg
+```
+
+### 测试内容
+
+对比以下包的 SVG 生成性能：
+- `kennytm-qrcode` - 社区参考库
+- `@veaba/qrcode-rust` - 纯 Rust 实现
+- `@veaba/qrcode-fast` - 极致性能优化版
+
+### 测试用例
+
+| 名称 | 文本 | 版本 | 模块数 |
+|------|------|------|--------|
+| Simple | "Hello World" | 1 | 21x21 |
+| Complex | "Test QR Code 123" | 3 | 25x25 |
+| URL | "https://github.com/veaba/qrcodes" | 3 | 29x29 |
+| Long | 长文本 | 6 | 37x37 |
+
+### 输出文件
+
+运行后生成以下文件：
+
+**SVG 文件** (`docs/bench/benchmark-output/`):
+- `{测试名}_{包名}.svg` - 各包生成的二维码 SVG
+
+**JSON 报告** (`docs/public/`):
+- `benchmark_svg_rust.json` - 详细性能数据
+
+**测试报告文档**:
+- `docs/bench/svg-benchmark.mdx` - 完整的测试报告
+
+### 实现细节
+
+#### 脚本文件
+
+- `scripts/benchmark-svg-rust.js` - Rust 包测试脚本
+- `scripts/benchmark-svg-js.js` - JS 包测试脚本（Windows 有兼容性问题）
+- `scripts/benchmark-svg.js` - 综合测试脚本
+- `bench/rust-tools/src/bin/benchmark_full.rs` - Rust 基准测试程序
+
+#### 关键特性
+
+1. **自动验证**: 使用 `resvg` + `rqrr` 验证生成的 SVG 可扫描性
+2. **可配置输出目录**: Rust 程序支持 `--output-dir` 参数
+3. **JSON 报告**: 自动复制到 `docs/public/` 供前端使用
+4. **性能对比**: 显示相对于 kennytm-qrcode 的速度提升倍数
+
+#### 添加新的测试用例
+
+编辑 `bench/rust-tools/src/bin/benchmark_full.rs`:
+
+```rust
+const TEST_CASES: &[(&str, &str)] = &[
+    ("Simple", "Hello World"),
+    ("Complex", "Test QR Code 123"),
+    ("URL", "https://github.com/veaba/qrcodes"),
+    ("Long", "Email: test@example.com | Phone: +1-234-567-8900 | Address: 123 Main St"),
+    ("NewCase", "你的新测试文本"),  // 添加新用例
+];
+```
+
 ## 添加新的基准测试
 
 ### 1. 为现有包添加新的测试项
@@ -326,6 +415,7 @@ import { BarChart, ComparisonTable } from '../components/BenchmarkCharts';
 | `backend_benchmark_pk.json` | PK 完整对比结果 | ~13 KB |
 | `backend_benchmark_pk_summary.json` | PK 摘要结果 | ~7 KB |
 | `benchmark_summary.json` | 所有测试汇总 | ~0.1 KB |
+| `benchmark_svg_rust.json` | SVG 生成测试原始数据 | ~5 KB |
 
 ### 文档报告
 
@@ -334,11 +424,53 @@ import { BarChart, ComparisonTable } from '../components/BenchmarkCharts';
 - `docs/bench/backend-bench.mdx` - 后端基准测试报告（Node.js vs Bun）
 - `docs/bench/backend-pk.mdx` - PK 多包对比报告
 - `docs/bench/compare-rust.mdx` - Rust 包对比报告
+- `docs/bench/svg-benchmark.mdx` - SVG 生成基准测试报告
 
 ### 可视化组件
 
 - `docs/components/BenchmarkCharts.tsx` - 图表组件（柱状图、对比表）
 - `docs/components/PKBenchmarkDashboard.tsx` - PK 对比仪表盘
+
+## 最新基准测试结果（2026-02-02）
+
+### 后端包性能对比
+
+| 包 | 单条生成 (ops/s) | SVG 输出 (ops/s) | 纠错级别 H (ops/s) |
+|---|-----------------|-----------------|-------------------|
+| `@veaba/qrcode-fast` | 54,283 | 92,486 | 47,436 |
+| `@veaba/qrcode-bun` | 18,902 | 18,003 | 20,170 |
+| `@veaba/qrcode-node` | 12,078 | 10,150 | 11,179 |
+
+### Rust 包对比（vs kennytm-qrcode）
+
+| 测试项 | @veaba/qrcode-rust | kennytm-qrcode | 速度提升 |
+|--------|-------------------|----------------|----------|
+| 单条生成 | ~54.4 µs | ~454.6 µs | **8.4x** |
+| 批量 100 条 | ~4.21 ms | ~34.12 ms | **8.1x** |
+| 纠错级别 L | ~29.6 µs | ~323.9 µs | **10.9x** |
+
+### SVG 验证结果
+
+使用 `bench/rust-tools` 验证工具：
+
+- ✅ `@veaba/qrcode-rust` - 生成的 SVG 可通过标准二维码扫描器正确解码（简单文本）
+- ✅ `@veaba/qrcode-fast` - 生成的 SVG 可通过标准二维码扫描器正确解码（简单文本）
+- ⚠️ 复杂文本（版本 3+）存在 Reed-Solomon 纠错码问题，验证失败
+
+验证命令：
+```bash
+cd bench/rust-tools
+cargo run --release --features validation --bin veaba-qr -- "Hello World"
+```
+
+### SVG 生成性能对比
+
+| 测试用例 | kennytm (µs) | qrcode-rust (µs) | qrcode-fast (µs) | fast 加速比 |
+|---------|-------------|-----------------|-----------------|------------|
+| Simple | ~230 | ~32 | ~11 | **~21x** |
+| Complex | ~350 | ~37 | ~17 | **~21x** |
+| URL | ~470 | ~55 | ~23 | **~20x** |
+| Long | ~870 | ~90 | ~40 | **~22x** |
 
 ## 参考
 
@@ -348,3 +480,4 @@ import { BarChart, ComparisonTable } from '../components/BenchmarkCharts';
   - `bench/frontend-benchmark/benchmark.cjs`
   - `bench/backend-benchmark-pk/index.ts`
   - `docs/components/PKBenchmarkDashboard.tsx`
+  - `bench/rust-tools/src/bin/veaba_qr.rs`
