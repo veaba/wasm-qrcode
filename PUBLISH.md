@@ -551,7 +551,6 @@ npm view @veaba/qrcode-wasm time
 
 如有问题，请联系：
 
-- 📧 Email: <godpu@outlook.com>
 - 🐙 GitHub: <https://github.com/veaba/qrcodes/issues>
 
 ---

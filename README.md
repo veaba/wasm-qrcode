@@ -301,8 +301,7 @@ pnpm run docs:preview
 
 欢迎 Issue 和 PR！
 
-- 📧 Email: godpu@outlook.com
-- 🐙 GitHub: https://github.com/veaba/qrcodes/issues
+- 🐙 GitHub: <https://github.com/veaba/qrcodes/issues>
 
 ---
 
