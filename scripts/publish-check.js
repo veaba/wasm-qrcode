@@ -111,6 +111,11 @@ for (const pkg of packages) {
     const pkgDir = path.join(pkgPath, 'pkg');
     check(fs.existsSync(pkgDir), 'pkg 目录存在') || (allPassed = false);
     check(fs.existsSync(path.join(pkgDir, 'package.json')), 'pkg/package.json 存在') || (allPassed = false);
+  } else if (pkg.name === '@veaba/qrcode-bun') {
+    // Bun 包直接使用 TypeScript 源码
+    const srcDir = path.join(pkgPath, 'src');
+    check(fs.existsSync(srcDir), 'src 目录存在') || (allPassed = false);
+    check(fs.existsSync(path.join(srcDir, 'index.ts')), 'src/index.ts 存在') || (allPassed = false);
   } else {
     const distDir = path.join(pkgPath, 'dist');
     check(fs.existsSync(distDir), 'dist 目录存在') || (allPassed = false);

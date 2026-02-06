@@ -37,12 +37,6 @@ function logSection(title) {
 // 包配置（按依赖顺序）
 const packages = [
   {
-    name: '@veaba/qrcode-shared',
-    path: 'packages/qrcode-shared',
-    buildCmd: 'pnpm run build',
-    publishPath: 'packages/qrcode-shared'
-  },
-  {
     name: '@veaba/qrcode-wasm',
     path: 'packages/qrcode-wasm',
     buildCmd: 'wasm-pack build --target web',
