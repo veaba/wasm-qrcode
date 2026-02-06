@@ -7,16 +7,26 @@
 // Enums
 // ============================================
 
-export enum QRErrorCorrectLevel {
+/**
+ * QR Code error correction level
+ * L: ~7%, M: ~15%, Q: ~25%, H: ~30%
+ */
+export declare enum QRErrorCorrectLevel {
   L = 1,  // Low (~7%)
   M = 0,  // Medium (~15%)
   Q = 3,  // Quartile (~25%)
   H = 2   // High (~30%)
 }
 
-export const QRMode: {
-  MODE_8BIT_BYTE: 4;
-};
+/**
+ * QR Code mode
+ */
+export const QRMode = {
+  MODE_8BIT_BYTE: 4,
+} as const;
+
+// Alias for WASM CorrectLevel
+export type CorrectLevel = QRErrorCorrectLevel;
 
 // ============================================
 // Options Interfaces
@@ -171,13 +181,12 @@ export declare function init_thread_pool(num_threads: number): Promise<void>;
 export declare function is_parallel_supported(): boolean;
 export declare function greet(): void;
 
-// Re-export WASM generated types
-export {
+// Re-export WASM generated types (type-only)
+export type {
   QRCodeWasm,
   QRCodeGenerator,
   StyledQRCode,
   QRCodeStyle,
-  CorrectLevel,
 } from '../pkg/qrcodes.js';
 
 // ============================================

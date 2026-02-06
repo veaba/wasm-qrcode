@@ -9,7 +9,6 @@
   },
   "description": "A browser-compatible QRCode library with caching - extends @veaba/qrcode-shared",
   "type": "module",
-  "source": "src/index.ts",
   "main": "dist/index.js",
   "module": "dist/index.js",
   "unpkg": "dist/index.iife.js",

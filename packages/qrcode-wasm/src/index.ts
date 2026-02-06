@@ -35,11 +35,15 @@ import init, {
   greet,
 } from '../pkg/qrcodes.js';
 
+// Re-export CorrectLevel as QRErrorCorrectLevel for API compatibility
+// CorrectLevel comes from WASM (wasm-pack generated)
+export { CorrectLevel as QRErrorCorrectLevel };
+export type { CorrectLevel as QRErrorCorrectLevelType };
+
 // ============================================
 // Re-export types
 // ============================================
 
-export { CorrectLevel as QRErrorCorrectLevel };
 export { QRCodeStyle, StyledQRCode };
 
 // QRMode constant
@@ -55,7 +59,7 @@ export const QRMode = { MODE_8BIT_BYTE: 4 } as const;
 export class QRCodeCore {
   private qr: QRCodeWasm;
   
-  constructor(text: string, correctLevel: QRErrorCorrectLevel = QRErrorCorrectLevel.H) {
+  constructor(text: string, correctLevel: CorrectLevel = CorrectLevel.H) {
     this.qr = QRCodeWasm.with_options(256, 256, correctLevel);
     if (text) {
       this.qr.make_code(text);
@@ -115,7 +119,7 @@ export const QRCode = QRCodeCore;
 
 export interface QRCodeOptions {
   text: string;
-  correctLevel?: QRErrorCorrectLevel;
+  correctLevel?: CorrectLevel;
   size?: number;
   colorDark?: string;
   colorLight?: string;
@@ -142,7 +146,7 @@ export interface CacheOptions {
   enabled?: boolean;
 }
 
-export type QRErrorCorrectLevel = CorrectLevel;
+// QRErrorCorrectLevel type is defined at the top of the file
 
 // ============================================
 // Cache System (Unified with qrcode-js)
@@ -198,14 +202,14 @@ class LRUCache<K, V> {
 
 const qrCodeCache = new LRUCache<string, QRCodeCore>();
 
-function getCacheKey(text: string, correctLevel: QRErrorCorrectLevel): string {
+function getCacheKey(text: string, correctLevel: CorrectLevel): string {
   return `${text}:${correctLevel}`;
 }
 
 /**
  * Get cached QRCode (creates and caches if not exists)
  */
-export function getCachedQRCode(text: string, correctLevel: QRErrorCorrectLevel = QRErrorCorrectLevel.H): QRCodeCore {
+export function getCachedQRCode(text: string, correctLevel: CorrectLevel = CorrectLevel.H): QRCodeCore {
   const key = getCacheKey(text, correctLevel);
   let qr = qrCodeCache.get(key);
 
@@ -321,53 +325,53 @@ export function generateMinimalStyleQRCode(text: string, size: number = 256): st
 // ============================================
 
 export function generateRoundedQRCodeCached(text: string, size: number = 256, radius: number = 8): string {
-  const qr = getCachedQRCode(text, QRErrorCorrectLevel.H);
+  getCachedQRCode(text, CorrectLevel.H);
   // Use the WASM function with cached QR data
   return generate_rounded_qrcode(text, size, radius);
 }
 
 export function generateQRCodeWithLogoAreaCached(text: string, size: number = 256, logoRatio: number = 0.2): string {
-  getCachedQRCode(text, QRErrorCorrectLevel.H);
+  getCachedQRCode(text, CorrectLevel.H);
   return generate_qrcode_with_logo_area(text, size, logoRatio);
 }
 
 export function generateGradientQRCodeCached(text: string, size: number = 256, color1: string = '#667eea', color2: string = '#764ba2'): string {
-  getCachedQRCode(text, QRErrorCorrectLevel.H);
+  getCachedQRCode(text, CorrectLevel.H);
   return generate_gradient_qrcode(text, size, color1, color2);
 }
 
 export function generateWechatStyleQRCodeCached(text: string, size: number = 256): string {
-  getCachedQRCode(text, QRErrorCorrectLevel.H);
+  getCachedQRCode(text, CorrectLevel.H);
   return generate_wechat_style_qrcode(text, size);
 }
 
 export function generateDouyinStyleQRCodeCached(text: string, size: number = 256): string {
-  getCachedQRCode(text, QRErrorCorrectLevel.H);
+  getCachedQRCode(text, CorrectLevel.H);
   return generate_douyin_style_qrcode(text, size);
 }
 
 export function generateAlipayStyleQRCodeCached(text: string, size: number = 256): string {
-  getCachedQRCode(text, QRErrorCorrectLevel.H);
+  getCachedQRCode(text, CorrectLevel.H);
   return generate_alipay_style_qrcode(text, size);
 }
 
 export function generateXiaohongshuStyleQRCodeCached(text: string, size: number = 256): string {
-  getCachedQRCode(text, QRErrorCorrectLevel.H);
+  getCachedQRCode(text, CorrectLevel.H);
   return generate_xiaohongshu_style_qrcode(text, size);
 }
 
 export function generateCyberpunkStyleQRCodeCached(text: string, size: number = 256): string {
-  getCachedQRCode(text, QRErrorCorrectLevel.H);
+  getCachedQRCode(text, CorrectLevel.H);
   return generate_cyberpunk_style_qrcode(text, size);
 }
 
 export function generateRetroStyleQRCodeCached(text: string, size: number = 256): string {
-  getCachedQRCode(text, QRErrorCorrectLevel.H);
+  getCachedQRCode(text, CorrectLevel.H);
   return generate_retro_style_qrcode(text, size);
 }
 
 export function generateMinimalStyleQRCodeCached(text: string, size: number = 256): string {
-  getCachedQRCode(text, QRErrorCorrectLevel.H);
+  getCachedQRCode(text, CorrectLevel.H);
   return generate_minimal_style_qrcode(text, size);
 }
 
@@ -379,7 +383,7 @@ export function generateMinimalStyleQRCodeCached(text: string, size: number = 25
  * Generate batch QRCodes
  */
 export function generateBatchQRCodes(texts: string[], options: Partial<QRCodeOptions> = {}): string[] {
-  const level = options.correctLevel ?? QRErrorCorrectLevel.H;
+  const level = options.correctLevel ?? CorrectLevel.H;
   return generate_qrcode_batch(texts, level);
 }
 
@@ -391,7 +395,7 @@ export function generateBatchQRCodesCached(
   options: Partial<QRCodeOptions> & { styled?: boolean; style?: StyledSVGOptions } = {}
 ): string[] {
   return texts.map(text => {
-    getCachedQRCode(text, options.correctLevel || QRErrorCorrectLevel.H);
+    getCachedQRCode(text, options.correctLevel || CorrectLevel.H);
     return generate_qrcode_fast(text, options.size || 256);
   });
 }
@@ -412,9 +416,9 @@ export function generateQRCodeAsync(
     let qr: QRCodeCore;
     
     if (useCache) {
-      qr = getCachedQRCode(text, options.correctLevel || QRErrorCorrectLevel.H);
+      qr = getCachedQRCode(text, options.correctLevel || CorrectLevel.H);
     } else {
-      qr = new QRCodeCore(text, options.correctLevel || QRErrorCorrectLevel.H);
+      qr = new QRCodeCore(text, options.correctLevel || CorrectLevel.H);
     }
     
     const svg = options.styled 

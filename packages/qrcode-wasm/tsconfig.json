@@ -17,5 +17,5 @@
     "resolveJsonModule": true
   },
   "include": ["src/**/*"],
-  "exclude": ["node_modules", "dist", "pkg", "target"]
+  "exclude": ["node_modules", "dist", "pkg", "target", "**/*.test.ts"]
 }

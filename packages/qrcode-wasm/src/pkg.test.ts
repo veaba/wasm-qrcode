@@ -18,9 +18,10 @@ describe('@veaba/qrcode-wasm - WASM Module', () => {
       const module = await import('../pkg/qrcodes.js');
       // Module should have exports after wasm-pack build
       expect(module).toBeDefined();
-    } catch (error) {
+    } catch (e: unknown) {
       // WASM might not be built yet
-      expect(error.message).toBeDefined();
+      const err = e as Error;
+      expect(err.message).toBeDefined();
     }
   });
 });

@@ -109,7 +109,7 @@ describe('@veaba/qrcode-wasm - API Exports', () => {
 describe('@veaba/qrcode-wasm - API Consistency with qrcode-js', () => {
   it('should have same export names as qrcode-js', async () => {
     const wasmMod = await import('./index.js');
-    const jsMod = await import('../../qrcode-js/src/index.js');
+    const jsMod = await import('@veaba/qrcode-js');
 
     // Core classes
     expect(wasmMod.QRCodeCore).toBeDefined();
@@ -138,15 +138,15 @@ describe('@veaba/qrcode-wasm - API Consistency with qrcode-js', () => {
     ];
 
     for (const fn of styleFns) {
-      expect(wasmMod[fn]).toBeDefined();
-      expect(jsMod[fn]).toBeDefined();
+      expect((wasmMod as Record<string, unknown>)[fn]).toBeDefined();
+      expect((jsMod as Record<string, unknown>)[fn]).toBeDefined();
     }
 
     // Cached versions
     const cachedFns = styleFns.map(fn => `${fn}Cached`);
     for (const fn of cachedFns) {
-      expect(wasmMod[fn]).toBeDefined();
-      expect(jsMod[fn]).toBeDefined();
+      expect((wasmMod as Record<string, unknown>)[fn]).toBeDefined();
+      expect((jsMod as Record<string, unknown>)[fn]).toBeDefined();
     }
 
     // Batch/Async
@@ -172,7 +172,7 @@ describe('@veaba/qrcode-wasm - API Consistency with qrcode-js', () => {
 
   it('should have same QRErrorCorrectLevel values', async () => {
     const wasmMod = await import('./index.js');
-    const jsMod = await import('../../qrcode-js/src/index.js');
+    const jsMod = await import('@veaba/qrcode-js');
 
     expect(wasmMod.QRErrorCorrectLevel.L).toBe(jsMod.QRErrorCorrectLevel.L);
     expect(wasmMod.QRErrorCorrectLevel.M).toBe(jsMod.QRErrorCorrectLevel.M);
