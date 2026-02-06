@@ -1,0 +1,2 @@
+# 空 workspace 配置，阻止向上查找父级 workspace
+packages: []
