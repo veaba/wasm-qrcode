@@ -1,6 +1,6 @@
 {
   "name": "@veaba/qrcode-bun",
-  "version": "0.0.4",
+  "version": "0.0.5",
   "description": "QRCode generator for Bun runtime - Pure TypeScript implementation",
   "author": "veaba",
   "license": "MIT",

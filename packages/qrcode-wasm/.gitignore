@@ -1,4 +1,5 @@
 target
-pkg
 node_modules
 dist
+# 注意：pkg 目录需要发布到 npm，所以不要在这里忽略
+# pkg
