@@ -1,61 +1,78 @@
 name: Release
 
 on:
-  push:
-    branches:
-      - main
+  workflow_dispatch:
+    inputs:
+      version:
+        type: choice
+        description: 'Release Version'
+        required: true
+        default: 'latest'
+        options:
+          - next
+          - beta
+          - alpha
+          - latest
+      branch:
+        description: 'Release Branch'
+        required: true
+        default: 'main'
+  issue_comment:
+    types: [created]
+
+permissions:
+  contents: write
+  pull-requests: write
+  id-token: write
 
 concurrency: ${{ github.workflow }}-${{ github.ref }}
 
 jobs:
   release:
     name: Release
+    if: github.event_name == 'workflow_dispatch' || github.event.comment.body == '/release'
     runs-on: ubuntu-latest
-    permissions:
-      contents: write
-      pull-requests: write
-      id-token: write  # Required for OIDC npm publishing
     steps:
-      - name: Checkout Repo
+      - name: Checkout
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 25
+          ref: ${{ github.event.inputs.branch || github.ref }}
+
+      - name: Setup Rust
+        uses: dtolnay/rust-toolchain@stable
+
+      - name: Install wasm-pack
+        run: curl https://rustwasm.github.io/wasm-pack/installer/init.sh -sSf | sh
+
+      - name: Install pnpm
+        run: corepack enable
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
           node-version: 20
+          cache: 'pnpm'
 
-      - name: Install pnpm
-        uses: pnpm/action-setup@v4
-
-      - name: Get pnpm store directory
-        shell: bash
-        run: |
-          echo "STORE_PATH=$(pnpm store path --silent)" >> $GITHUB_ENV
-
-      - name: Setup pnpm cache
-        uses: actions/cache@v4
-        with:
-          path: ${{ env.STORE_PATH }}
-          key: ${{ runner.os }}-pnpm-store-${{ hashFiles('**/pnpm-lock.yaml') }}
-          restore-keys: |
-            ${{ runner.os }}-pnpm-store-
-
-      - name: Install dependencies
+      - name: Install Dependencies
         run: pnpm install
 
-      - name: Build packages
-        run: |
-          # Build shared first (dependency of others)
-          pnpm --filter @veaba/qrcode-shared build
-          # Build wasm
-          pnpm --filter @veaba/qrcode-wasm build
-          # Build other packages
-          pnpm --filter @veaba/qrcode-js build
-          pnpm --filter @veaba/qrcode-node build
-          pnpm --filter @veaba/qrcode-bun build
+      - name: Build @veaba/qrcode-shared
+        run: pnpm --filter @veaba/qrcode-shared build
 
-      - name: Create Release Pull Request or Publish to npm
-        id: changesets
+      - name: Build @veaba/qrcode-wasm
+        run: pnpm --filter @veaba/qrcode-wasm build
+
+      - name: Build @veaba/qrcode-js
+        run: pnpm --filter @veaba/qrcode-js build
+
+      - name: Build @veaba/qrcode-node
+        run: pnpm --filter @veaba/qrcode-node build
+
+      - name: Build @veaba/qrcode-bun
+        run: pnpm --filter @veaba/qrcode-bun build
+
+      - name: Create Release Pull Request or Publish
         uses: changesets/action@v1
         with:
           version: pnpm ci:version
@@ -64,5 +81,4 @@ jobs:
           title: "chore: version packages"
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          # OIDC is enabled, no NPM_TOKEN needed
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
