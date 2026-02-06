@@ -51,8 +51,9 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: 20
+          node-version: 24  # npm OIDC requires CLI 11.5.1+
           cache: 'pnpm'
+          registry-url: 'https://registry.npmjs.org'
 
       - name: Install Dependencies
         run: pnpm install
@@ -81,4 +82,7 @@ jobs:
           title: "chore: version packages"
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+          # 注意：使用 OIDC 认证，不需要 NODE_AUTH_TOKEN
+          # 确保在 npmjs.com 上为每个包配置了 Trusted Publisher:
+          # https://www.npmjs.com/package/@veaba/xxx/access
+          # Publisher 配置: org=veaba, repo=qrcodes, workflow=release.yml
