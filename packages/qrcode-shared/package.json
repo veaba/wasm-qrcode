@@ -1,8 +1,9 @@
 {
   "name": "@veaba/qrcode-shared",
-  "version": "1.0.0",
+  "version": "0.0.1-alpha",
   "description": "Shared QRCode utilities and core logic for all @veaba/qrcode packages",
   "type": "module",
+  "private": true,
   "main": "dist/index.js",
   "module": "dist/index.js",
   "types": "dist/index.d.ts",

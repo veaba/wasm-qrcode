@@ -1,6 +1,6 @@
 {
   "name": "@veaba/qrcode-node",
-  "version": "1.0.0",
+  "version": "0.0.1-alpha",
   "description": "Node.js version of QRCode generator - Pure JavaScript implementation",
   "type": "module",
   "main": "dist/index.js",

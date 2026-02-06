@@ -1,6 +1,7 @@
 {
-  "name": "@veaba/qrcode",
-  "version": "0.0.2",
+  "name": "@veaba/qrcodes-monorepos",
+  "version": "0.0.1-alpha",
+  "private": true,
   "license": "MIT",
   "type": "module",
   "scripts": {
@@ -36,9 +37,17 @@
     "publish:help": "echo '查看 PUBLISH.md 获取详细发包指南'",
     "docs:dev": "rspress dev",
     "docs:build": "rspress build",
-    "docs:preview": "rspress preview"
+    "docs:preview": "rspress preview",
+    "changeset": "changeset",
+    "changeset:add": "changeset add",
+    "changeset:status": "changeset status",
+    "changeset:version": "changeset version",
+    "changeset:publish": "changeset publish",
+    "ci:version": "changeset version && pnpm install",
+    "ci:publish": "changeset publish"
   },
   "devDependencies": {
+    "@changesets/cli": "^2.29.8",
     "@types/node": "^25.1.0",
     "@vitest/browser": "^2.1.9",
     "@vitest/coverage-v8": "^2.1.0",
