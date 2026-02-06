@@ -6,6 +6,7 @@ on:
     paths:
       - 'docs/**'
       - '.github/workflows/docs.yml'
+      - 'rspress.config.ts'
   pull_request:
     branches: [main]
     paths:
@@ -32,7 +33,7 @@ jobs:
       - name: Install pnpm
         uses: pnpm/action-setup@v2
         with:
-          version: 8
+          version: 9
 
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
@@ -44,35 +45,28 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: documentation
-          path: docs/doc_build
+          path: doc_build
 
-  # ========== 部署文档 ==========
+  # ========== 部署到 Cloudflare Pages ==========
   deploy:
-    name: Deploy to GitHub Pages
+    name: Deploy to Cloudflare Pages
     runs-on: ubuntu-latest
     needs: build
+    # 只在 push 到 main 分支时部署（PR 不部署）
     if: github.event_name == 'push' && github.ref == 'refs/heads/main'
-    permissions:
-      pages: write
-      id-token: write
-    environment:
-      name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
     steps:
       - name: Download documentation artifacts
         uses: actions/download-artifact@v4
         with:
           name: documentation
-          path: docs/doc_build
+          path: doc_build
 
-      - name: Setup Pages
-        uses: actions/configure-pages@v4
-
-      - name: Upload to GitHub Pages
-        uses: actions/upload-pages-artifact@v3
+      - name: Deploy to Cloudflare Pages
+        uses: cloudflare/pages-action@v1
         with:
-          path: docs/doc_build
+          apiToken: ${{ secrets.CF_API_TOKEN }}
+          accountId: ${{ secrets.CF_ACCOUNT_ID }}
+          projectName: qrcodes-docs
+          directory: doc_build
+          gitHubToken: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Deploy to GitHub Pages
-        id: deployment
-        uses: actions/deploy-pages@v4
