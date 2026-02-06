@@ -1,6 +1,6 @@
 {
   "name": "@veaba/qrcode-wasm",
-  "version": "0.0.5",
+  "version": "0.0.6",
   "description": "WebAssembly QRCode generator - Unified API with qrcode-js",
   "type": "module",
   "main": "dist/index.js",
