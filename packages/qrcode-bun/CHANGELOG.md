@@ -1,5 +1,11 @@
 # @veaba/qrcode-bun
 
+## 0.0.4
+
+### Patch Changes
+
+- ebc2e52: release v0.0.3
+
 ## 0.0.3
 
 ### Patch Changes
