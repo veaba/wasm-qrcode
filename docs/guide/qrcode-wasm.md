@@ -10,14 +10,21 @@ npm install @veaba/qrcode-wasm
 
 ## 初始化
 
-WASM 需要异步初始化，确保在使用前完成初始化：
+WASM 需要异步初始化。`initWasm()` 函数**自动检测**你的构建工具环境：
+
+- **Vite**: 自动使用 `?url` 导入 WASM 文件
+- **Webpack 5**: 使用 `new URL()` 方式加载
+- **Parcel**: 使用内置 WASM 支持
+- **Node.js**: 使用文件系统读取
 
 ```typescript
-import init from '@veaba/qrcode-wasm';
+import initWasm from '@veaba/qrcode-wasm';
 
-// 初始化 WASM
-await init();
+// 初始化 WASM（自动检测环境，无需配置）
+await initWasm();
 ```
+
+> **注意**: 如果你使用 Vite 且遇到 WASM 加载问题，确保使用 `initWasm()` 而不是旧的 `init()`。
 
 ## 统一 API（推荐）
 
@@ -26,10 +33,10 @@ await init();
 ### 基础用法
 
 ```typescript
-import init, { QRCodeCore, QRErrorCorrectLevel } from '@veaba/qrcode-wasm';
+import initWasm, { QRCodeCore, QRErrorCorrectLevel } from '@veaba/qrcode-wasm';
 
-// 初始化 WASM（只需一次）
-await init();
+// 初始化 WASM（只需一次，自动检测环境）
+await initWasm();
 
 // 创建 QRCode 实例（与 qrcode-js 相同的 API）
 const qr = new QRCodeCore('https://github.com/veaba/qrcodes', QRErrorCorrectLevel.H);
@@ -44,13 +51,13 @@ document.getElementById('qrcode').innerHTML = svg;
 ### 使用缓存（推荐）
 
 ```typescript
-import init, { 
+import initWasm, { 
   generateRoundedQRCodeCached,
   clearQRCodeCache,
   getCacheStats 
 } from '@veaba/qrcode-wasm';
 
-await init();
+await initWasm();
 
 // 第一次生成会缓存
 const svg1 = generateRoundedQRCodeCached('https://example.com', 256, 8);
@@ -68,13 +75,13 @@ clearQRCodeCache();
 ### 样式化二维码
 
 ```typescript
-import init, { 
+import initWasm, { 
   generateWechatStyleQRCode,
   generateDouyinStyleQRCode,
   generateCyberpunkStyleQRCode 
 } from '@veaba/qrcode-wasm';
 
-await init();
+await initWasm();
 
 // 微信风格
 const wechatQR = generateWechatStyleQRCode('https://weixin.qq.com', 256);
@@ -89,9 +96,9 @@ const cyberQR = generateCyberpunkStyleQRCode('https://example.com', 256);
 ### 批量生成
 
 ```typescript
-import init, { generateBatchQRCodes, generateBatchQRCodesCached } from '@veaba/qrcode-wasm';
+import initWasm, { generateBatchQRCodes, generateBatchQRCodesCached } from '@veaba/qrcode-wasm';
 
-await init();
+await initWasm();
 
 const texts = [
   'https://example.com/1',
@@ -109,9 +116,9 @@ const svgsCached = generateBatchQRCodesCached(texts, { size: 256 });
 ### 异步生成
 
 ```typescript
-import init, { generateQRCodeAsync, generateBatchAsync } from '@veaba/qrcode-wasm';
+import initWasm, { generateQRCodeAsync, generateBatchAsync } from '@veaba/qrcode-wasm';
 
-await init();
+await initWasm();
 
 // 单个异步生成
 const result = await generateQRCodeAsync('https://example.com', {
@@ -132,9 +139,9 @@ const results = await generateBatchAsync(texts, {
 如果需要更底层的控制，可以直接使用 WASM 原生 API：
 
 ```typescript
-import init, { QRCodeWasm, CorrectLevel } from '@veaba/qrcode-wasm';
+import initWasm, { QRCodeWasm, CorrectLevel } from '@veaba/qrcode-wasm';
 
-await init();
+await initWasm();
 
 // 使用底层 WASM API
 const qr = new QRCodeWasm();
@@ -145,9 +152,9 @@ const svg = qr.get_svg();
 ### 使用 QRCodeGenerator（可复用实例）
 
 ```typescript
-import init, { QRCodeGenerator, CorrectLevel } from '@veaba/qrcode-wasm';
+import initWasm, { QRCodeGenerator, CorrectLevel } from '@veaba/qrcode-wasm';
 
-await init();
+await initWasm();
 
 // 创建可复用的生成器
 const gen = new QRCodeGenerator();
@@ -173,9 +180,9 @@ const svgs = gen.generate_batch(texts);
 如果需要像素数据用于 Canvas：
 
 ```typescript
-import init, { CanvasRenderer } from '@veaba/qrcode-wasm';
+import initWasm, { CanvasRenderer } from '@veaba/qrcode-wasm';
 
-await init();
+await initWasm();
 
 // 创建 Canvas 渲染器
 const renderer = new CanvasRenderer(256, 256);
@@ -207,7 +214,7 @@ ctx.putImageData(imageData, 0, 0);
 ```typescript
 // hooks/useQRCode.ts
 import { useEffect, useState, useCallback } from 'react';
-import init, { QRCodeCore, QRErrorCorrectLevel } from '@veaba/qrcode-wasm';
+import initWasm, { QRCodeCore, QRErrorCorrectLevel } from '@veaba/qrcode-wasm';
 
 let initialized = false;
 
@@ -218,7 +225,7 @@ export function useQRCode(text: string) {
   useEffect(() => {
     const generate = async () => {
       if (!initialized) {
-        await init();
+        await initWasm();
         initialized = true;
       }
       
@@ -239,7 +246,7 @@ export function useQRCode(text: string) {
 ```typescript
 // composables/useQRCode.ts
 import { ref, watch, onMounted } from 'vue';
-import init, { QRCodeCore, QRErrorCorrectLevel } from '@veaba/qrcode-wasm';
+import initWasm, { QRCodeCore, QRErrorCorrectLevel } from '@veaba/qrcode-wasm';
 
 let initialized = false;
 
@@ -249,7 +256,7 @@ export function useQRCode(text: Ref<string>) {
 
   const generate = async () => {
     if (!initialized) {
-      await init();
+      await initWasm();
       initialized = true;
     }
     
@@ -327,15 +334,15 @@ export function useQRCode(text: Ref<string>) {
 
 ```typescript
 // 旧版本（仍然支持）
-import init, { QRCodeWasm } from '@veaba/qrcode-wasm';
-await init();
+import initWasm, { QRCodeWasm } from '@veaba/qrcode-wasm';
+await initWasm();
 const qr = new QRCodeWasm();
 qr.make_code('text');
 const svg = qr.get_svg();
 
 // 新版本（统一 API，推荐）
-import init, { QRCodeCore } from '@veaba/qrcode-wasm';
-await init();
+import initWasm, { QRCodeCore } from '@veaba/qrcode-wasm';
+await initWasm();
 const qr = new QRCodeCore('text');
 const svg = qr.toSVG();
 ```

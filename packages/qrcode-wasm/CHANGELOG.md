@@ -1,5 +1,49 @@
 # @veaba/qrcode-wasm
 
+## 0.0.7
+
+### Patch Changes
+
+- Auto-detect Vite environment for seamless integration
+
+  The package now automatically detects Vite environment and loads WASM accordingly:
+
+  - **Vite**: Uses `?url` import for proper asset handling
+  - **Webpack/Parcel/Node**: Uses default WASM loading
+
+  Users no longer need special configuration or subpath imports:
+
+  ```typescript
+  import initWasm, {
+    QRCodeCore,
+    QRErrorCorrectLevel,
+  } from "@veaba/qrcode-wasm";
+
+  await initWasm(); // Auto-detects environment
+  const qr = new QRCodeCore("https://example.com", QRErrorCorrectLevel.H);
+  ```
+
+  Works out of the box in all major bundlers.
+
+- Add Vite support via subpath export
+
+  Users can now import from `@veaba/qrcode-wasm/vite` for seamless Vite integration:
+
+  ```typescript
+  import initWasm, {
+    QRCodeCore,
+    QRErrorCorrectLevel,
+  } from "@veaba/qrcode-wasm/vite";
+
+  await initWasm();
+  const qr = new QRCodeCore("https://example.com", QRErrorCorrectLevel.H);
+  const svg = qr.toSVG(256);
+  ```
+
+  No additional Vite configuration or plugins required.
+
+  The standard import (`@veaba/qrcode-wasm`) continues to work for non-Vite environments.
+
 ## 0.0.6
 
 ### Patch Changes

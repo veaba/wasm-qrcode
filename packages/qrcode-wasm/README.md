@@ -31,13 +31,20 @@ yarn add @veaba/qrcode-wasm
 
 ## 使用方法
 
+### 自动检测构建工具
+
+`@veaba/qrcode-wasm` 现在**自动检测** Vite、Webpack、Parcel 等构建工具环境：
+- **Vite**: 自动使用 `?url` 导入 WASM 文件
+- **Webpack/Parcel**: 使用默认 WASM 加载方式
+- **无需配置**: 所有环境使用相同的 API
+
 ### 基础用法（统一 API）
 
 ```typescript
-import init, { QRCodeCore, QRErrorCorrectLevel } from '@veaba/qrcode-wasm';
+import initWasm, { QRCodeCore, QRErrorCorrectLevel } from '@veaba/qrcode-wasm';
 
-// 初始化 WASM（只需一次）
-await init();
+// 初始化 WASM（自动检测 Vite/Webpack/Parcel 环境）
+await initWasm();
 
 // 创建 QRCode 实例（与 qrcode-js 相同的 API）
 const qr = new QRCodeCore('Hello World', QRErrorCorrectLevel.H);
@@ -52,13 +59,13 @@ document.getElementById('qrcode').innerHTML = svg;
 ### 使用缓存（推荐）
 
 ```typescript
-import init, { 
+import initWasm, { 
   generateRoundedQRCodeCached,
   clearQRCodeCache,
   getCacheStats 
 } from '@veaba/qrcode-wasm';
 
-await init();
+await initWasm();
 
 // 第一次生成会缓存
 const svg1 = generateRoundedQRCodeCached('https://example.com', 256, 8);
@@ -76,13 +83,13 @@ clearQRCodeCache();
 ### 样式化二维码
 
 ```typescript
-import init, { 
+import initWasm, { 
   generateWechatStyleQRCode,
   generateDouyinStyleQRCode,
   generateCyberpunkStyleQRCode 
 } from '@veaba/qrcode-wasm';
 
-await init();
+await initWasm();
 
 // 微信风格
 const wechatQR = generateWechatStyleQRCode('https://weixin.qq.com', 256);
@@ -97,9 +104,9 @@ const cyberQR = generateCyberpunkStyleQRCode('https://example.com', 256);
 ### 批量生成
 
 ```typescript
-import init, { generateBatchQRCodes, generateBatchQRCodesCached } from '@veaba/qrcode-wasm';
+import initWasm, { generateBatchQRCodes, generateBatchQRCodesCached } from '@veaba/qrcode-wasm';
 
-await init();
+await initWasm();
 
 const texts = [
   'https://example.com/1',
@@ -117,9 +124,9 @@ const svgsCached = generateBatchQRCodesCached(texts, { size: 256 });
 ### 异步生成
 
 ```typescript
-import init, { generateQRCodeAsync, generateBatchAsync } from '@veaba/qrcode-wasm';
+import initWasm, { generateQRCodeAsync, generateBatchAsync } from '@veaba/qrcode-wasm';
 
-await init();
+await initWasm();
 
 // 单个异步生成
 const result = await generateQRCodeAsync('https://example.com', {
@@ -140,9 +147,9 @@ const results = await generateBatchAsync(texts, {
 如果需要更底层的控制，可以直接使用 WASM 原生 API：
 
 ```typescript
-import init, { QRCodeWasm, CorrectLevel } from '@veaba/qrcode-wasm';
+import initWasm, { QRCodeWasm, CorrectLevel } from '@veaba/qrcode-wasm';
 
-await init();
+await initWasm();
 
 // 使用底层 WASM API
 const qr = new QRCodeWasm();
@@ -153,9 +160,9 @@ const svg = qr.get_svg();
 ### 使用 QRCodeGenerator（可复用实例）
 
 ```typescript
-import init, { QRCodeGenerator, CorrectLevel } from '@veaba/qrcode-wasm';
+import initWasm, { QRCodeGenerator, CorrectLevel } from '@veaba/qrcode-wasm';
 
-await init();
+await initWasm();
 
 // 创建可复用的生成器
 const gen = new QRCodeGenerator();
@@ -179,9 +186,9 @@ const svgs = gen.generate_batch(texts);
 ### Canvas 渲染
 
 ```typescript
-import init, { CanvasRenderer } from '@veaba/qrcode-wasm';
+import initWasm, { CanvasRenderer } from '@veaba/qrcode-wasm';
 
-await init();
+await initWasm();
 
 // 创建 Canvas 渲染器
 const renderer = new CanvasRenderer(256, 256);
