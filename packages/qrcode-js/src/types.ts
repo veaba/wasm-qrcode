@@ -32,10 +32,10 @@ export {
   generateRetroStyleQRCode,
   generateMinimalStyleQRCode,
   generateBatchQRCodes,
-  generateQRCodeAsync,
-  generateBatchAsync,
 
-  // Types
+} from '@veaba/qrcode-shared';
+
+export type {
   QRCodeOptions,
   StyledSVGOptions,
   RSBlock,
@@ -69,7 +69,7 @@ export declare function generateBatchQRCodesCached(
   options?: Partial<QRCodeOptions> & { styled?: boolean; style?: StyledSVGOptions }
 ): string[];
 
-// Async generation with optional caching
+// Async generation with optional caching (using Advanced versions from shared)
 export interface QRCodeResult {
   text: string;
   svg: string;

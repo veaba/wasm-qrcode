@@ -38,6 +38,10 @@ name = "validate-qr"
 path = "src/bin/validate_qr.rs"
 
 [[bin]]
+name = "validate-external-svg"
+path = "src/bin/validate_external_svg.rs"
+
+[[bin]]
 name = "veaba-qr"
 path = "src/bin/veaba_qr.rs"
 

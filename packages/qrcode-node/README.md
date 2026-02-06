@@ -195,6 +195,16 @@ interface StyledSVGOptions {
 
 - `@veaba/qrcode-shared` - 核心共享库
 
+## 性能测试
+
+基准测试已迁移到 `bench/backend-benchmark`，运行方式：
+
+```bash
+cd bench/backend-benchmark
+pnpm run bench      # 完整测试（对比所有后端包）
+pnpm run bench:fast # 快速测试
+```
+
 ## 环境要求
 
 - Node.js >= 16.0.0
@@ -202,3 +212,7 @@ interface StyledSVGOptions {
 ## License
 
 MIT
+
+## 历史迁移
+
+- **2026-02-06**: 基准测试从 `packages/qrcode-node/benchmark/` 迁移至 `bench/backend-benchmark`，保持包目录干净。

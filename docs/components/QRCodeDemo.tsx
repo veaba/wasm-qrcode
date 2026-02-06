@@ -1,4 +1,4 @@
-import React, { useState, useMemo, useEffect, useCallback } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   QRCodeCore,
   QRErrorCorrectLevel,
@@ -302,7 +302,7 @@ export const QRCodeDemo: React.FC = () => {
             setIsLoading(false);
             return;
           }
-                    result = generateWASMQRCode(wasmModuleState, text, selectedStyle, size);
+          result = generateWASMQRCode(wasmModuleState, text, selectedStyle, size);
         } else {
           result = generateJSQRCode(text, selectedStyle, size);
         }

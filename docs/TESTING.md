@@ -92,7 +92,7 @@ vitest --config vitest.config.browser.ts
 
 | Package | Test Location |
 |---------|---------------|
-| @veaba/qrcode-shared | `packages/shared/src/index.test.ts` |
+| @veaba/qrcode-shared | `packages/qrcode-shared/src/index.test.ts` |
 | @veaba/qrcode-node | `packages/qrcode-node/src/index.test.ts` |
 | @veaba/qrcode-bun | `packages/qrcode-bun/src/index.test.ts` |
 | @veaba/qrcode-js | `packages/qrcode-js/src/index.test.js` |

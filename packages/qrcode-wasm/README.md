@@ -293,6 +293,17 @@ npm test
 wasm-pack build --release --target web
 ```
 
+## 性能测试
+
+基准测试已迁移到 `bench/frontend-benchmark`：
+
+```bash
+cd bench/frontend-benchmark
+node benchmark.cjs           # 测试 qrcode-js
+npx tsx wasm.benchmark.ts    # 测试 qrcode-wasm
+cargo run --bin benchmark    # 测试 Rust 原生性能
+```
+
 ## 相关包
 
 - `@veaba/qrcode-js` - 纯 JavaScript 版本（API 一致）
@@ -303,3 +314,7 @@ wasm-pack build --release --target web
 ## License
 
 MIT
+
+## 历史迁移
+
+- **2026-02-06**: 基准测试从 `packages/qrcode-wasm/benchmark/` 和 `packages/qrcode-wasm/src/bin/benchmark.rs` 迁移至 `bench/frontend-benchmark/`，保持包目录干净。

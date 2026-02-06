@@ -86,17 +86,16 @@ export const PKBenchmarkDashboard: React.FC = () => {
         <div style={{ fontSize: '1.5rem' }}>❌ 加载失败</div>
         <p>{error || '暂无数据，请运行基准测试'}</p>
         <p style={{ fontSize: '0.875rem', color: '#6b7280', marginTop: '1rem' }}>
-          运行命令: <code>cd bench/backend-benchmark-pk && npm run bench</code>
+          运行命令: <code>cd bench/backend-benchmark && npm run bench</code>
         </p>
       </div>
     );
   }
 
   const categories = ['all', ...new Set(data.comparison.map((c) => c.category))];
-  
-  const filteredComparison = selectedCategory === 'all' 
-    ? data.comparison 
-    : data.comparison.filter((c) => c.category === selectedCategory);
+
+  const filteredComparison =
+    selectedCategory === 'all' ? data.comparison : data.comparison.filter((c) => c.category === selectedCategory);
 
   // 找出每个包的最佳表现
   const packageWins: Record<string, number> = {};
@@ -110,12 +109,14 @@ export const PKBenchmarkDashboard: React.FC = () => {
   return (
     <div style={{ padding: '1.5rem' }}>
       {/* 环境信息 */}
-      <div style={{ 
-        backgroundColor: '#f8fafc', 
-        padding: '1.5rem', 
-        borderRadius: '8px',
-        marginBottom: '2rem'
-      }}>
+      <div
+        style={{
+          backgroundColor: '#f8fafc',
+          padding: '1.5rem',
+          borderRadius: '8px',
+          marginBottom: '2rem',
+        }}
+      >
         <h3 style={{ marginTop: 0, marginBottom: '1rem' }}>🖥️ 测试环境</h3>
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '1rem' }}>
           <div>
@@ -302,12 +303,26 @@ export const PKBenchmarkDashboard: React.FC = () => {
       </div>
 
       {/* 说明 */}
-      <div style={{ marginTop: '2rem', padding: '1rem', backgroundColor: '#fef3c7', borderRadius: '8px', fontSize: '0.875rem' }}>
+      <div
+        style={{
+          marginTop: '2rem',
+          padding: '1rem',
+          backgroundColor: '#fef3c7',
+          borderRadius: '8px',
+          fontSize: '0.875rem',
+        }}
+      >
         <strong>💡 说明:</strong>
         <ul style={{ margin: '0.5rem 0 0 0', paddingLeft: '1.5rem' }}>
-          <li><strong>ops/s</strong>: 每秒操作数，数值越高性能越好</li>
-          <li><strong>平均耗时</strong>: 每次操作的平均时间（微秒），数值越低越好</li>
-          <li><strong>速度提升</strong>: 最快包相对于最慢包的速度倍数</li>
+          <li>
+            <strong>ops/s</strong>: 每秒操作数，数值越高性能越好
+          </li>
+          <li>
+            <strong>平均耗时</strong>: 每次操作的平均时间（微秒），数值越低越好
+          </li>
+          <li>
+            <strong>速度提升</strong>: 最快包相对于最慢包的速度倍数
+          </li>
           <li>绿色高亮行为该测试项的冠军</li>
         </ul>
       </div>

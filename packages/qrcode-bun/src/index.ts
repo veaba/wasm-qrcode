@@ -7,7 +7,6 @@
 
 // Bun-optimized utilities
 const encoder = new TextEncoder();
-const decoder = new TextDecoder();
 
 // ============================================
 // 基础常量 - 与统一 API 一致
@@ -281,8 +280,9 @@ export class QRCode {
     this.correctLevel = correctLevel;
     this.typeNumber = getTypeNumber(text, correctLevel);
     this.moduleCount = this.typeNumber * 4 + 17;
+    // 使用 255 作为未初始化的标记，0=白色，1=黑色
     this.modules = Array.from({ length: this.moduleCount }, () =>
-      new Uint8Array(this.moduleCount)
+      new Uint8Array(this.moduleCount).fill(255)
     );
     this.make();
   }
@@ -300,19 +300,19 @@ export class QRCode {
     const cellSize = Math.floor(size / this.moduleCount);
     const actualSize = cellSize * this.moduleCount;
 
-    let svg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${actualSize} ${actualSize}" width="${actualSize}" height="${actualSize}">`;
-    svg += `<rect width="${actualSize}" height="${actualSize}" fill="white"/>`;
-
+    // 使用 path 合并所有黑色模块，提高兼容性和渲染性能
+    let path = '';
     for (let row = 0; row < this.moduleCount; row++) {
       for (let col = 0; col < this.moduleCount; col++) {
         if (this.isDark(row, col)) {
-          svg += `<rect x="${col * cellSize}" y="${row * cellSize}" width="${cellSize}" height="${cellSize}" fill="black"/>`;
+          const x = col * cellSize;
+          const y = row * cellSize;
+          path += `M${x},${y}h${cellSize}v${cellSize}h-${cellSize}z`;
         }
       }
     }
 
-    svg += '</svg>';
-    return svg;
+    return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${actualSize} ${actualSize}" width="${actualSize}" height="${actualSize}"><rect width="${actualSize}" height="${actualSize}" fill="white"/><path d="${path}" fill="black"/></svg>`;
   }
 
   toStyledSVG(options: StyledSVGOptions = {}): string {
@@ -445,14 +445,20 @@ export class QRCode {
   }
 
   private setupPositionProbePattern(row: number, col: number): void {
-    for (let r = -1; r <= 7; r++) {
-      if (row + r <= -1 || this.moduleCount <= row + r) continue;
-      for (let c = -1; c <= 7; c++) {
-        if (col + c <= -1 || this.moduleCount <= col + c) continue;
-        const isDark = (r >= 0 && r <= 6 && (c === 0 || c === 6)) ||
-          (c >= 0 && c <= 6 && (r === 0 || r === 6)) ||
-          (r >= 2 && r <= 4 && c >= 2 && c <= 4);
-        this.modules[row + r][col + c] = isDark ? 1 : 0;
+    for (let r = -1; r < 8; r++) {
+      const absR = row + r;
+      if (absR < 0 || absR >= this.moduleCount) continue;
+      for (let c = -1; c < 8; c++) {
+        const absC = col + c;
+        if (absC < 0 || absC >= this.moduleCount) continue;
+        const inPattern = (r >= 0 && r < 7 && c >= 0 && c < 7);
+        if (!inPattern) {
+          this.modules[absR][absC] = 0; // 白色（quiet zone）
+        } else {
+          const isDark = (r === 0 || r === 6 || c === 0 || c === 6) ||
+            (r >= 2 && r <= 4 && c >= 2 && c <= 4);
+          this.modules[absR][absC] = isDark ? 1 : 0; // 1=黑色, 0=白色
+        }
       }
     }
   }
@@ -463,7 +469,7 @@ export class QRCode {
       for (let j = 0; j < pos.length; j++) {
         const row = pos[i];
         const col = pos[j];
-        if (this.modules[row][col] !== 0) continue;
+        if (this.modules[row][col] !== 255) continue; // 如果已被设置则跳过
         for (let r = -2; r <= 2; r++) {
           for (let c = -2; c <= 2; c++) {
             this.modules[row + r][col + c] =
@@ -476,10 +482,10 @@ export class QRCode {
 
   private setupTimingPattern(): void {
     for (let r = 8; r < this.moduleCount - 8; r++) {
-      if (this.modules[r][6] === 0) this.modules[r][6] = (r & 1) === 0 ? 1 : 0;
+      if (this.modules[r][6] === 255) this.modules[r][6] = (r & 1) === 0 ? 1 : 0;
     }
     for (let c = 8; c < this.moduleCount - 8; c++) {
-      if (this.modules[6][c] === 0) this.modules[6][c] = (c & 1) === 0 ? 1 : 0;
+      if (this.modules[6][c] === 255) this.modules[6][c] = (c & 1) === 0 ? 1 : 0;
     }
   }
 
@@ -547,7 +553,7 @@ export class QRCode {
       if (col === 6) col--;
       while (true) {
         for (let c = 0; c < 2; c++) {
-          if (this.modules[row][col - c] === 0) {
+          if (this.modules[row][col - c] === 255) { // 只填充未初始化的位置
             let dark = false;
             if (byteIndex < data.length) {
               dark = ((data[byteIndex] >>> bitIndex) & 1) === 1;

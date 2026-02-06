@@ -215,7 +215,7 @@ qrcodes/
 ├── bench/                  # 基准测试工具
 │   ├── rust-tools/         # Rust 对比测试工具
 │   ├── frontend-benchmark/ # 前端性能测试
-│   └── backend-benchmark-pk/ # 后端 PK 测试
+│   └── backend-benchmark/ # 后端 PK 测试
 ├── scripts/                # 构建和发布脚本
 └── skills/                 # 开发技能文档
 ```
@@ -245,19 +245,62 @@ pnpm run build
 
 ### 运行测试
 
-```bash
-# 所有测试
-pnpm test
+本项目使用 **Vitest** 进行测试，支持两种测试模式：
 
-# 单元测试
+#### 单元测试 (Node.js 环境)
+
+```bash
+# 运行所有单元测试（Node.js 环境）
 pnpm run test:unit
 
-# 浏览器测试
+# 监视模式
+pnpm run test:watch
+
+# 覆盖率报告
+pnpm run test:coverage
+```
+
+#### 浏览器模式测试
+
+用于测试 **WASM 模块**在真实浏览器环境中的功能，需要系统安装 Chrome：
+
+```bash
+# 运行浏览器模式测试（真实 Chrome 环境）
 pnpm run test:browser
 
-# Rust 测试
+# 调试模式（ headed 模式，显示浏览器窗口）
+pnpm run test:browser:ui
+```
+
+**浏览器测试配置：**
+- 使用 Playwright 驱动真实 Chrome 浏览器
+- 自动加载并初始化 WASM 模块
+- 测试 WASM QRCode 生成、样式渲染、缓存系统等完整功能
+- 配置文件：`vitest.config.browser.ts`
+- 测试文件：`tests/**/*.browser.test.ts`
+
+#### Rust 测试
+
+```bash
+# qrcode-rust 测试
 cd packages/qrcode-rust && cargo test
+
+# qrcode-fast 测试
 cd packages/qrcode-fast && cargo test
+```
+
+#### 测试结构
+
+```
+tests/
+├── qrcode-js/           # @veaba/qrcode-js 测试
+├── qrcode-node/         # @veaba/qrcode-node 测试
+├── qrcode-shared/       # @veaba/qrcode-shared 测试
+├── qrcode-bun/          # @veaba/qrcode-bun 测试
+├── qrcode-wasm/
+│   ├── index.test.ts         # WASM API 单元测试
+│   └── index.browser.test.ts # WASM 浏览器模式测试 ⭐
+└── qrcode-wasm/pkg.test.ts   # WASM 构建产物测试
 ```
 
 ### 文档开发

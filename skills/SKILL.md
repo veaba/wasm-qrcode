@@ -39,32 +39,33 @@
 ## 基准测试
 
 - `/bench` 目录基准测试的代码
-- `/scripts` 是用于测试的脚本
-- **详细指南**: 参见 `skills/BENCHMARK.md`
+- `/bench/scripts` 是基准测试运行脚本
+- **详细指南**: 参见 `bench/README.md`
 
 ### 基准测试结构（已整理）
 
 ```
 bench/
-├── backend-benchmark-pk/          # 后端包 PK 基准测试（多包对比）
-│   ├── index.ts                   # 主测试脚本，对比 3 个包
+├── backend-benchmark/          # 后端包 PK 基准测试（多包对比）
+│   ├── index.ts                # 主测试脚本
 │   └── package.json
-├── frontend-benchmark/            # 前端包基准测试
-│   ├── index.ts                   # TypeScript 版本（需构建后运行）
-│   ├── benchmark.cjs              # CommonJS 版本（直接运行）
-│   └── dist/
-├── kennytm-qrcode/               # 外部对比包（社区 Rust QRCode，勿动）
+├── frontend-benchmark/         # 前端包基准测试
+│   └── benchmark.cjs
+├── svg-benchmark/              # SVG 生成性能测试
+│   ├── index.js                # 主入口
+│   ├── rust.js                 # Rust 包测试
+│   └── js.js                   # JS 包测试
+├── scripts/                    # 基准测试运行脚本
+│   └── run.js                  # 统一入口
+├── kennytm-qrcode/             # 外部对比包
 │   └── src/
-└── rust-tools/                   # 二维码验证工具集
+└── rust-tools/                 # Rust 验证工具集
     ├── Cargo.toml
-    ├── src/
-    │   ├── lib.rs
-    │   ├── validation.rs          # SVG 二维码验证模块
-    │   └── bin/
-    │       ├── veaba_qr.rs        # 生成并验证 @veaba 二维码
-    │       ├── validate_qr.rs     # 验证 kennytm 二维码
-    │       └── ...
-    └── README.md
+    └── src/
+        └── bin/
+            ├── veaba_qr.rs
+            ├── validate_qr.rs
+            └── ...
 ```
 
 **注意**: `benchmark-cross-backend/` 目录已删除（功能被 PK 测试覆盖）
@@ -154,7 +155,7 @@ PK 测试对比以下后端包：
 
 ```bash
 # 完整 PK 测试（包含 Rust benchmark，耗时约 5 分钟）
-cd bench/backend-benchmark-pk
+cd bench/backend-benchmark
 npx tsx index.ts
 
 # 快速 PK 测试（使用缓存的 Rust 结果）
@@ -220,10 +221,92 @@ npx tsx index-fast.ts
 
 ## 测试
 
-1. 对于前端包，使用 `pnpm run test`，使用 `vitest` 来测试，它有 `browser` 模式，可以测试浏览器环境
-2. 对于 Rust 包，使用 `cargo test` 进行测试
-3. 对于 SVG 验证，使用 `bench/rust-tools` 中的验证工具
-4. 产生的 `svg` 文件 和 json 放在 `/docs/public` 中
+本项目使用 **Vitest** 作为测试框架，支持两种测试模式：
+
+### 测试脚本
+
+```bash
+# 运行所有单元测试（Node.js 环境）
+pnpm run test:unit
+
+# 运行浏览器模式测试（真实 Chrome + WASM）
+pnpm run test:browser
+
+# 调试模式（显示浏览器窗口）
+pnpm run test:browser:ui
+
+# 监视模式
+pnpm run test:watch
+
+# 覆盖率报告
+pnpm run test:coverage
+```
+
+### 测试模式说明
+
+#### 1. 单元测试 (Node.js 环境)
+
+- **配置文件**: `vitest.config.ts`
+- **测试文件**: `tests/**/*.test.ts` (不包括 `.browser.test.ts`)
+- **用途**: 测试 API 接口、类型定义、非 WASM 逻辑
+- **特点**: 快速执行，无需浏览器环境
+
+#### 2. 浏览器模式测试
+
+- **配置文件**: `vitest.config.browser.ts`
+- **测试文件**: `tests/**/*.browser.test.ts`
+- **用途**: 测试 WASM 模块在真实浏览器环境中的功能
+- **驱动**: Playwright + 系统 Chrome
+- **配置要点**:
+  - 使用系统 Chrome 路径避免下载浏览器
+  - 配置 COOP/COEP 头支持 WASM
+  - 自动加载和初始化 WASM 模块
+
+### 测试文件结构
+
+```
+tests/
+├── qrcode-js/                  # @veaba/qrcode-js 单元测试
+├── qrcode-node/                # @veaba/qrcode-node 单元测试
+├── qrcode-shared/              # @veaba/qrcode-shared 单元测试
+├── qrcode-bun/                 # @veaba/qrcode-bun 单元测试
+├── qrcode-wasm/
+│   ├── index.test.ts           # WASM API 单元测试
+│   ├── index.browser.test.ts   # WASM 浏览器模式测试 ⭐
+│   └── pkg.test.ts             # WASM 构建产物测试
+└── ...
+```
+
+### Rust 测试
+
+```bash
+# qrcode-rust 测试
+cd packages/qrcode-rust && cargo test
+
+# qrcode-fast 测试
+cd packages/qrcode-fast && cargo test
+```
+
+### SVG 验证
+
+使用 `bench/rust-tools` 中的工具验证生成的二维码：
+
+```bash
+cd bench/rust-tools
+
+# 生成并验证 @veaba 二维码
+cargo run --release --features validation --bin veaba-qr -- "Hello World"
+
+# 验证 kennytm 二维码
+cargo run --release --features validation --bin validate-qr -- "Hello World"
+```
+
+### 注意事项
+
+1. **WASM 测试**: 浏览器模式测试需要 WASM 模块已构建 (`packages/qrcode-wasm/pkg/`)
+2. **Chrome 路径**: macOS 使用 `/Applications/Google Chrome.app/Contents/MacOS/Google Chrome`
+3. **测试隔离**: 单元测试和浏览器测试文件分开，避免重复执行
+4. **输出文件**: 基准测试产生的 `svg` 文件和 `json` 放在 `/docs/public` 中
 
 ## 文档
 
@@ -240,6 +323,19 @@ npx tsx index-fast.ts
 
 ## 更新记录
 
+### 2026-02-07 (Vitest 浏览器模式配置)
+
+- 配置 Vitest 浏览器模式测试 WASM 模块
+  - 创建 `vitest.config.browser.ts` 浏览器测试配置
+  - 使用 Playwright + 系统 Chrome 驱动测试
+  - 配置 COOP/COEP 头支持 WASM 加载
+- 创建 `tests/qrcode-wasm/index.browser.test.ts` 浏览器测试文件
+  - 28 个功能测试覆盖 WASM 初始化、QRCode 生成、样式渲染、缓存系统
+  - 优雅处理 WASM 未构建的情况
+- 更新 `vitest.config.ts` 排除浏览器测试文件
+- 添加 `test:browser` 和 `test:browser:ui` 脚本命令
+- 更新 `README.md` 和 `skills/SKILL.md` 测试文档
+
 ### 2026-02-02
 
 - 运行了完整的基准测试（Node.js、Bun、Rust）
@@ -250,10 +346,11 @@ npx tsx index-fast.ts
 
 ### 2026-02-02 (SVG 基准测试)
 
-- 创建了 SVG 生成性能基准测试脚本
-  - `scripts/benchmark-svg-rust.js` - Rust 包测试
-  - `scripts/benchmark-svg.js` - 综合测试脚本
-  - `bench/rust-tools/src/bin/benchmark_full.rs` - Rust 测试程序
+- 迁移基准测试脚本到 `bench/` 目录
+  - `bench/scripts/run.js` - 统一基准测试入口
+  - `bench/svg-benchmark/index.js` - SVG 测试主入口
+  - `bench/svg-benchmark/rust.js` - Rust 包 SVG 测试
+  - `bench/svg-benchmark/node-bun.js` - JS 包 SVG 测试
 - 添加了 package.json scripts 命令
   - `pnpm bench:svg:rust:quick` - 快速测试
   - `pnpm bench:svg:rust` - 完整测试

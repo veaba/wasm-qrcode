@@ -6,13 +6,13 @@ import { PKBenchmarkDashboard } from '../components/PKBenchmarkDashboard';
 
 本基准测试对比了以下后端 QRCode 生成库的性能：
 
-| 包 | 运行时 | 描述 | 图标 |
-|---|---|---|---|
-| `@veaba/qrcode-node` | Node.js | Node.js 环境下的 QRCode 实现 | 🟢 |
-| `@veaba/qrcode-bun` | Bun | Bun 环境下的 QRCode 实现 | 🥟 |
-| `@veaba/qrcode-rust` | Rust | Rust 原生 QRCode 实现 | 🦀 |
-| `@veaba/qrcode-fast` | Rust | Rust 优化版 QRCode | ⚡ |
-| `kennytm-qrcode` | Rust | 社区流行的 Rust QRCode 库 | 📦 |
+| 包                   | 运行时  | 描述                         | 图标 |
+| -------------------- | ------- | ---------------------------- | ---- |
+| `@veaba/qrcode-node` | Node.js | Node.js 环境下的 QRCode 实现 | 🟢   |
+| `@veaba/qrcode-bun`  | Bun     | Bun 环境下的 QRCode 实现     | 🥟   |
+| `@veaba/qrcode-rust` | Rust    | Rust 原生 QRCode 实现        | 🦀   |
+| `@veaba/qrcode-fast` | Rust    | Rust 优化版 QRCode           | ⚡   |
+| `kennytm-qrcode`     | Rust    | 社区流行的 Rust QRCode 库    | 📦   |
 
 ## 测试结果仪表板
 
@@ -53,55 +53,55 @@ import { PKBenchmarkDashboard } from '../components/PKBenchmarkDashboard';
 
 ### 🏆 单条生成性能冠军
 
-| 排名 | 包 | 性能 (ops/s) | 平均耗时 |
-|------|---|-------------|----------|
-| 🥇 | `@veaba/qrcode-fast` | 54,283 | 18.42 µs |
-| 🥈 | `@veaba/qrcode-rust` | 21,635 | 46.22 µs |
-| 🥉 | `@veaba/qrcode-bun` | 17,248 | 57.98 µs |
-| 4 | `@veaba/qrcode-node` | 8,035 | 124.45 µs |
-| 5 | `kennytm-qrcode` | 1,451 | 688.92 µs |
+| 排名 | 包                   | 性能 (ops/s) | 平均耗时  |
+| ---- | -------------------- | ------------ | --------- |
+| 🥇   | `@veaba/qrcode-fast` | 54,283       | 18.42 µs  |
+| 🥈   | `@veaba/qrcode-rust` | 21,635       | 46.22 µs  |
+| 🥉   | `@veaba/qrcode-bun`  | 17,248       | 57.98 µs  |
+| 4    | `@veaba/qrcode-node` | 8,035        | 124.45 µs |
+| 5    | `kennytm-qrcode`     | 1,451        | 688.92 µs |
 
 ### 🏆 批量生成性能冠军
 
-| 排名 | 包 | 性能 (ops/s) | 平均耗时 |
-|------|---|-------------|----------|
-| 🥇 | `@veaba/qrcode-bun` | 13,800 | 72.47 ms (100条) |
-| 🥈 | `@veaba/qrcode-node` | 5,100 | 196.16 ms (100条) |
-| 🥉 | `@veaba/qrcode-fast` | 439 | 2,278.70 µs (100条) |
-| 4 | `@veaba/qrcode-rust` | 192 | 5,201.80 µs (100条) |
-| 5 | `kennytm-qrcode` | 15 | 63,730.78 µs (100条) |
+| 排名 | 包                   | 性能 (ops/s) | 平均耗时             |
+| ---- | -------------------- | ------------ | -------------------- |
+| 🥇   | `@veaba/qrcode-bun`  | 13,800       | 72.47 ms (100条)     |
+| 🥈   | `@veaba/qrcode-node` | 5,100        | 196.16 ms (100条)    |
+| 🥉   | `@veaba/qrcode-fast` | 439          | 2,278.70 µs (100条)  |
+| 4    | `@veaba/qrcode-rust` | 192          | 5,201.80 µs (100条)  |
+| 5    | `kennytm-qrcode`     | 15           | 63,730.78 µs (100条) |
 
 ### 🏆 SVG 生成性能冠军
 
-| 排名 | 包 | 性能 (ops/s) | 平均耗时 |
-|------|---|-------------|----------|
-| 🥇 | `@veaba/qrcode-fast` | 92,486 | 10.81 µs |
-| 🥈 | `@veaba/qrcode-rust` | 20,966 | 47.70 µs |
-| 🥉 | `@veaba/qrcode-bun` | 17,287 | 57.85 µs |
-| 4 | `@veaba/qrcode-node` | 7,685 | 130.12 µs |
-| 5 | `kennytm-qrcode` | 1,225 | 815.75 µs |
+| 排名 | 包                   | 性能 (ops/s) | 平均耗时  |
+| ---- | -------------------- | ------------ | --------- |
+| 🥇   | `@veaba/qrcode-fast` | 92,486       | 10.81 µs  |
+| 🥈   | `@veaba/qrcode-rust` | 20,966       | 47.70 µs  |
+| 🥉   | `@veaba/qrcode-bun`  | 17,287       | 57.85 µs  |
+| 4    | `@veaba/qrcode-node` | 7,685        | 130.12 µs |
+| 5    | `kennytm-qrcode`     | 1,225        | 815.75 µs |
 
 ### 🏆 纠错级别性能冠军
 
-| 纠错级别 | 冠军 | 性能 (ops/s) |
-|----------|------|-------------|
-| L (低) | `@veaba/qrcode-fast` | 61,368 |
-| M (中) | `@veaba/qrcode-fast` | 41,950 |
-| Q (较高) | `@veaba/qrcode-fast` | 49,062 |
-| H (高) | `@veaba/qrcode-fast` | 47,436 |
+| 纠错级别 | 冠军                 | 性能 (ops/s) |
+| -------- | -------------------- | ------------ |
+| L (低)   | `@veaba/qrcode-fast` | 61,368       |
+| M (中)   | `@veaba/qrcode-fast` | 41,950       |
+| Q (较高) | `@veaba/qrcode-fast` | 49,062       |
+| H (高)   | `@veaba/qrcode-fast` | 47,436       |
 
 ## 对比总结
 
 ### 速度提升倍数
 
-| 对比 | 速度提升 |
-|------|----------|
-| `@veaba/qrcode-fast` vs `@veaba/qrcode-node` | **6.7x - 13.0x** |
-| `@veaba/qrcode-fast` vs `@veaba/qrcode-bun` | **3.1x - 5.3x** |
-| `@veaba/qrcode-fast` vs `@veaba/qrcode-rust` | **2.5x - 4.4x** |
-| `@veaba/qrcode-fast` vs `kennytm-qrcode` | **36.7x - 75.5x** |
-| `@veaba/qrcode-rust` vs `kennytm-qrcode` | **13.0x - 17.1x** |
-| `@veaba/qrcode-bun` vs `@veaba/qrcode-node` | **2.1x - 2.7x** |
+| 对比                                         | 速度提升          |
+| -------------------------------------------- | ----------------- |
+| `@veaba/qrcode-fast` vs `@veaba/qrcode-node` | **6.7x - 13.0x**  |
+| `@veaba/qrcode-fast` vs `@veaba/qrcode-bun`  | **3.1x - 5.3x**   |
+| `@veaba/qrcode-fast` vs `@veaba/qrcode-rust` | **2.5x - 4.4x**   |
+| `@veaba/qrcode-fast` vs `kennytm-qrcode`     | **36.7x - 75.5x** |
+| `@veaba/qrcode-rust` vs `kennytm-qrcode`     | **13.0x - 17.1x** |
+| `@veaba/qrcode-bun` vs `@veaba/qrcode-node`  | **2.1x - 2.7x**   |
 
 ## SVG 验证
 
@@ -113,6 +113,7 @@ cargo run --release --features validation --bin veaba-qr -- "Hello World"
 ```
 
 **验证结果** (文本: "Hello World"):
+
 - ✅ `@veaba/qrcode-rust` - 147.1µs, 13,798 bytes
 - ✅ `@veaba/qrcode-fast` - 48.6µs, 4,187 bytes (比 kennytm 快 6x)
 - ✅ `kennytm-qrcode` - 291.4µs, 4,270 bytes (社区库基准)
@@ -124,7 +125,7 @@ cargo run --release --features validation --bin veaba-qr -- "Hello World"
 ### 运行所有测试
 
 ```bash
-cd bench/backend-benchmark-pk
+cd bench/backend-benchmark
 npx tsx index.ts
 ```
 
@@ -159,13 +160,13 @@ cargo run --release --features validation --bin veaba-qr -- "你的文本"
 
 ## 使用建议
 
-| 场景 | 推荐包 | 原因 |
-|------|--------|------|
-| 极致性能 | `@veaba/qrcode-fast` | 最快的生成速度，比 kennytm 快 36-75x |
-| 生产环境 (Rust) | `@veaba/qrcode-rust` | 功能完整，比 kennytm 快 13-17x |
-| 生产环境 (Bun) | `@veaba/qrcode-bun` | Bun 运行时下的最佳选择 |
-| 生产环境 (Node.js) | `@veaba/qrcode-node` | Node.js 运行时下的最佳选择 |
-| 对比基准 | `kennytm-qrcode` | 社区成熟库，用于性能对比 |
+| 场景               | 推荐包               | 原因                                 |
+| ------------------ | -------------------- | ------------------------------------ |
+| 极致性能           | `@veaba/qrcode-fast` | 最快的生成速度，比 kennytm 快 36-75x |
+| 生产环境 (Rust)    | `@veaba/qrcode-rust` | 功能完整，比 kennytm 快 13-17x       |
+| 生产环境 (Bun)     | `@veaba/qrcode-bun`  | Bun 运行时下的最佳选择               |
+| 生产环境 (Node.js) | `@veaba/qrcode-node` | Node.js 运行时下的最佳选择           |
+| 对比基准           | `kennytm-qrcode`     | 社区成熟库，用于性能对比             |
 
 ## 历史数据
 
@@ -176,4 +177,4 @@ cargo run --release --features validation --bin veaba-qr -- "你的文本"
 
 ---
 
-*最后更新: 2026-02-02*
+_最后更新: 2026-02-02_

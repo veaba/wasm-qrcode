@@ -2,7 +2,6 @@
  * QRCode 工具函数
  * 对应 JS 中的 QRUtil
  */
-
 use crate::qr_math;
 use crate::qr_polynomial::QRPolynomial;
 
@@ -77,7 +76,8 @@ const PATTERN_POSITION_TABLE: [&[i32]; 40] = [
 ];
 
 const G15: i32 = (1 << 10) | (1 << 8) | (1 << 5) | (1 << 4) | (1 << 2) | (1 << 1) | (1 << 0);
-const G18: i32 = (1 << 12) | (1 << 11) | (1 << 10) | (1 << 9) | (1 << 8) | (1 << 5) | (1 << 2) | (1 << 0);
+const G18: i32 =
+    (1 << 12) | (1 << 11) | (1 << 10) | (1 << 9) | (1 << 8) | (1 << 5) | (1 << 2) | (1 << 0);
 const G15_MASK: i32 = (1 << 14) | (1 << 12) | (1 << 10) | (1 << 4) | (1 << 1);
 
 /// 获取 BCH 类型信息
@@ -171,105 +171,7 @@ pub fn get_length_in_bits(mode: QRMode, type_num: i32) -> usize {
 }
 
 /// 获取失分（用于选择最佳遮罩模式）
-pub fn get_lost_point(modules: &[Vec<bool>]) -> i32 {
-    let module_count = modules.len() as i32;
-    let mut lost_point = 0;
-
-    // LEVEL1
-    for row in 0..module_count {
-        for col in 0..module_count {
-            let mut same_count = 0;
-            let dark = modules[row as usize][col as usize];
-            for r in -1..=1 {
-                if row + r < 0 || module_count <= row + r {
-                    continue;
-                }
-                for c in -1..=1 {
-                    if col + c < 0 || module_count <= col + c {
-                        continue;
-                    }
-                    if r == 0 && c == 0 {
-                        continue;
-                    }
-                    if dark == modules[(row + r) as usize][(col + c) as usize] {
-                        same_count += 1;
-                    }
-                }
-            }
-            if same_count > 5 {
-                lost_point += 3 + same_count - 5;
-            }
-        }
-    }
-
-    // LEVEL2
-    for row in 0..module_count - 1 {
-        for col in 0..module_count - 1 {
-            let mut count = 0;
-            if modules[row as usize][col as usize] {
-                count += 1;
-            }
-            if modules[(row + 1) as usize][col as usize] {
-                count += 1;
-            }
-            if modules[row as usize][(col + 1) as usize] {
-                count += 1;
-            }
-            if modules[(row + 1) as usize][(col + 1) as usize] {
-                count += 1;
-            }
-            if count == 0 || count == 4 {
-                lost_point += 3;
-            }
-        }
-    }
-
-    // LEVEL3
-    for row in 0..module_count {
-        for col in 0..module_count - 6 {
-            if modules[row as usize][col as usize]
-                && !modules[row as usize][(col + 1) as usize]
-                && modules[row as usize][(col + 2) as usize]
-                && modules[row as usize][(col + 3) as usize]
-                && modules[row as usize][(col + 4) as usize]
-                && !modules[row as usize][(col + 5) as usize]
-                && modules[row as usize][(col + 6) as usize]
-            {
-                lost_point += 40;
-            }
-        }
-    }
-
-    for col in 0..module_count {
-        for row in 0..module_count - 6 {
-            if modules[row as usize][col as usize]
-                && !modules[(row + 1) as usize][col as usize]
-                && modules[(row + 2) as usize][col as usize]
-                && modules[(row + 3) as usize][col as usize]
-                && modules[(row + 4) as usize][col as usize]
-                && !modules[(row + 5) as usize][col as usize]
-                && modules[(row + 6) as usize][col as usize]
-            {
-                lost_point += 40;
-            }
-        }
-    }
-
-    // LEVEL4
-    let mut dark_count = 0;
-    for col in 0..module_count {
-        for row in 0..module_count {
-            if modules[row as usize][col as usize] {
-                dark_count += 1;
-            }
-        }
-    }
-
-    let ratio = ((100 * dark_count) / module_count / module_count - 50).abs() / 5;
-    lost_point += ratio * 10;
-
-    lost_point
-}
+// `get_lost_point` removed — use `get_lost_point_option` instead.
 /// 获取失分（用于选择最佳遮罩模式）- Option<bool> 版本
 pub fn get_lost_point_option(modules: &[Vec<Option<bool>>]) -> i32 {
     let module_count = modules.len() as i32;

@@ -1,26 +1,29 @@
 {
   "name": "@veaba/qrcode-bun",
   "version": "1.0.0",
-  "description": "QRCode generator for Bun runtime - Optimized TypeScript implementation",
+  "description": "QRCode generator for Bun runtime - Pure TypeScript implementation",
+  "author": "veaba",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/veaba/qrcodes"
+  },
   "type": "module",
-  "main": "dist/index.js",
-  "module": "dist/index.js",
-  "types": "dist/index.d.ts",
+  "main": "src/index.ts",
+  "module": "src/index.ts",
+  "types": "src/index.ts",
   "exports": {
     ".": {
-      "import": "./dist/index.js",
-      "types": "./dist/index.d.ts"
+      "import": "./src/index.ts",
+      "types": "./src/index.ts"
     }
   },
   "files": [
-    "dist",
     "src"
   ],
   "scripts": {
-    "build": "tsc",
-    "watch": "tsc --watch",
     "test": "bun test",
-    "benchmark": "bun run benchmark.ts"
+    "typecheck": "tsc --noEmit"
   },
   "keywords": [
     "qrcode",
@@ -30,20 +33,15 @@
     "barcode",
     "generator"
   ],
-  "author": "veaba",
-  "license": "MIT",
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/veaba/qrcodes"
-  },
-  "dependencies": {
-    "@veaba/qrcode-shared": "workspace:*"
-  },
   "devDependencies": {
     "typescript": "^5.0.0",
     "@types/bun": "latest"
   },
   "engines": {
     "bun": ">=1.0.0"
+  },
+  "publishConfig": {
+    "access": "public",
+    "registry": "https://registry.npmjs.org/"
   }
 }

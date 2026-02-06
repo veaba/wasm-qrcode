@@ -4,17 +4,17 @@
 //   cargo run --release --bin benchmark-kennytm
 //
 // 此工具专门用于测试 kennytm/qrcode 的 SVG 生成性能
-// 输出 JSON 格式结果，可集成到 backend-benchmark-pk
+// 输出 JSON 格式结果，可集成到 backend-benchmark
 
-use qrcode_kennytm::{QrCode, EcLevel};
 use qrcode_kennytm::render::svg;
+use qrcode_kennytm::{EcLevel, QrCode};
 use std::time::Instant;
 
 #[derive(Debug, serde::Serialize)]
 struct BenchmarkResult {
     name: String,
     ops: u64,
-    avg_time: f64,  // 微秒
+    avg_time: f64, // 微秒
     category: String,
 }
 
@@ -94,7 +94,9 @@ fn main() {
     // ========== 批量生成测试 ==========
     println!("📚 批量生成测试...");
 
-    let texts: Vec<String> = (0..100).map(|i| format!("https://example.com/{}", i)).collect();
+    let texts: Vec<String> = (0..100)
+        .map(|i| format!("https://example.com/{}", i))
+        .collect();
     results.push(run_test("批量生成 (100 条)", 100, &|| {
         let mut output = String::new();
         for text in &texts {
@@ -145,7 +147,10 @@ fn main() {
     println!();
 
     for result in &results {
-        println!("  {}: {} ops/s ({:.2} µs)", result.name, result.ops, result.avg_time);
+        println!(
+            "  {}: {} ops/s ({:.2} µs)",
+            result.name, result.ops, result.avg_time
+        );
     }
 
     println!();

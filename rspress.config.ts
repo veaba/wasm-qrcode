@@ -44,7 +44,7 @@ export default defineConfig({
         {
           text: '共享库',
           items: [
-            { text: '@veaba/qrcode-shared', link: '/guide/shared' },
+            { text: '@veaba/qrcode-shared', link: '/guide/qrcode-shared' },
           ],
         },
       ],

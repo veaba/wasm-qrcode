@@ -10,14 +10,6 @@
 
 ---
 
-## 📦 包结构
-
-此包已精简为核心库。验证和比较工具已迁移到：
-
-```
-bench/rust-tools/
-```
-
 ## 🚀 使用方法
 
 ### 作为库使用
@@ -86,6 +78,10 @@ packages/qrcode-fast/
 | `src/bin/verified_qr.rs` | `bench/rust-tools/src/bin/verified_qr.rs` |
 | `src/bin/benchmark_report.rs` | `bench/rust-tools/src/bin/benchmark_report.rs` |
 | `src/validation.rs` | `bench/rust-tools/src/validation.rs` |
+
+## 📝 历史迁移
+
+- **2026-02-06**: 删除 `examples/` 目录，其中 `generate_svg.rs` 为 mock 实现，`test_qrcode_fast.rs` 和 `test_ec.rs` 功能由 `bench/rust-tools` 覆盖，保持包目录干净。
 
 ## 📄 License
 

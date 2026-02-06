@@ -38,7 +38,7 @@ cd packages/qrcode-rust
 cargo bench
 
 # PK 基准测试（对比 3 个包：Node.js + Bun + Rust）
-cd bench/backend-benchmark-pk
+cd bench/backend-benchmark
 npx tsx index.ts      # 完整测试（包含 Rust，耗时约 5 分钟）
 npx tsx index-fast.ts # 快速测试（使用缓存的 Rust 结果）
 ```
@@ -76,6 +76,7 @@ pnpm bench:svg
 ### 测试内容
 
 对比以下包的 SVG 生成性能：
+
 - `kennytm-qrcode` - 社区参考库
 - `@veaba/qrcode-rust` - 纯 Rust 实现
 - `@veaba/qrcode-fast` - 极致性能优化版
@@ -86,7 +87,7 @@ pnpm bench:svg
 |------|------|------|--------|
 | Simple | "Hello World" | 1 | 21x21 |
 | Complex | "Test QR Code 123" | 3 | 25x25 |
-| URL | "https://github.com/veaba/qrcodes" | 3 | 29x29 |
+| URL | "<https://github.com/veaba/qrcodes>" | 3 | 29x29 |
 | Long | 长文本 | 6 | 37x37 |
 
 ### 输出文件
@@ -94,12 +95,15 @@ pnpm bench:svg
 运行后生成以下文件：
 
 **SVG 文件** (`docs/bench/benchmark-output/`):
+
 - `{测试名}_{包名}.svg` - 各包生成的二维码 SVG
 
 **JSON 报告** (`docs/public/`):
+
 - `benchmark_svg_rust.json` - 详细性能数据
 
 **测试报告文档**:
+
 - `docs/bench/svg-benchmark.mdx` - 完整的测试报告
 
 ### 实现细节
@@ -176,7 +180,7 @@ criterion_group!(benches, bench_new_test, /* ...其他测试 */);
 
 ### 2. 添加新的对比包
 
-编辑 `bench/backend-benchmark-pk/index.ts`:
+编辑 `bench/backend-benchmark/index.ts`:
 
 ```typescript
 // 1. 在 PACKAGES 中添加包信息
@@ -244,7 +248,7 @@ const nameMapping: Record<string, { name: string; category: BenchmarkResult['cat
 
 #### 步骤 2: 更新分类函数
 
-编辑 `bench/backend-benchmark-pk/index.ts`:
+编辑 `bench/backend-benchmark/index.ts`:
 
 ```typescript
 function categorizeTest(name: string): BenchmarkResult['category'] {
@@ -361,6 +365,7 @@ fetch('/backend_benchmark_pk.json')
 ### Q: 基准测试结果不一致？
 
 A: 可能原因：
+
 - 系统负载：确保测试时没有其他高负载程序运行
 - 电源管理：笔记本电脑请连接电源并设置为高性能模式
 - 温度节流：长时间运行可能导致 CPU 降频
@@ -368,6 +373,7 @@ A: 可能原因：
 ### Q: Rust 测试编译失败？
 
 A: 检查：
+
 ```bash
 # 确保使用 release 模式
 cargo bench  # 自动使用 release
@@ -382,6 +388,7 @@ cargo clean && cargo bench
 ### Q: 前端组件不显示数据？
 
 A: 检查：
+
 1. JSON 文件是否存在于 `docs/public/`
 2. 文件路径是否正确（以 `/` 开头）
 3. JSON 格式是否有效
@@ -458,6 +465,7 @@ import { BarChart, ComparisonTable } from '../components/BenchmarkCharts';
 - ⚠️ 复杂文本（版本 3+）存在 Reed-Solomon 纠错码问题，验证失败
 
 验证命令：
+
 ```bash
 cd bench/rust-tools
 cargo run --release --features validation --bin veaba-qr -- "Hello World"
@@ -478,6 +486,6 @@ cargo run --release --features validation --bin veaba-qr -- "Hello World"
 - [Rspress 文档](https://rspress.dev/)
 - 项目中的示例代码：
   - `bench/frontend-benchmark/benchmark.cjs`
-  - `bench/backend-benchmark-pk/index.ts`
+  - `bench/backend-benchmark/index.ts`
   - `docs/components/PKBenchmarkDashboard.tsx`
   - `bench/rust-tools/src/bin/veaba_qr.rs`

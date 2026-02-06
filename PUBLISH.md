@@ -121,7 +121,7 @@ pnpm -r install
 
 ```bash
 # 1. 构建 shared（被所有包依赖）
-cd packages/shared
+cd packages/qrcode-shared
 pnpm run build
 
 # 2. 构建 qrcode-wasm（WASM 包）
@@ -145,7 +145,7 @@ pnpm run build
 
 ```bash
 # 检查构建产物是否存在
-ls packages/shared/dist/
+ls packages/qrcode-shared/dist/
 ls packages/qrcode-node/dist/
 ls packages/qrcode-bun/dist/
 ls packages/qrcode-js/dist/
@@ -184,7 +184,7 @@ pnpm version 1.2.3
 
 ```bash
 # 更新所有包的版本（推荐保持版本一致）
-cd packages/shared && pnpm version 1.0.1
+cd packages/qrcode-shared && pnpm version 1.0.1
 cd packages/qrcode-wasm && pnpm version 1.0.1
 cd packages/qrcode-node && pnpm version 1.0.1
 cd packages/qrcode-bun && pnpm version 1.0.1
@@ -201,7 +201,7 @@ cd packages/qrcode-rust && pnpm version 1.0.1
 #### 1. 发布 @veaba/qrcode-shared
 
 ```bash
-cd packages/shared
+cd packages/qrcode-shared
 
 # 检查包内容
 npm pack --dry-run
@@ -309,7 +309,7 @@ const rootDir = path.resolve(__dirname, '..');
 
 // npm 包列表（按依赖顺序）
 const npmPackages = [
-  { name: '@veaba/shared', path: 'packages/shared', build: 'pnpm run build' },
+  { name: '@veaba/qrcode-shared', path: 'packages/qrcode-shared', build: 'pnpm run build' },
   { name: '@veaba/qrcode-wasm', path: 'packages/qrcode-wasm/pkg', build: 'wasm-pack build --target web' },
   { name: '@veaba/qrcode-node', path: 'packages/qrcode-node', build: 'pnpm run build' },
   { name: '@veaba/qrcode-bun', path: 'packages/qrcode-bun', build: 'pnpm run build' },
@@ -463,7 +463,7 @@ cat pkg/package.json
 
 npm 包（按依赖顺序）：
 
-1. `@veaba/shared` (最先)
+1. `@veaba/qrcode-shared` (最先)
 2. `@veaba/qrcode-wasm`
 3. `@veaba/qrcode-node`
 4. `@veaba/qrcode-bun`

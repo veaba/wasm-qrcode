@@ -335,10 +335,18 @@ cargo run --release --bin debug_rs -- "Hello World"
 
 ## Scripts Directory
 
-`/scripts` contains automation for:
+### `/scripts` - 项目级脚本
 
 - `test.js` - Test runner
-- `benchmark.js` - Benchmark runner
-- `benchmark-clean.js` - Clean benchmark artifacts
 - `publish-check.js` - Pre-publish validation
 - `publish.js` - Publishing automation
+
+### `/bench/scripts` - 基准测试脚本
+
+- `run.js` - 统一基准测试入口 (Node.js/Bun/Rust)
+
+### `/bench/svg-benchmark` - SVG 性能测试
+
+- `index.js` - SVG 测试主入口
+- `rust.js` - Rust 包 SVG 性能测试
+- `js.js` - JavaScript 包 SVG 性能测试

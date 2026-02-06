@@ -1,0 +1,18 @@
+{
+  "name": "backend-benchmark",
+  "version": "1.0.0",
+  "description": "后端 QRCode 包 PK 基准测试 - 统一管理与对比多个后端实现的性能",
+  "type": "module",
+  "scripts": {
+    "bench": "tsx index.ts",
+    "bench:fast": "tsx index-fast.ts",
+    "bench:bun": "bun run index.ts"
+  },
+  "dependencies": {
+    "@veaba/qrcode-node": "workspace:*",
+    "@veaba/qrcode-bun": "workspace:*"
+  },
+  "devDependencies": {
+    "tsx": "^4.0.0"
+  }
+}

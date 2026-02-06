@@ -38,9 +38,9 @@ function logSection(title) {
 const packages = [
   {
     name: '@veaba/qrcode-shared',
-    path: 'packages/shared',
+    path: 'packages/qrcode-shared',
     buildCmd: 'pnpm run build',
-    publishPath: 'packages/shared'
+    publishPath: 'packages/qrcode-shared'
   },
   {
     name: '@veaba/qrcode-wasm',

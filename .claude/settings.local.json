@@ -33,7 +33,8 @@
       "Bash(cargo bench:*)",
       "Bash(echo:*)",
       "Bash(npm install:*)",
-      "Bash(npm run bench:*)"
+      "Bash(npm run bench:*)",
+      "Bash(tree:*)"
     ]
   }
 }
