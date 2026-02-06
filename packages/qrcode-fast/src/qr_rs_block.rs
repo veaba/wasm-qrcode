@@ -64,7 +64,7 @@ const RS_BLOCK_TABLE: &[[i32; 6]] = &[
 pub fn get_rs_blocks(type_number: i32, error_correct_level: QRErrorCorrectLevel) -> Vec<QRRSBlock> {
     let level_map = [1, 0, 3, 2];
     let level_index = level_map[error_correct_level as usize];
-    let index = ((type_number - 1) * 4 + level_index as i32) as usize;
+    let index = ((type_number - 1) * 4 + level_index) as usize;
     
     let rs_block = RS_BLOCK_TABLE.get(index).unwrap_or(&RS_BLOCK_TABLE[0]);
     let mut list = Vec::new();

@@ -138,9 +138,9 @@ impl QRCode {
                 if col + c <= -1 || self.module_count <= col + c {
                     continue;
                 }
-                let is_dark = (0 <= r && r <= 6 && (c == 0 || c == 6))
-                    || (0 <= c && c <= 6 && (r == 0 || r == 6))
-                    || (2 <= r && r <= 4 && 2 <= c && c <= 4);
+                let is_dark = ((0..=6).contains(&r) && (c == 0 || c == 6))
+                    || ((0..=6).contains(&c) && (r == 0 || r == 6))
+                    || ((2..=4).contains(&r) && (2..=4).contains(&c));
                 self.modules[(row + r) as usize][(col + c) as usize] = Some(is_dark);
             }
         }
@@ -343,7 +343,7 @@ impl QRCode {
             buffer.put(0, 4);
         }
 
-        while buffer.length % 8 != 0 {
+        while !buffer.length.is_multiple_of(8) {
             buffer.put_bit(false);
         }
 
@@ -388,9 +388,7 @@ impl QRCode {
             // 在降序表示中，在末尾添加零相当于乘以 x^ec_count
             let dc = dcdata.last().unwrap();
             let mut raw_coeff = dc.clone();
-            for _ in 0..ec_count {
-                raw_coeff.push(0);
-            }
+            raw_coeff.extend(std::iter::repeat_n(0, ec_count as usize));
             let raw_poly = crate::qr_polynomial::Polynomial::new(raw_coeff, 0);
 
             // 计算纠错码: (数据多项式 * x^{ec_count}) mod 生成多项式
@@ -401,7 +399,7 @@ impl QRCode {
             // 匹配 JS 实现: const modIndex = i + modPoly.length - ecCount;
             let mut ec: Vec<i32> = Vec::with_capacity(ec_count as usize);
             for i in 0..ec_count {
-                let mod_index = i as i32 + mod_poly.len() as i32 - ec_count;
+                let mod_index = i + mod_poly.len() as i32 - ec_count;
                 let val = if mod_index >= 0 {
                     mod_poly.get(mod_index as usize)
                 } else {
@@ -417,9 +415,9 @@ impl QRCode {
         let mut result: Vec<i32> = Vec::new();
         
         for i in 0..max_dc_count {
-            for r in 0..rs_blocks.len() {
-                if i < dcdata[r].len() as i32 {
-                    result.push(dcdata[r][i as usize]);
+            for (_r, item) in dcdata.iter().enumerate().take(rs_blocks.len()) {
+                if i < item.len() as i32 {
+                    result.push(item[i as usize]);
                 }
             }
         }
@@ -427,9 +425,9 @@ impl QRCode {
 
         
         for i in 0..max_ec_count {
-            for r in 0..rs_blocks.len() {
-                if i < ecdata[r].len() as i32 {
-                    result.push(ecdata[r][i as usize]);
+            for (_r, item) in ecdata.iter().enumerate().take(rs_blocks.len()) {
+                if i < item.len() as i32 {
+                    result.push(item[i as usize]);
                 }
             }
         }

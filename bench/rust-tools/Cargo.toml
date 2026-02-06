@@ -88,8 +88,3 @@ path = "src/bin/debug_data.rs"
 [[bin]]
 name = "debug-rs"
 path = "src/bin/debug_rs.rs"
-
-[profile.release]
-opt-level = 3
-lto = true
-codegen-units = 1

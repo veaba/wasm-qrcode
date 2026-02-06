@@ -1,3 +1,9 @@
 [workspace]
 members = ["packages/qrcode-rust", "packages/qrcode-fast", "packages/qrcode-wasm", "bench/rust-tools"]
 resolver = "2"
+
+# Workspace-wide release profile (applies to all members)
+[profile.release]
+opt-level = 3
+lto = true
+codegen-units = 1

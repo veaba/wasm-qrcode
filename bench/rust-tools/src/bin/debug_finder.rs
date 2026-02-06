@@ -90,8 +90,8 @@ fn debug_logic() {
         for c in 0..7 {
             let dark = qr.is_dark(r, c);
 
-            let is_outer = (r == 0 || r == 6 || c == 0 || c == 6);
-            let is_center = (2 <= r && r <= 4 && 2 <= c && c <= 4);
+            let is_outer = r == 0 || r == 6 || c == 0 || c == 6;
+            let is_center = 2 <= r && r <= 4 && 2 <= c && c <= 4;
             let expected = is_outer || is_center;
 
             let status = if dark == expected { "✓" } else { "✗" };

@@ -1,6 +1,7 @@
 //! 8-bit Byte Mode
 
 pub struct QR8bitByte {
+    #[allow(dead_code)]
     pub data: String,
     pub parsed_data: Vec<u8>,
 }

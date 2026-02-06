@@ -40,8 +40,8 @@ pub fn get_min_version(text_len: usize, level: QRErrorCorrectLevel) -> i32 {
         QRErrorCorrectLevel::H => 3,
     };
     
-    for version in 1..=10 {
-        if QR_CAPACITY[version][level_idx] >= text_len {
+    for (version, capacity) in QR_CAPACITY.iter().enumerate().skip(1) {
+        if capacity[level_idx] >= text_len {
             return version as i32;
         }
     }

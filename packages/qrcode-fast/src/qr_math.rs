@@ -85,10 +85,7 @@ fn init_tables() {
                 }
                 EXP_TABLE[i] = v;
             }
-            // 扩展表以处理溢出
-            for i in 256..512 {
-                EXP_TABLE[i - 256] = EXP_TABLE[i - 256];
-            }
+            // 注意: EXP_TABLE 大小为 256，通过 gexp 中的模运算处理溢出
             
             // 构建对数表
             for i in 0..255 {

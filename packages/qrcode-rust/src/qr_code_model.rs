@@ -83,7 +83,7 @@ pub const QR_CODE_LIMIT_LENGTH: &[[i32; 4]] = &[
 
 /// 获取类型号
 pub fn get_type_number(text: &str, correct_level: QRErrorCorrectLevel) -> i32 {
-    let length = text.bytes().count();
+    let length = text.len();
 
     // 错误纠正级别映射
     let level_map = [1, 0, 3, 2];

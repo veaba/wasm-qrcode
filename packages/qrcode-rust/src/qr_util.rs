@@ -18,10 +18,8 @@ pub fn get_length_in_bits(mode: i32, type_num: i32) -> i32 {
         panic!("Invalid mode");
     }
     
-    if type_num >= 1 && type_num < 10 {
+    if (1..10).contains(&type_num) {
         8
-    } else if type_num < 27 {
-        16
     } else {
         16
     }

@@ -34,7 +34,3 @@ harness = false
 [[bench]]
 name = "comparison_bench"
 harness = false
-
-[profile.release]
-opt-level = "s"
-lto = true

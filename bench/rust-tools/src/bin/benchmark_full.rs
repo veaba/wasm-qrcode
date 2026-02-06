@@ -474,6 +474,7 @@ fn save_report(results: &[BenchmarkResult], output_dir: &str) {
                 "name": r.test_name,
                 "text": r.text,
                 "kennytm": r.kennytm.as_ref().map(|p| serde_json::json!({
+                    "name": p.name,
                     "avg_time_us": p.avg_time_us,
                     "min_time_us": p.min_time_us,
                     "max_time_us": p.max_time_us,
@@ -482,6 +483,7 @@ fn save_report(results: &[BenchmarkResult], output_dir: &str) {
                     "module_count": p.module_count,
                 })),
                 "qrcode_rust": r.qrcode_rust.as_ref().map(|p| serde_json::json!({
+                    "name": p.name,
                     "avg_time_us": p.avg_time_us,
                     "min_time_us": p.min_time_us,
                     "max_time_us": p.max_time_us,
@@ -490,6 +492,7 @@ fn save_report(results: &[BenchmarkResult], output_dir: &str) {
                     "module_count": p.module_count,
                 })),
                 "qrcode_fast": r.qrcode_fast.as_ref().map(|p| serde_json::json!({
+                    "name": p.name,
                     "avg_time_us": p.avg_time_us,
                     "min_time_us": p.min_time_us,
                     "max_time_us": p.max_time_us,

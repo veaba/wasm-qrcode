@@ -106,9 +106,9 @@ impl QRCode {
                 if col + c <= -1 || self.module_count <= col + c {
                     continue;
                 }
-                let is_dark = (0 <= r && r <= 6 && (c == 0 || c == 6))
-                    || (0 <= c && c <= 6 && (r == 0 || r == 6))
-                    || (2 <= r && r <= 4 && 2 <= c && c <= 4);
+                let is_dark = ((0..=6).contains(&r) && (c == 0 || c == 6))
+                    || ((0..=6).contains(&c) && (r == 0 || r == 6))
+                    || ((2..=4).contains(&r) && (2..=4).contains(&c));
                 self.set_module(row + r, col + c, is_dark);
             }
         }
@@ -230,7 +230,7 @@ impl QRCode {
             data ^= g18 << (get_bch_digit(data) - get_bch_digit(g18));
         }
 
-        data = (self.type_number << 12) | data;
+        data |= self.type_number << 12;
 
         for i in 0..18 {
             let bit = ((data >> i) & 1) == 1;
@@ -262,7 +262,7 @@ impl QRCode {
             buffer.put(0, 4);
         }
 
-        while buffer.length % 8 != 0 {
+        while !buffer.length.is_multiple_of(8) {
             buffer.put_bit(false);
         }
 
@@ -296,15 +296,13 @@ impl QRCode {
             let rs_poly = crate::qr_polynomial::Polynomial::generate_rs_poly(ec_count);
             let dc = dcdata.last().unwrap();
             let mut raw_coeff = dc.clone();
-            for _ in 0..ec_count {
-                raw_coeff.push(0);
-            }
+            raw_coeff.extend(std::iter::repeat_n(0, ec_count as usize));
             let raw_poly = crate::qr_polynomial::Polynomial::new(raw_coeff, 0);
             let mod_poly = raw_poly.r#mod(&rs_poly);
 
             let mut ec: Vec<i32> = Vec::with_capacity(ec_count as usize);
             for i in 0..ec_count {
-                let mod_index = i as i32 + mod_poly.len() as i32 - ec_count;
+                let mod_index = i + mod_poly.len() as i32 - ec_count;
                 let val = if mod_index >= 0 {
                     mod_poly.get(mod_index as usize)
                 } else {
@@ -318,17 +316,17 @@ impl QRCode {
         let mut result: Vec<i32> = Vec::new();
         
         for i in 0..max_dc_count {
-            for r in 0..rs_blocks.len() {
-                if i < dcdata[r].len() as i32 {
-                    result.push(dcdata[r][i as usize]);
+            for item in dcdata.iter().take(rs_blocks.len()) {
+                if i < item.len() as i32 {
+                    result.push(item[i as usize]);
                 }
             }
         }
         
         for i in 0..max_ec_count {
-            for r in 0..rs_blocks.len() {
-                if i < ecdata[r].len() as i32 {
-                    result.push(ecdata[r][i as usize]);
+            for item in ecdata.iter().take(rs_blocks.len()) {
+                if i < item.len() as i32 {
+                    result.push(item[i as usize]);
                 }
             }
         }
@@ -447,7 +445,7 @@ impl QRCode {
         // SVG 头部
         svg.push_str(r#"<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 "#);
         svg.push_str(&size.to_string());
-        svg.push_str(" ");
+        svg.push(' ');
         svg.push_str(&size.to_string());
         svg.push_str(r#"" width=""#);
         svg.push_str(&size.to_string());
@@ -455,7 +453,7 @@ impl QRCode {
         svg.push_str(&size.to_string());
         svg.push_str(r#""><path d="M0 0h"#);
         svg.push_str(&size.to_string());
-        svg.push_str("v");
+        svg.push('v');
         svg.push_str(&size.to_string());
         svg.push_str(r#"H0z" fill=""#);
         svg.push_str(&self.options.color_light);
@@ -543,10 +541,8 @@ fn get_pattern_position(type_number: i32) -> Vec<i32> {
 
 /// 获取长度位数
 fn get_length_in_bits(_mode: i32, type_num: i32) -> i32 {
-    if type_num >= 1 && type_num < 10 {
+    if (1..10).contains(&type_num) {
         8
-    } else if type_num < 27 {
-        16
     } else {
         16
     }

@@ -83,28 +83,11 @@ impl Polynomial {
 
         // Subtract (e * ratio * x^(degree_diff))
         let mut num = self.num.clone();
-        for i in 0..e.len() {
-            num[i] ^= QRMath::gexp(QRMath::glog(e.get(i)) + ratio);
+        for (i, item) in num.iter_mut().enumerate().take(e.len()) {
+            *item ^= QRMath::gexp(QRMath::glog(e.get(i)) + ratio);
         }
 
         Polynomial::new(num, 0).r#mod(e)
-    }
-
-    /// 计算多项式模运算（带位移，用于 RS 纠错码计算）
-    /// 注意：由于系数按降序排列，位移操作需要特殊处理
-    pub fn r#mod_with_shift(&self, e: &Polynomial, shift: i32) -> Polynomial {
-        // 首先扩展 self 的系数（在末尾添加 shift 个零）
-        // 在降序表示中，在末尾添加零相当于乘以 x^shift
-        // 例如: [d0, d1] (d0*x + d1) * x^2 = [d0, d1, 0, 0] (d0*x^3 + d1*x^2)
-        let mut extended = self.num.clone();
-        for _ in 0..shift {
-            extended.push(0);
-        }
-
-        let shifted_poly = Polynomial::new(extended, 0);
-
-        // 使用普通的 mod 运算
-        shifted_poly.r#mod(e)
     }
 }
 
