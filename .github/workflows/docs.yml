@@ -1,16 +1,16 @@
 name: Documentation
 
 on:
-  push:
+  # 手动触发
+  workflow_dispatch:
+  
+  # 可选：PR 时构建但不部署（用于验证）
+  pull_request:
     branches: [main]
     paths:
       - 'docs/**'
       - '.github/workflows/docs.yml'
       - 'rspress.config.ts'
-  pull_request:
-    branches: [main]
-    paths:
-      - 'docs/**'
 
 env:
   NODE_VERSION: '20'
@@ -63,8 +63,8 @@ jobs:
     name: Deploy to Cloudflare Pages
     runs-on: ubuntu-latest
     needs: build
-    # 只在 push 到 main 分支时部署（PR 不部署）
-    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    # 只在手动触发时部署
+    if: github.event_name == 'workflow_dispatch'
     steps:
       - name: Download documentation artifacts
         uses: actions/download-artifact@v4
@@ -80,4 +80,3 @@ jobs:
           projectName: qrcodes-docs
           directory: doc_build
           gitHubToken: ${{ secrets.GITHUB_TOKEN }}
-
