@@ -75,7 +75,8 @@ export async function initWasm(): Promise<void> {
     // Vite: dynamic import with ?url
     // @ts-ignore - Vite-specific syntax
     const wasmUrl = await import('../pkg/qrcodes_bg.wasm?url').then(m => m.default);
-    await init(wasmUrl);
+    // 使用新的对象参数格式 (wasm-pack >= 0.13)
+    await init({ module_or_path: wasmUrl });
     return;
   }
   // Webpack/Parcel/Node: use default WASM loading
