@@ -211,12 +211,14 @@ const QRErrorCorrectLevel = {
 | API | 统一 ✅ | 统一 ✅ |
 
 选择 `@veaba/qrcode-js`：
+
 - ✅ 需要支持 IE11 等旧浏览器
 - ✅ 对包大小敏感
 - ✅ 不想处理 WASM 的异步初始化
 - ✅ 生成频率不高，性能不是瓶颈
 
 选择 `@veaba/qrcode-wasm`：
+
 - ✅ 追求极致性能
 - ✅ 高频批量生成
 - ✅ 现代浏览器环境
