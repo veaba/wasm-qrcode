@@ -10,7 +10,7 @@
  *   node scripts/test.js --watch      - Watch mode
  *   node scripts/test.js --shared     - Test specific package
  *   node scripts/test.js --node       - Test qrcode-node package
- *   node scripts/test.js --ts         - Test qrcode-bun package
+ *   node scripts/test.js --bun        - Test qrcode-bun package
  */
 
 import { execSync } from 'child_process';
@@ -86,6 +86,7 @@ function parseArgs(args) {
         options.packages.push('qrcode-node');
         break;
       case '--ts':
+      case '--bun':
         options.packages.push('qrcode-bun');
         break;
       case '--qrcode-js':
