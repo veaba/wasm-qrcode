@@ -109,7 +109,7 @@ jobs:
             libxcursor1 \
             libxkbcommon0 \
             libxss1 \
-            libasound2
+            libasound2t64
 
       - name: Build qrcode-wasm
         run: pnpm --filter @veaba/qrcode-wasm build
