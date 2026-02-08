@@ -27,7 +27,7 @@ import {
   generateBatchQRCodes as _generateBatchQRCodes,
   generateQRCodeAsync as _generateQRCodeAsync,
   generateBatchAsync as _generateBatchAsync,
-} from '@veaba/qrcode-shared';
+} from '@veaba/js-shared';
 
 // ============================================
 // 导出统一常量

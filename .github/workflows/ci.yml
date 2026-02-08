@@ -19,17 +19,23 @@ jobs:
   # TypeScript Tests (Node.js)
   # ========================================
   test-ts:
-    name: TS Tests (Node ${{ matrix.node }})
+    name: TS Tests (Node 20.19.0)
     runs-on: ${{ matrix.os }}
     strategy:
       fail-fast: false
       matrix:
         os: [ubuntu-latest, windows-latest, macos-latest]
-        node: [18, 20, 22]
+        node: [20, 22]
 
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+
+      - name: Setup Rust
+        uses: dtolnay/rust-toolchain@stable
+
+      - name: Install wasm-pack
+        run: curl https://rustwasm.github.io/wasm-pack/installer/init.sh -sSf | sh
 
       - name: Setup pnpm
         uses: pnpm/action-setup@v2
@@ -39,24 +45,35 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: ${{ matrix.node }}
+          node-version: 20
           cache: 'pnpm'
 
       - name: Install dependencies
         run: pnpm install --frozen-lockfile --ignore-scripts
 
+      - name: Build qrcode-wasm
+        run: pnpm --filter @veaba/qrcode-wasm build
+
       - name: Build shared package
-        run: pnpm --filter @veaba/qrcode-shared build
+        run: pnpm --filter @veaba/js-shared build
 
       - name: Run unit tests
         run: pnpm test:unit
 
+      - name: Setup Bun
+        uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: '1.3.0'
+
+      - name: Run Bun tests
+        run: pnpm test --bun
+
       - name: Generate coverage report
-        if: matrix.os == 'ubuntu-latest' && matrix.node == 20
+        if: matrix.os == 'ubuntu-latest'
         run: pnpm test:coverage
 
       - name: Upload coverage to Codecov
-        if: matrix.os == 'ubuntu-latest' && matrix.node == 20
+        if: matrix.os == 'ubuntu-latest'
         uses: codecov/codecov-action@v4
         with:
           files: ./coverage/lcov.info
@@ -115,7 +132,7 @@ jobs:
         run: pnpm --filter @veaba/qrcode-wasm build
 
       - name: Build shared package
-        run: pnpm --filter @veaba/qrcode-shared build
+        run: pnpm --filter @veaba/js-shared build
 
       - name: Run browser tests
         run: pnpm test:browser
@@ -201,6 +218,11 @@ jobs:
           node-version: 20
           cache: 'pnpm'
 
+      - name: Setup Bun
+        uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: '1.3.0'
+
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
 
@@ -235,15 +257,20 @@ jobs:
           node-version: 20
           cache: 'pnpm'
 
+      - name: Setup Bun
+        uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: '1.3.0'
+
       - name: Install dependencies
         run: pnpm install --frozen-lockfile --ignore-scripts
 
-      - name: Build qrcode-shared
-        run: pnpm --filter @veaba/qrcode-shared build
+      - name: Build js-shared
+        run: pnpm --filter @veaba/js-shared build
 
       - name: Type check all packages
         run: |
-          pnpm --filter @veaba/qrcode-shared exec tsc --noEmit
+          pnpm --filter @veaba/js-shared exec tsc --noEmit
           pnpm --filter @veaba/qrcode-js exec tsc --noEmit
           pnpm --filter @veaba/qrcode-node exec tsc --noEmit
           pnpm --filter @veaba/qrcode-bun exec tsc --noEmit
@@ -273,6 +300,11 @@ jobs:
         with:
           node-version: 20
           cache: 'pnpm'
+
+      - name: Setup Bun
+        uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: '1.3.0'
 
       - name: Install dependencies
         run: pnpm install --frozen-lockfile --ignore-scripts
@@ -315,6 +347,11 @@ jobs:
           node-version: 20
           cache: 'pnpm'
 
+      - name: Setup Bun
+        uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: '1.3.0'
+
       - name: Install dependencies
         run: pnpm install --frozen-lockfile --ignore-scripts
 
@@ -353,12 +390,17 @@ jobs:
           node-version: 20
           cache: 'pnpm'
 
+      - name: Setup Bun
+        uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: '1.3.0'
+
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
 
       - name: Build all packages
         run: |
-          pnpm --filter @veaba/qrcode-shared build
+          pnpm --filter @veaba/js-shared build
           pnpm --filter @veaba/qrcode-js build
           pnpm --filter @veaba/qrcode-node build
           pnpm --filter @veaba/qrcode-bun build
@@ -366,7 +408,7 @@ jobs:
 
       - name: Verify build artifacts
         run: |
-          test -f packages/qrcode-shared/dist/index.js
+          test -f packages/js-shared/dist/index.js
           test -f packages/qrcode-js/dist/index.js
           test -f packages/qrcode-node/dist/index.js
           test -f packages/qrcode-bun/dist/index.js

@@ -1,4 +1,4 @@
-/**
+/*!
  * QRCode 8位字节数据
  * 对应 JS 中的 QR8bitByte
  */

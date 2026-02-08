@@ -31,7 +31,7 @@
 | `@veaba/qrcode-js` | 浏览器 | 纯 JavaScript，即时启动 | 无需 WASM 的场景 |
 | `@veaba/qrcode-node` | Node.js | 服务端渲染，支持 PNG | Node.js 后端 |
 | `@veaba/qrcode-bun` | Bun | Bun 运行时优化 | 边缘计算、高并发 |
-| `@veaba/qrcode-shared` | 通用 | 共享核心，缓存系统 | 内部依赖 |
+| `@veaba/js-shared` | 通用 | 共享核心，缓存系统 | 内部依赖 |
 
 ## 🚀 快速开始
 
@@ -210,7 +210,7 @@ qrcodes/
 │   ├── qrcode-js/          # 纯 JavaScript 浏览器包
 │   ├── qrcode-node/        # Node.js 后端包
 │   ├── qrcode-bun/         # Bun 后端包
-│   └── qrcode-shared/      # 共享核心逻辑
+│   └── js-shared/      # 共享核心逻辑
 ├── docs/                   # Rspress 文档站点
 ├── bench/                  # 基准测试工具
 │   ├── rust-tools/         # Rust 对比测试工具
@@ -273,6 +273,7 @@ pnpm run test:browser:ui
 ```
 
 **浏览器测试配置：**
+
 - 使用 Playwright 驱动真实 Chrome 浏览器
 - 自动加载并初始化 WASM 模块
 - 测试 WASM QRCode 生成、样式渲染、缓存系统等完整功能
@@ -295,7 +296,7 @@ cd packages/qrcode-fast && cargo test
 tests/
 ├── qrcode-js/           # @veaba/qrcode-js 测试
 ├── qrcode-node/         # @veaba/qrcode-node 测试
-├── qrcode-shared/       # @veaba/qrcode-shared 测试
+├── js-shared/       # @veaba/js-shared 测试
 ├── qrcode-bun/          # @veaba/qrcode-bun 测试
 ├── qrcode-wasm/
 │   ├── index.test.ts         # WASM API 单元测试

@@ -5,9 +5,10 @@
  */
 
 import { execSync } from 'child_process';
-import { rmSync, existsSync } from 'fs';
+import { existsSync } from 'fs';
 import { join } from 'path';
 import { fileURLToPath } from 'url';
+import { rimrafSync } from 'rimraf';
 
 const __dirname = fileURLToPath(new URL('.', import.meta.url));
 const rootDir = join(__dirname, '..');
@@ -18,7 +19,7 @@ console.log('🧹 开始清理项目...\n');
 const rootNodeModules = join(rootDir, 'node_modules');
 if (existsSync(rootNodeModules)) {
   console.log('📦 删除根目录 node_modules...');
-  rmSync(rootNodeModules, { recursive: true, force: true });
+  rimrafSync(rootNodeModules);
   console.log('  ✅ 已删除\n');
 }
 
@@ -31,14 +32,14 @@ const packages = [
   'qrcode-rust',
   'qrcode-fast',
   'qrcode-wasm',
-  'qrcode-shared',
+  'js-shared',
 ];
 
 console.log('📦 删除 packages 下的 node_modules...');
 for (const pkg of packages) {
   const pkgNodeModules = join(packagesDir, pkg, 'node_modules');
   if (existsSync(pkgNodeModules)) {
-    rmSync(pkgNodeModules, { recursive: true, force: true });
+    rimrafSync(pkgNodeModules);
     console.log(`  ✅ @veaba/${pkg}`);
   }
 }
@@ -56,7 +57,7 @@ const rustTargets = [
 console.log('🦀 删除 Rust 构建产物...');
 for (const target of rustTargets) {
   if (existsSync(target)) {
-    rmSync(target, { recursive: true, force: true });
+    rimrafSync(target);
     console.log(`  ✅ ${target.replace(rootDir, '.')}`);
   }
 }
@@ -66,13 +67,13 @@ console.log('');
 const distDirs = [
   join(packagesDir, 'qrcode-js', 'dist'),
   join(packagesDir, 'qrcode-node', 'dist'),
-  join(packagesDir, 'qrcode-shared', 'dist'),
+  join(packagesDir, 'js-shared', 'dist'),
 ];
 
 console.log('📁 删除 dist 构建目录...');
 for (const dist of distDirs) {
   if (existsSync(dist)) {
-    rmSync(dist, { recursive: true, force: true });
+    rimrafSync(dist);
     console.log(`  ✅ ${dist.replace(rootDir, '.')}`);
   }
 }
@@ -88,7 +89,7 @@ const tempFiles = [
 console.log('🗑️  删除临时文件...');
 for (const file of tempFiles) {
   if (existsSync(file)) {
-    rmSync(file, { force: true });
+    rimrafSync(file);
     console.log(`  ✅ ${file.replace(rootDir, '.')}`);
   }
 }

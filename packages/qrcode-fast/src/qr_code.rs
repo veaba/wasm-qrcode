@@ -1,16 +1,19 @@
 //! QR Code Fast Implementation
-//! 
+//!
 //! 极致优化版本：
 //! 1. 一维数组存储模块数据
 //! 2. 预分配 SVG 字符串容量
 //! 3. 使用内联数字转换避免 format! 开销
 //! 4. 避免所有不必要的内存分配
 
-use crate::qr_8bit_byte::QR8bitByte;
-use crate::qr_bit_buffer::BitBuffer;
-use crate::qr_code_model::{get_min_version, QRErrorCorrectLevel};
-use crate::qr_rs_block::get_rs_blocks;
-use crate::qr_util::get_bch_digit;
+use crate::{
+    qr_8bit_byte::QR8bitByte,
+    qr_bit_buffer::BitBuffer,
+    qr_code_model::{get_min_version, QRErrorCorrectLevel},
+    qr_polynomial::Polynomial,
+    qr_rs_block::get_rs_blocks,
+    qr_util::get_bch_digit,
+};
 
 /// QRCode 选项
 #[derive(Clone)]
@@ -70,15 +73,15 @@ impl QRCode {
     pub fn make_code(&mut self, text: &str) {
         self.data_list.clear();
         self.data_list.push(QR8bitByte::new(text));
-        
+
         // 计算类型号
         self.type_number = get_min_version(text.len(), self.options.correct_level);
         self.module_count = self.type_number * 4 + 17;
-        
+
         // 分配一维数组 (0 = 未设置/浅色, 1 = 深色)
         let count = self.module_count as usize;
         self.modules = vec![0u8; count * count];
-        
+
         // 设置功能图案
         self.setup_position_probe_pattern(0, 0);
         self.setup_position_probe_pattern(self.module_count - 7, 0);
@@ -86,11 +89,11 @@ impl QRCode {
         self.setup_position_adjust_pattern();
         self.setup_timing_pattern();
         self.setup_type_info(false);
-        
+
         if self.type_number >= 7 {
             self.setup_type_number(false);
         }
-        
+
         // 创建数据并映射
         let data = self.create_data();
         self.map_data(&data);
@@ -121,11 +124,11 @@ impl QRCode {
             for j in 0..pos.len() {
                 let row = pos[i];
                 let col = pos[j];
-                
+
                 if row == 0 || col == 0 {
                     continue;
                 }
-                
+
                 // 跳过与位置探测图案重叠的位置
                 if row <= 8 && col <= 8 {
                     continue;
@@ -136,7 +139,7 @@ impl QRCode {
                 if row >= self.module_count - 8 && col <= 8 {
                     continue;
                 }
-                
+
                 if self.is_module_set(row, col) {
                     continue;
                 }
@@ -145,8 +148,11 @@ impl QRCode {
                     for c in -2..=2 {
                         let new_row = row + r;
                         let new_col = col + c;
-                        if new_row < 0 || new_row >= self.module_count ||
-                           new_col < 0 || new_col >= self.module_count {
+                        if new_row < 0
+                            || new_row >= self.module_count
+                            || new_col < 0
+                            || new_col >= self.module_count
+                        {
                             continue;
                         }
                         let is_dark = r == -2 || r == 2 || c == -2 || c == 2 || (r == 0 && c == 0);
@@ -223,7 +229,14 @@ impl QRCode {
 
     /// 设置类型号（版本 7+）
     fn setup_type_number(&mut self, _test: bool) {
-        let g18 = (1 << 12) | (1 << 11) | (1 << 10) | (1 << 9) | (1 << 8) | (1 << 5) | (1 << 2) | (1 << 0);
+        let g18 = (1 << 12)
+            | (1 << 11)
+            | (1 << 10)
+            | (1 << 9)
+            | (1 << 8)
+            | (1 << 5)
+            | (1 << 2)
+            | (1 << 0);
         let mut data = self.type_number << 12;
 
         while get_bch_digit(data) - get_bch_digit(g18) >= 0 {
@@ -244,12 +257,15 @@ impl QRCode {
     /// 创建数据
     fn create_data(&self) -> Vec<i32> {
         let rs_blocks = get_rs_blocks(self.type_number, self.options.correct_level);
-        
+
         let mut buffer = BitBuffer::new();
 
         for data in &self.data_list {
             buffer.put(4, 4); // MODE_8BIT_BYTE
-            buffer.put(data.get_length() as i32, get_length_in_bits(4, self.type_number));
+            buffer.put(
+                data.get_length() as i32,
+                get_length_in_bits(4, self.type_number),
+            );
             data.write(&mut buffer);
         }
 
@@ -278,10 +294,14 @@ impl QRCode {
         }
 
         let data = buffer.buffer;
-        
+
         let mut offset = 0;
         let max_dc_count = rs_blocks.iter().map(|b| b.data_count).max().unwrap_or(0);
-        let max_ec_count = rs_blocks.iter().map(|b| b.total_count - b.data_count).max().unwrap_or(0);
+        let max_ec_count = rs_blocks
+            .iter()
+            .map(|b| b.total_count - b.data_count)
+            .max()
+            .unwrap_or(0);
 
         let mut dcdata: Vec<Vec<i32>> = Vec::new();
         let mut ecdata: Vec<Vec<i32>> = Vec::new();
@@ -293,11 +313,11 @@ impl QRCode {
             dcdata.push(data[offset as usize..(offset + dc_count) as usize].to_vec());
             offset += dc_count;
 
-            let rs_poly = crate::qr_polynomial::Polynomial::generate_rs_poly(ec_count);
+            let rs_poly = Polynomial::generate_rs_poly(ec_count);
             let dc = dcdata.last().unwrap();
             let mut raw_coeff = dc.clone();
             raw_coeff.extend(std::iter::repeat_n(0, ec_count as usize));
-            let raw_poly = crate::qr_polynomial::Polynomial::new(raw_coeff, 0);
+            let raw_poly = Polynomial::new(raw_coeff, 0);
             let mod_poly = raw_poly.r#mod(&rs_poly);
 
             let mut ec: Vec<i32> = Vec::with_capacity(ec_count as usize);
@@ -314,7 +334,7 @@ impl QRCode {
         }
 
         let mut result: Vec<i32> = Vec::new();
-        
+
         for i in 0..max_dc_count {
             for item in dcdata.iter().take(rs_blocks.len()) {
                 if i < item.len() as i32 {
@@ -322,7 +342,7 @@ impl QRCode {
                 }
             }
         }
-        
+
         for i in 0..max_ec_count {
             for item in ecdata.iter().take(rs_blocks.len()) {
                 if i < item.len() as i32 {
@@ -432,16 +452,16 @@ impl QRCode {
         let actual_size = cell_size * count;
         let offset = (size - actual_size) / 2;
         let count_usize = count as usize;
-        
+
         // 统计深色模块数量，精确预分配
         let dark_count: usize = self.modules.iter().map(|&m| (m == 1) as usize).sum();
-        
+
         // 每个深色模块约 20-25 字节路径数据
         let path_capacity = dark_count * 25;
         let total_capacity = 200 + path_capacity;
-        
+
         let mut svg = String::with_capacity(total_capacity);
-        
+
         // SVG 头部
         svg.push_str(r#"<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 "#);
         svg.push_str(&size.to_string());
@@ -468,7 +488,7 @@ impl QRCode {
                 if self.modules[row_offset + col] == 1 {
                     let x = (col as i32) * cell_size + offset;
                     let y = (row as i32) * cell_size + offset;
-                    
+
                     svg.push('M');
                     Self::push_i32(&mut svg, x);
                     svg.push(' ');
@@ -484,7 +504,7 @@ impl QRCode {
                 }
             }
         }
-        
+
         svg.push_str(r#""/></svg>"#);
         svg
     }
@@ -496,21 +516,21 @@ impl QRCode {
             s.push('0');
             return;
         }
-        
+
         if n < 0 {
             s.push('-');
             n = -n;
         }
-        
+
         let mut buf = [0u8; 10];
         let mut i = 10;
-        
+
         while n > 0 {
             i -= 1;
             buf[i] = (n % 10) as u8 + b'0';
             n /= 10;
         }
-        
+
         s.push_str(unsafe { std::str::from_utf8_unchecked(&buf[i..]) });
     }
 }

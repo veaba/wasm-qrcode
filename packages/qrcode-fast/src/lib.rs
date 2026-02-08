@@ -68,9 +68,9 @@ mod tests {
         let count = qr.module_count;
         
         // 越界访问应该返回 false
-        assert_eq!(qr.is_dark(count, 0), false, "越界访问应该返回 false");
-        assert_eq!(qr.is_dark(-1, 0), false, "负索引应该返回 false");
-        assert_eq!(qr.is_dark(0, count), false, "越界列应该返回 false");
+        assert!(!qr.is_dark(count, 0), "越界访问应该返回 false");
+        assert!(!qr.is_dark(-1, 0), "负索引应该返回 false");
+        assert!(!qr.is_dark(0, count), "越界列应该返回 false");
     }
 
     #[test]

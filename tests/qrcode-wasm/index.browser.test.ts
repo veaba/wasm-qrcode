@@ -197,34 +197,34 @@ describe('@veaba/qrcode-wasm - Browser Mode', () => {
   });
 
   describe('Async Generation', () => {
-    itIfWasm('should generate QRCode asynchronously', async () => {
+    itIfWasm('should generate QRCode asynchronously - returns string', async () => {
       const result = await wasmModule.generateQRCodeAsync('Async Test', {
         correctLevel: wasmModule.QRErrorCorrectLevel.M,
         size: 256
       });
-      expect(result).toBeDefined();
-      expect(result.text).toBe('Async Test');
-      expect(typeof result.svg).toBe('string');
-      expect(typeof result.moduleCount).toBe('number');
+      // API changed: now returns Promise<string> instead of Promise<QRCodeResult>
+      expect(typeof result).toBe('string');
+      expect(result).toContain('<svg');
+      expect(result).toContain('</svg>');
     });
 
     itIfWasm('should generate styled QRCode asynchronously', async () => {
       const result = await wasmModule.generateQRCodeAsync('Styled Async', {
-        styled: true,
-        style: { size: 256 },
-        cache: true
+        size: 256
       });
-      expect(result).toBeDefined();
-      expect(typeof result.svg).toBe('string');
+      expect(typeof result).toBe('string');
+      expect(result).toContain('<svg');
     });
 
-    itIfWasm('should generate batch asynchronously', async () => {
+    itIfWasm('should generate batch asynchronously - returns string[]', async () => {
       const texts = ['Async 1', 'Async 2', 'Async 3'];
       const results = await wasmModule.generateBatchAsync(texts, { size: 200 });
+      // API changed: now returns Promise<string[]> instead of Promise<QRCodeResult[]>
       expect(Array.isArray(results)).toBe(true);
       expect(results.length).toBe(3);
       results.forEach(result => {
-        expect(typeof result.svg).toBe('string');
+        expect(typeof result).toBe('string');
+        expect(result).toContain('<svg');
       });
     });
   });
@@ -260,6 +260,131 @@ describe('@veaba/qrcode-wasm - Browser Mode', () => {
   describe('Default Export', () => {
     itIfWasm('should have QRCodeCore as default', () => {
       expect(wasmModule.default).toBe(wasmModule.QRCodeCore);
+    });
+  });
+
+  describe('QRCodeCore Properties - New API', () => {
+    itIfWasm('should have text property', () => {
+      const qr = new wasmModule.QRCodeCore('Hello World');
+      expect(qr.text).toBe('Hello World');
+    });
+
+    itIfWasm('should have correctLevel property', () => {
+      const qr = new wasmModule.QRCodeCore('Hello', wasmModule.QRErrorCorrectLevel.H);
+      expect(qr.correctLevel).toBe(wasmModule.QRErrorCorrectLevel.H);
+    });
+
+    itIfWasm('should have typeNumber property', () => {
+      const qr = new wasmModule.QRCodeCore('Hello');
+      expect(typeof qr.typeNumber).toBe('number');
+    });
+
+    itIfWasm('should have modules property as Uint8Array', () => {
+      const qr = new wasmModule.QRCodeCore('Hello');
+      expect(qr.modules).toBeInstanceOf(Uint8Array);
+      expect(qr.modules.length).toBeGreaterThan(0);
+    });
+
+    itIfWasm('modules property should match moduleCount', () => {
+      const qr = new wasmModule.QRCodeCore('Test');
+      const count = qr.moduleCount;
+      expect(qr.modules.length).toBe(count * count);
+    });
+  });
+
+  describe('Advanced Async Functions - New API', () => {
+    itIfWasm('generateQRCodeAsyncAdvanced should return QRCodeResult', async () => {
+      const result = await wasmModule.generateQRCodeAsyncAdvanced('Hello', { size: 128 });
+      expect(result).toMatchObject({
+        text: 'Hello',
+        svg: expect.stringContaining('<svg'),
+        moduleCount: expect.any(Number)
+      });
+      expect(result.svg).toContain('</svg>');
+    });
+
+    itIfWasm('generateBatchAsyncAdvanced should return QRCodeResult[]', async () => {
+      const results = await wasmModule.generateBatchAsyncAdvanced(['Hello', 'World'], { size: 128 });
+      expect(Array.isArray(results)).toBe(true);
+      expect(results.length).toBe(2);
+      results.forEach(result => {
+        expect(result).toMatchObject({
+          text: expect.any(String),
+          svg: expect.stringContaining('<svg'),
+          moduleCount: expect.any(Number)
+        });
+      });
+    });
+
+    itIfWasm('generateQRCodeAsyncAdvanced should support cache option', async () => {
+      const result = await wasmModule.generateQRCodeAsyncAdvanced('Test', { cache: true });
+      expect(result).toHaveProperty('moduleCount');
+      expect(typeof result.moduleCount).toBe('number');
+    });
+  });
+
+  describe('Snake Case Aliases - API Consistency', () => {
+    const snakeCaseAliases = [
+      'generate_rounded_qrcode',
+      'generate_qrcode_with_logo_area',
+      'generate_gradient_qrcode',
+      'generate_wechat_style_qrcode',
+      'generate_douyin_style_qrcode',
+      'generate_alipay_style_qrcode',
+      'generate_xiaohongshu_style_qrcode',
+      'generate_cyberpunk_style_qrcode',
+      'generate_retro_style_qrcode',
+      'generate_minimal_style_qrcode'
+    ];
+
+    itIfWasm('should export all snake_case aliases', () => {
+      snakeCaseAliases.forEach(alias => {
+        expect(typeof wasmModule[alias]).toBe('function');
+      });
+    });
+
+    itIfWasm('snake_case aliases should point to cached versions', () => {
+      expect(wasmModule.generate_rounded_qrcode).toBe(wasmModule.generateRoundedQRCodeCached);
+      expect(wasmModule.generate_gradient_qrcode).toBe(wasmModule.generateGradientQRCodeCached);
+      expect(wasmModule.generate_wechat_style_qrcode).toBe(wasmModule.generateWechatStyleQRCodeCached);
+    });
+
+    itIfWasm('snake_case aliases should work correctly', () => {
+      const svg = wasmModule.generate_rounded_qrcode('Test', 256);
+      expect(typeof svg).toBe('string');
+      expect(svg).toContain('<svg');
+    });
+  });
+
+  describe('Return Type Verification', () => {
+    itIfWasm('generateQRCodeAsync vs generateQRCodeAsyncAdvanced return different types', async () => {
+      const simpleResult = await wasmModule.generateQRCodeAsync('Test');
+      const advancedResult = await wasmModule.generateQRCodeAsyncAdvanced('Test');
+
+      // Simple returns string
+      expect(typeof simpleResult).toBe('string');
+      expect(simpleResult).toContain('<svg');
+
+      // Advanced returns object
+      expect(typeof advancedResult).toBe('object');
+      expect(advancedResult).toHaveProperty('text');
+      expect(advancedResult).toHaveProperty('svg');
+      expect(advancedResult).toHaveProperty('moduleCount');
+    });
+
+    itIfWasm('generateBatchAsync vs generateBatchAsyncAdvanced return different types', async () => {
+      const texts = ['Test1', 'Test2'];
+      const simpleResults = await wasmModule.generateBatchAsync(texts);
+      const advancedResults = await wasmModule.generateBatchAsyncAdvanced(texts);
+
+      // Simple returns string[]
+      expect(Array.isArray(simpleResults)).toBe(true);
+      expect(typeof simpleResults[0]).toBe('string');
+
+      // Advanced returns QRCodeResult[]
+      expect(Array.isArray(advancedResults)).toBe(true);
+      expect(typeof advancedResults[0]).toBe('object');
+      expect(advancedResults[0]).toHaveProperty('text');
     });
   });
 });

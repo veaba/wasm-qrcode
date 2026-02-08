@@ -78,12 +78,14 @@ fn main() {
 
     // 格式信息区域
     // 左上: 第8行和第8列的0-8区域
+    #[allow(clippy::needless_range_loop)]
     for i in 0..9 {
         is_fixed[8][i] = true;
         is_fixed[i][8] = true;
     }
     // 右上和左下区域
     let mc = module_count as usize;
+    #[allow(clippy::needless_range_loop)]
     for i in (mc - 8)..mc {
         is_fixed[8][i] = true;  // 右上
         is_fixed[i][8] = true;  // 左下

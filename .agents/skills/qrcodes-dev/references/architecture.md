@@ -5,7 +5,7 @@
 ```
 qrcodes/
 ├── packages/
-│   ├── qrcode-shared/      # Core logic (private)
+│   ├── js-shared/      # Core logic (private)
 │   ├── qrcode-js/          # Browser TypeScript
 │   ├── qrcode-wasm/        # Rust WASM for browser
 │   ├── qrcode-node/        # Node.js runtime
@@ -27,7 +27,7 @@ qrcodes/
 ## Dependency Graph
 
 ```
-qrcode-shared (private)
+js-shared (private)
     ├── qrcode-js
     ├── qrcode-node
     └── qrcode-bun

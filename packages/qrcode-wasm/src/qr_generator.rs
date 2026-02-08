@@ -1,4 +1,4 @@
-/**
+/*!
  * 优化的 QRCode 生成器
  * 支持实例复用和批量生成
  */
@@ -98,7 +98,7 @@ impl QRCodeGenerator {
 
     /// 判断指定位置是否为深色
     pub fn is_dark(&self, row: i32, col: i32) -> bool {
-        self.model.as_ref().map_or(false, |m| m.is_dark(row, col))
+        self.model.as_ref().is_some_and(|m| m.is_dark(row, col))
     }
 
     /// 获取 SVG 字符串（优化版本）

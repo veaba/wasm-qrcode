@@ -9,8 +9,8 @@
     "rsw": "rsw",
     "watch": "pnpm rsw watch",
     "build": "pnpm -r --filter './packages/*' run build",
-    "build:js": "pnpm --filter @veaba/qrcode-shared build && pnpm --filter @veaba/qrcode-js build",
-    "build:node": "pnpm --filter @veaba/qrcode-shared build && pnpm --filter @veaba/qrcode-node build",
+    "build:js": "pnpm --filter @veaba/js-shared build && pnpm --filter @veaba/qrcode-js build",
+    "build:node": "pnpm --filter @veaba/js-shared build && pnpm --filter @veaba/qrcode-node build",
     "build:wasm": "pnpm --filter @veaba/qrcode-wasm build",
     "build:rust": "pnpm --filter @veaba/qrcode-fast build && pnpm --filter @veaba/qrcode-rust build",
     "test": "node scripts/test.js",
@@ -57,6 +57,7 @@
     "@vitest/browser": "^2.1.9",
     "@vitest/coverage-v8": "^2.1.0",
     "playwright": "^1.58.1",
+    "rimraf": "^6.0.1",
     "typescript": "^4.8.4",
     "vite": "^5.0.0",
     "vitest": "^2.1.9"

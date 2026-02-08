@@ -1,8 +1,7 @@
-/**
+/*!
  * QRCode 主类
  * 对应 JS 中的 QRCode
  */
-
 use crate::qr_code_model::QRCodeModel;
 use crate::qr_rs_block::QRErrorCorrectLevel;
 
@@ -55,12 +54,12 @@ pub fn get_type_number(s_text: &str, n_correct_level: QRErrorCorrectLevel) -> i3
     let mut n_type = 1;
     let length = get_utf8_length(s_text);
 
-    for i in 0..QR_CODE_LIMIT_LENGTH.len() {
+    for item in QR_CODE_LIMIT_LENGTH.iter() {
         let n_limit = match n_correct_level {
-            QRErrorCorrectLevel::L => QR_CODE_LIMIT_LENGTH[i][0],
-            QRErrorCorrectLevel::M => QR_CODE_LIMIT_LENGTH[i][1],
-            QRErrorCorrectLevel::Q => QR_CODE_LIMIT_LENGTH[i][2],
-            QRErrorCorrectLevel::H => QR_CODE_LIMIT_LENGTH[i][3],
+            QRErrorCorrectLevel::L => item[0],
+            QRErrorCorrectLevel::M => item[1],
+            QRErrorCorrectLevel::Q => item[2],
+            QRErrorCorrectLevel::H => item[3],
         };
 
         if length <= n_limit {
@@ -181,7 +180,7 @@ impl QRCode {
 
     /// 判断指定位置是否为深色
     pub fn is_dark(&self, row: i32, col: i32) -> bool {
-        self.model.as_ref().map_or(false, |m| m.is_dark(row, col))
+        self.model.as_ref().is_some_and(|m| m.is_dark(row, col))
     }
 }
 

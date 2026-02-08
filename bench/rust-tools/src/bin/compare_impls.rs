@@ -24,7 +24,8 @@ fn main() {
     
     match mode.as_str() {
         "full" => compare_full(&text),
-        "modules" | _ => compare_modules(&text),
+        "modules" => compare_modules(&text),
+        _ => compare_modules(&text),
     }
 }
 

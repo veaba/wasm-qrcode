@@ -1,5 +1,5 @@
 // @veaba/qrcode-js 类型定义
-// Re-exports from @veaba/qrcode-shared with additional cached versions
+// Re-exports from @veaba/js-shared with additional cached versions
 
 export {
   // Core classes
@@ -33,15 +33,15 @@ export {
   generateMinimalStyleQRCode,
   generateBatchQRCodes,
 
-} from '@veaba/qrcode-shared';
+} from '@veaba/js-shared';
 
 export type {
   QRCodeOptions,
   StyledSVGOptions,
   RSBlock,
-} from '@veaba/qrcode-shared';
+} from '@veaba/js-shared';
 
-import type { QRCodeCore, QRErrorCorrectLevel, QRCodeOptions, StyledSVGOptions } from '@veaba/qrcode-shared';
+import type { QRCodeCore, QRErrorCorrectLevel, QRCodeOptions, StyledSVGOptions } from '@veaba/js-shared';
 
 // QRCode is an alias for QRCodeCore
 export type QRCode = QRCodeCore;

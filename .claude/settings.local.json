@@ -34,7 +34,11 @@
       "Bash(echo:*)",
       "Bash(npm install:*)",
       "Bash(npm run bench:*)",
-      "Bash(tree:*)"
+      "Bash(tree:*)",
+      "Bash(pnpm run build:js:*)",
+      "Bash(pnpm:*)",
+      "Bash(npm run build:*)",
+      "Bash(/Users/yexiao/github/veaba/qrcodes/bench/backend-benchmark/package.json << 'EOF'\n{\n  \"name\": \"@veaba/backend-benchmark\",\n  \"version\": \"0.0.1\",\n  \"private\": true,\n  \"type\": \"module\",\n  \"scripts\": {\n    \"benchmark\": \"npx tsx index.ts\",\n    \"benchmark:quick\": \"npx tsx index-fast.ts\"\n  },\n  \"dependencies\": {\n    \"@veaba/qrcode-node\": \"workspace:*\",\n    \"@veaba/qrcode-bun\": \"workspace:*\",\n    \"@veaba/js-shared\": \"workspace:*\"\n  },\n  \"devDependencies\": {\n    \"tsx\": \"^4.0.0\",\n    \"typescript\": \"^5.0.0\"\n  }\n}\nEOF)"
     ]
   }
 }

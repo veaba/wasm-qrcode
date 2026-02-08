@@ -578,7 +578,7 @@ export class QRCodeCore {
 
     // 生成唯一的渐变 ID，避免多个 SVG 之间的冲突
     const gradientId = gradient ? `qrGradient_${Math.random().toString(36).substr(2, 9)}` : '';
-    
+
     let defs = '';
     if (gradient) {
       defs = `<defs><linearGradient id="${gradientId}" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" style="stop-color:${gradient.color1}"/><stop offset="100%" style="stop-color:${gradient.color2}"/></linearGradient></defs>`;
@@ -1079,7 +1079,7 @@ export const VERSION = '1.0.0';
 export function getVersionInfo(): string {
   return JSON.stringify({
     version: VERSION,
-    name: '@veaba/qrcode-shared',
+    name: '@veaba/js-shared',
     features: [
       'basic_qrcode',
       'styled_svg',

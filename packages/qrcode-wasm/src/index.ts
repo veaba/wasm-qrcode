@@ -15,17 +15,17 @@ import init, {
   StyledQRCode,
   QRCodeStyle,
   CorrectLevel,
-  // Style generators (snake_case from Rust)
-  generate_rounded_qrcode,
-  generate_qrcode_with_logo_area,
-  generate_gradient_qrcode,
-  generate_wechat_style_qrcode,
-  generate_douyin_style_qrcode,
-  generate_alipay_style_qrcode,
-  generate_xiaohongshu_style_qrcode,
-  generate_cyberpunk_style_qrcode,
-  generate_retro_style_qrcode,
-  generate_minimal_style_qrcode,
+  // Style generators (snake_case from Rust - imported with aliases to avoid conflicts)
+  generate_rounded_qrcode as wasm_generate_rounded_qrcode,
+  generate_qrcode_with_logo_area as wasm_generate_qrcode_with_logo_area,
+  generate_gradient_qrcode as wasm_generate_gradient_qrcode,
+  generate_wechat_style_qrcode as wasm_generate_wechat_style_qrcode,
+  generate_douyin_style_qrcode as wasm_generate_douyin_style_qrcode,
+  generate_alipay_style_qrcode as wasm_generate_alipay_style_qrcode,
+  generate_xiaohongshu_style_qrcode as wasm_generate_xiaohongshu_style_qrcode,
+  generate_cyberpunk_style_qrcode as wasm_generate_cyberpunk_style_qrcode,
+  generate_retro_style_qrcode as wasm_generate_retro_style_qrcode,
+  generate_minimal_style_qrcode as wasm_generate_minimal_style_qrcode,
   // Batch generation
   generate_qrcode_batch,
   generate_qrcode_fast,
@@ -60,9 +60,9 @@ export const QRMode = { MODE_8BIT_BYTE: 4 } as const;
  */
 function isVite(): boolean {
   // Vite injects import.meta.env
-  return typeof import.meta !== 'undefined' && 
-         // @ts-ignore - Vite-specific
-         typeof import.meta.env !== 'undefined';
+  return typeof import.meta !== 'undefined' &&
+    // @ts-ignore - Vite-specific
+    typeof import.meta.env !== 'undefined';
 }
 
 /**
@@ -95,16 +95,46 @@ export { init };
  */
 export class QRCodeCore {
   private qr: QRCodeWasm;
+  private _text: string;
+  private _correctLevel: CorrectLevel;
 
   constructor(text: string, correctLevel: CorrectLevel = CorrectLevel.H) {
+    this._text = text;
+    this._correctLevel = correctLevel;
     this.qr = QRCodeWasm.with_options(256, 256, correctLevel);
     if (text) {
       this.qr.make_code(text);
     }
   }
 
+  // Public properties for API consistency with qrcode-js
+  get text(): string {
+    return this._text;
+  }
+
+  get correctLevel(): CorrectLevel {
+    return this._correctLevel;
+  }
+
+  get typeNumber(): number {
+    // Auto-detected by WASM implementation, return 0 for auto
+    return 0;
+  }
+
   get moduleCount(): number {
     return this.qr.get_module_count();
+  }
+
+  get modules(): Uint8Array {
+    // Convert WASM modules to Uint8Array format for API consistency
+    const count = this.qr.get_module_count();
+    const modules = new Uint8Array(count * count);
+    for (let row = 0; row < count; row++) {
+      for (let col = 0; col < count; col++) {
+        modules[row * count + col] = this.qr.is_dark(row, col) ? 1 : 0;
+      }
+    }
+    return modules;
   }
 
   getModuleCount(): number {
@@ -283,14 +313,14 @@ interface StyledSVGOptions {
  * Generate rounded QRCode
  */
 export function generateRoundedQRCode(text: string, size: number = 256, radius: number = 8): string {
-  return generate_rounded_qrcode(text, size, radius);
+  return wasm_generate_rounded_qrcode(text, size, radius);
 }
 
 /**
  * Generate QRCode with logo area
  */
 export function generateQRCodeWithLogoArea(text: string, size: number = 256, logoRatio: number = 0.2): string {
-  return generate_qrcode_with_logo_area(text, size, logoRatio);
+  return wasm_generate_qrcode_with_logo_area(text, size, logoRatio);
 }
 
 /**
@@ -302,56 +332,56 @@ export function generateGradientQRCode(
   color1: string = '#667eea',
   color2: string = '#764ba2'
 ): string {
-  return generate_gradient_qrcode(text, size, color1, color2);
+  return wasm_generate_gradient_qrcode(text, size, color1, color2);
 }
 
 /**
  * Generate WeChat style QRCode
  */
 export function generateWechatStyleQRCode(text: string, size: number = 256): string {
-  return generate_wechat_style_qrcode(text, size);
+  return wasm_generate_wechat_style_qrcode(text, size);
 }
 
 /**
  * Generate Douyin style QRCode
  */
 export function generateDouyinStyleQRCode(text: string, size: number = 256): string {
-  return generate_douyin_style_qrcode(text, size);
+  return wasm_generate_douyin_style_qrcode(text, size);
 }
 
 /**
  * Generate Alipay style QRCode
  */
 export function generateAlipayStyleQRCode(text: string, size: number = 256): string {
-  return generate_alipay_style_qrcode(text, size);
+  return wasm_generate_alipay_style_qrcode(text, size);
 }
 
 /**
  * Generate Xiaohongshu style QRCode
  */
 export function generateXiaohongshuStyleQRCode(text: string, size: number = 256): string {
-  return generate_xiaohongshu_style_qrcode(text, size);
+  return wasm_generate_xiaohongshu_style_qrcode(text, size);
 }
 
 /**
  * Generate Cyberpunk style QRCode
  */
 export function generateCyberpunkStyleQRCode(text: string, size: number = 256): string {
-  return generate_cyberpunk_style_qrcode(text, size);
+  return wasm_generate_cyberpunk_style_qrcode(text, size);
 }
 
 /**
  * Generate Retro style QRCode
  */
 export function generateRetroStyleQRCode(text: string, size: number = 256): string {
-  return generate_retro_style_qrcode(text, size);
+  return wasm_generate_retro_style_qrcode(text, size);
 }
 
 /**
  * Generate Minimal style QRCode
  */
 export function generateMinimalStyleQRCode(text: string, size: number = 256): string {
-  return generate_minimal_style_qrcode(text, size);
+  return wasm_generate_minimal_style_qrcode(text, size);
 }
 
 // ============================================
@@ -360,52 +390,52 @@ export function generateMinimalStyleQRCode(text: string, size: number = 256): st
 
 export function generateRoundedQRCodeCached(text: string, size: number = 256, radius: number = 8): string {
   getCachedQRCode(text, CorrectLevel.H);
-  return generate_rounded_qrcode(text, size, radius);
+  return wasm_generate_rounded_qrcode(text, size, radius);
 }
 
 export function generateQRCodeWithLogoAreaCached(text: string, size: number = 256, logoRatio: number = 0.2): string {
   getCachedQRCode(text, CorrectLevel.H);
-  return generate_qrcode_with_logo_area(text, size, logoRatio);
+  return wasm_generate_qrcode_with_logo_area(text, size, logoRatio);
 }
 
 export function generateGradientQRCodeCached(text: string, size: number = 256, color1: string = '#667eea', color2: string = '#764ba2'): string {
   getCachedQRCode(text, CorrectLevel.H);
-  return generate_gradient_qrcode(text, size, color1, color2);
+  return wasm_generate_gradient_qrcode(text, size, color1, color2);
 }
 
 export function generateWechatStyleQRCodeCached(text: string, size: number = 256): string {
   getCachedQRCode(text, CorrectLevel.H);
-  return generate_wechat_style_qrcode(text, size);
+  return wasm_generate_wechat_style_qrcode(text, size);
 }
 
 export function generateDouyinStyleQRCodeCached(text: string, size: number = 256): string {
   getCachedQRCode(text, CorrectLevel.H);
-  return generate_douyin_style_qrcode(text, size);
+  return wasm_generate_douyin_style_qrcode(text, size);
 }
 
 export function generateAlipayStyleQRCodeCached(text: string, size: number = 256): string {
   getCachedQRCode(text, CorrectLevel.H);
-  return generate_alipay_style_qrcode(text, size);
+  return wasm_generate_alipay_style_qrcode(text, size);
 }
 
 export function generateXiaohongshuStyleQRCodeCached(text: string, size: number = 256): string {
   getCachedQRCode(text, CorrectLevel.H);
-  return generate_xiaohongshu_style_qrcode(text, size);
+  return wasm_generate_xiaohongshu_style_qrcode(text, size);
 }
 
 export function generateCyberpunkStyleQRCodeCached(text: string, size: number = 256): string {
   getCachedQRCode(text, CorrectLevel.H);
-  return generate_cyberpunk_style_qrcode(text, size);
+  return wasm_generate_cyberpunk_style_qrcode(text, size);
 }
 
 export function generateRetroStyleQRCodeCached(text: string, size: number = 256): string {
   getCachedQRCode(text, CorrectLevel.H);
-  return generate_retro_style_qrcode(text, size);
+  return wasm_generate_retro_style_qrcode(text, size);
 }
 
 export function generateMinimalStyleQRCodeCached(text: string, size: number = 256): string {
   getCachedQRCode(text, CorrectLevel.H);
-  return generate_minimal_style_qrcode(text, size);
+  return wasm_generate_minimal_style_qrcode(text, size);
 }
 
 // ============================================
@@ -436,11 +466,56 @@ export function generateBatchQRCodesCached(texts: string[], options: { correctLe
 
 /**
  * Generate QRCode asynchronously
+ * Returns SVG string directly for API consistency with qrcode-js/js-shared
  */
 export function generateQRCodeAsync(
   text: string,
   options: { cache?: boolean; correctLevel?: CorrectLevel; size?: number; styled?: boolean; style?: StyledSVGOptions } = {}
-): Promise<{ text: string; svg: string; moduleCount: number }> {
+): Promise<string> {
+  return new Promise((resolve) => {
+    const useCache = options.cache !== false;
+    let qr: QRCodeCore;
+    if (useCache) {
+      qr = getCachedQRCode(text, options.correctLevel || CorrectLevel.H);
+    } else {
+      qr = new QRCodeCore(text, options.correctLevel || CorrectLevel.H);
+    }
+    const svg = options.styled
+      ? qr.toStyledSVG({ size: options.size || 256, ...options.style })
+      : qr.toSVG(options.size || 256);
+    resolve(svg);
+  });
+}
+
+/**
+ * Generate batch QRCodes asynchronously
+ * Returns array of SVG strings for API consistency with qrcode-js/js-shared
+ */
+export function generateBatchAsync(texts: string[], options: { cache?: boolean; correctLevel?: CorrectLevel; size?: number; styled?: boolean; style?: StyledSVGOptions } = {}): Promise<string[]> {
+  return Promise.all(texts.map(text => generateQRCodeAsync(text, options)));
+}
+
+// ============================================
+// Advanced Async Generation (with QRCodeResult)
+// ============================================
+
+/**
+ * QRCode generation result interface
+ */
+export interface QRCodeResult {
+  text: string;
+  svg: string;
+  moduleCount: number;
+}
+
+/**
+ * Advanced async generation that returns QRCodeResult
+ * Provides additional metadata compared to generateQRCodeAsync
+ */
+export function generateQRCodeAsyncAdvanced(
+  text: string,
+  options: { cache?: boolean; correctLevel?: CorrectLevel; size?: number; styled?: boolean; style?: StyledSVGOptions } = {}
+): Promise<QRCodeResult> {
   return new Promise((resolve) => {
     const useCache = options.cache !== false;
     let qr: QRCodeCore;
@@ -461,26 +536,29 @@ export function generateQRCodeAsync(
 }
 
 /**
- * Generate batch QRCodes asynchronously
+ * Advanced batch async generation that returns QRCodeResult[]
  */
-export function generateBatchAsync(texts: string[], options: { cache?: boolean; correctLevel?: CorrectLevel; size?: number; styled?: boolean; style?: StyledSVGOptions } = {}): Promise<{ text: string; svg: string; moduleCount: number }[]> {
-  return Promise.all(texts.map(text => generateQRCodeAsync(text, options)));
+export function generateBatchAsyncAdvanced(
+  texts: string[],
+  options: { cache?: boolean; correctLevel?: CorrectLevel; size?: number; styled?: boolean; style?: StyledSVGOptions } = {}
+): Promise<QRCodeResult[]> {
+  return Promise.all(texts.map(text => generateQRCodeAsyncAdvanced(text, options)));
 }
 
 // ============================================
-// Snake_case Aliases (Backward Compatibility)
+// Snake_case Aliases (for API consistency with qrcode-js/js-shared)
 // ============================================
 
-export const generate_rounded_qrcode_alias = generateRoundedQRCodeCached;
-export const generate_qrcode_with_logo_area_alias = generateQRCodeWithLogoAreaCached;
-export const generate_gradient_qrcode_alias = generateGradientQRCodeCached;
-export const generate_wechat_style_qrcode_alias = generateWechatStyleQRCodeCached;
-export const generate_douyin_style_qrcode_alias = generateDouyinStyleQRCodeCached;
-export const generate_alipay_style_qrcode_alias = generateAlipayStyleQRCodeCached;
-export const generate_xiaohongshu_style_qrcode_alias = generateXiaohongshuStyleQRCodeCached;
-export const generate_cyberpunk_style_qrcode_alias = generateCyberpunkStyleQRCodeCached;
-export const generate_retro_style_qrcode_alias = generateRetroStyleQRCodeCached;
-export const generate_minimal_style_qrcode_alias = generateMinimalStyleQRCodeCached;
+export const generate_rounded_qrcode = generateRoundedQRCodeCached;
+export const generate_qrcode_with_logo_area = generateQRCodeWithLogoAreaCached;
+export const generate_gradient_qrcode = generateGradientQRCodeCached;
+export const generate_wechat_style_qrcode = generateWechatStyleQRCodeCached;
+export const generate_douyin_style_qrcode = generateDouyinStyleQRCodeCached;
+export const generate_alipay_style_qrcode = generateAlipayStyleQRCodeCached;
+export const generate_xiaohongshu_style_qrcode = generateXiaohongshuStyleQRCodeCached;
+export const generate_cyberpunk_style_qrcode = generateCyberpunkStyleQRCodeCached;
+export const generate_retro_style_qrcode = generateRetroStyleQRCodeCached;
+export const generate_minimal_style_qrcode = generateMinimalStyleQRCodeCached;
 
 // ============================================
 // Constants
@@ -502,5 +580,5 @@ export { init_thread_pool, is_parallel_supported, QRCodeGenerator, greet };
 // Default Export
 // ============================================
 
-// Default export for unified API consistency with qrcode-js/qrcode-shared
+// Default export for unified API consistency with qrcode-js/js-shared
 export default QRCodeCore;

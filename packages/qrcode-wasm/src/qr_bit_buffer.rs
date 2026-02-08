@@ -1,4 +1,4 @@
-/**
+/*!
  * QRCode 位缓冲区
  * 对应 JS 中的 QRBitBuffer
  */

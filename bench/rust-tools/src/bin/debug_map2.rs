@@ -1,5 +1,7 @@
 // 调试数据位映射 - 修正固定图案标记
 
+#![allow(clippy::needless_range_loop)]
+
 use qrcode_rust::{QRCode as QRCodeRust, QRCodeOptions, QRErrorCorrectLevel as LevelRust};
 
 fn main() {

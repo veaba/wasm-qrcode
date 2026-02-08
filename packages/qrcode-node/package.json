@@ -38,7 +38,7 @@
     "url": "https://github.com/veaba/qrcodes"
   },
   "dependencies": {
-    "@veaba/qrcode-shared": "workspace:*"
+    "@veaba/js-shared": "workspace:*"
   },
   "devDependencies": {
     "typescript": "^5.0.0"

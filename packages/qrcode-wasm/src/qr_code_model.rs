@@ -1,8 +1,7 @@
-/**
+/*!
  * QRCode 核心模型 - 修复版
  * 使用 Option<bool> 来区分未设置和功能图案的白色间隔
  */
-
 use crate::qr_8bit_byte::QR8bitByte;
 use crate::qr_bit_buffer::QRBitBuffer;
 use crate::qr_polynomial::QRPolynomial;
@@ -102,9 +101,9 @@ impl QRCodeModel {
                 if col + c <= -1 || self.module_count <= col + c {
                     continue;
                 }
-                let is_dark = (0 <= r && r <= 6 && (c == 0 || c == 6))
-                    || (0 <= c && c <= 6 && (r == 0 || r == 6))
-                    || (2 <= r && r <= 4 && 2 <= c && c <= 4);
+                let is_dark = ((0..=6).contains(&r) && (c == 0 || c == 6))
+                    || ((0..=6).contains(&c) && (r == 0 || r == 6))
+                    || ((2..=4).contains(&r) && (2..=4).contains(&c));
                 self.modules[(row + r) as usize][(col + c) as usize] = Some(is_dark);
             }
         }
@@ -279,7 +278,7 @@ fn create_data(type_number: i32, error_correct_level: QRErrorCorrectLevel, data_
         buffer.put(0, 4);
     }
 
-    while buffer.get_length_in_bits() % 8 != 0 {
+    while !buffer.get_length_in_bits().is_multiple_of(8) {
         buffer.put_bit(false);
     }
 
@@ -314,8 +313,8 @@ fn create_bytes(buffer: &QRBitBuffer, rs_blocks: &[crate::qr_rs_block::QRRSBlock
         max_ec_count = max_ec_count.max(ec_count);
 
         dcdata[r] = vec![0; dc_count];
-        for i in 0..dc_count {
-            dcdata[r][i] = buffer.get_buffer()[i + offset];
+        for (i, item) in dcdata[r].iter_mut().enumerate().take(dc_count) {
+            *item = buffer.get_buffer()[i + offset];
         }
         offset += dc_count;
 
@@ -342,18 +341,18 @@ fn create_bytes(buffer: &QRBitBuffer, rs_blocks: &[crate::qr_rs_block::QRRSBlock
     let mut index = 0;
 
     for i in 0..max_dc_count {
-        for r in 0..rs_blocks.len() {
-            if i < dcdata[r].len() {
-                data[index] = dcdata[r][i];
+        for item in dcdata.iter().take(rs_blocks.len()) {
+            if i < item.len() {
+                data[index] = item[i];
                 index += 1;
             }
         }
     }
 
     for i in 0..max_ec_count {
-        for r in 0..rs_blocks.len() {
-            if i < ecdata[r].len() {
-                data[index] = ecdata[r][i];
+        for item in ecdata.iter().take(rs_blocks.len()) {
+            if i < item.len() {
+                data[index] = item[i];
                 index += 1;
             }
         }

@@ -63,21 +63,21 @@ function ensurePublicDir() {
 
 // 构建 shared 包
 function buildShared() {
-  log('🔨 构建 @veaba/qrcode-shared...', 'yellow');
-  const sharedDir = path.join(rootDir, 'packages/qrcode-shared');
-  
+  log('🔨 构建 @veaba/js-shared...', 'yellow');
+  const sharedDir = path.join(rootDir, 'packages/js-shared');
+
   // 检查目录是否存在
   if (!fs.existsSync(sharedDir)) {
     log(`❌ 目录不存在: ${sharedDir}`, 'red');
     return false;
   }
-  
+
   try {
-    execSync('pnpm run build', { 
-      cwd: sharedDir, 
+    execSync('pnpm run build', {
+      cwd: sharedDir,
       stdio: 'inherit'
     });
-    log('✅ shared 构建成功', 'green');
+    log('✅ js-shared 构建成功', 'green');
     return true;
   } catch (error) {
     log(`❌ shared 构建失败: ${error.message}`, 'red');
@@ -92,10 +92,10 @@ function buildShared() {
 function buildNode() {
   log('🔨 构建 @veaba/qrcode-node...', 'yellow');
   const nodeDir = path.join(rootDir, 'packages/qrcode-node');
-  
+
   try {
-    execSync('pnpm run build', { 
-      cwd: nodeDir, 
+    execSync('pnpm run build', {
+      cwd: nodeDir,
       stdio: 'inherit'
     });
     log('✅ Node.js 包构建成功', 'green');
@@ -109,24 +109,24 @@ function buildNode() {
 // ========== 后端 PK 基准测试 ==========
 async function runBackendBenchmark(quick = false) {
   logSection('📦 后端 PK 基准测试');
-  
+
   const backendBenchmarkDir = path.join(rootDir, 'bench/backend-benchmark');
-  
+
   try {
     if (quick) {
       log('运行快速模式...', 'blue');
-      execSync('npx tsx index-fast.ts', { 
-        cwd: backendBenchmarkDir, 
+      execSync('npx tsx index-fast.ts', {
+        cwd: backendBenchmarkDir,
         stdio: 'inherit'
       });
     } else {
       log('运行完整 PK 测试...', 'blue');
-      execSync('npx tsx index.ts', { 
-        cwd: backendBenchmarkDir, 
+      execSync('npx tsx index.ts', {
+        cwd: backendBenchmarkDir,
         stdio: 'inherit'
       });
     }
-    
+
     log('✅ 后端 PK 测试完成', 'green');
     return true;
   } catch (error) {
@@ -139,7 +139,7 @@ async function runBackendBenchmark(quick = false) {
 // ========== Rust 基准测试 ==========
 async function runRustBenchmark() {
   logSection('🦀 Rust 基准测试');
-  
+
   if (!checkCommand('cargo')) {
     log('⚠️  Rust/Cargo 未安装，跳过 Rust 测试', 'yellow');
     log('安装 Rust: https://rustup.rs/', 'cyan');
@@ -149,19 +149,19 @@ async function runRustBenchmark() {
   try {
     const rustDir = path.join(rootDir, 'packages/qrcode-rust');
     const fastDir = path.join(rootDir, 'packages/qrcode-fast');
-    
+
     log('运行 qrcode-rust 基准测试...', 'blue');
-    execSync('cargo bench', { 
-      cwd: rustDir, 
+    execSync('cargo bench', {
+      cwd: rustDir,
       stdio: 'inherit'
     });
-    
+
     log('运行 qrcode-fast 基准测试...', 'blue');
-    execSync('cargo bench', { 
-      cwd: fastDir, 
+    execSync('cargo bench', {
+      cwd: fastDir,
       stdio: 'inherit'
     });
-    
+
     // 解析并保存 Rust 结果
     const rustResult = {
       name: '@veaba/qrcode-rust & @veaba/qrcode-fast',
@@ -173,13 +173,13 @@ async function runRustBenchmark() {
       ],
       note: '请查看 target/criterion 目录获取详细报告'
     };
-    
+
     fs.writeFileSync(
       path.join(ensurePublicDir(), 'benchmark_rust_result.json'),
       JSON.stringify(rustResult, null, 2)
     );
     log('✅ Rust 结果已保存到 docs/public/benchmark_rust_result.json', 'green');
-    
+
     return true;
   } catch (error) {
     log('❌ Rust 基准测试失败', 'red');
@@ -191,7 +191,7 @@ async function runRustBenchmark() {
 // ========== 生成汇总报告 ==========
 async function generateSummary() {
   logSection('📊 生成汇总报告');
-  
+
   const publicDir = ensurePublicDir();
   const summary = {
     timestamp: new Date().toISOString(),
@@ -272,13 +272,13 @@ async function main() {
   await generateSummary();
 
   logSection('✨ 基准测试完成!');
-  
+
   log('📁 生成的数据文件:', 'bright');
   log('  - docs/public/backend_benchmark_pk.json (PK 完整结果)', 'cyan');
   log('  - docs/public/backend_benchmark_pk_summary.json (PK 摘要)', 'cyan');
   log('  - docs/public/benchmark_rust_result.json (Rust 结果)', 'cyan');
   log('  - docs/public/benchmark_summary.json (汇总)', 'cyan');
-  
+
   console.log('');
   log('🌐 查看结果:', 'bright');
   log('  1. 运行: pnpm run docs:dev', 'cyan');

@@ -6,7 +6,7 @@
 - **`@veaba/qrcode-node`** - Node.js 环境
 - **`@veaba/qrcode-bun`** - Bun 环境
 
-所有公开包都导出相同的 API，`QRCodeCore` 是内部私有包 `@veaba/qrcode-shared` 的核心类。
+所有公开包都导出相同的 API，`QRCodeCore` 是内部私有包 `@veaba/js-shared` 的核心类。
 
 ## 构造函数
 

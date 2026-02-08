@@ -1,4 +1,4 @@
-/**
+/*!
  * QRCode 工具函数
  * 对应 JS 中的 QRUtil
  */
@@ -111,7 +111,7 @@ fn get_bch_digit(data: i32) -> i32 {
 
 /// 获取位置调整图案位置
 pub fn get_pattern_position(type_number: i32) -> &'static [i32] {
-    if type_number >= 1 && type_number <= 40 {
+    if (1..=40).contains(&type_number) {
         PATTERN_POSITION_TABLE[(type_number - 1) as usize]
     } else {
         &[]
@@ -144,7 +144,7 @@ pub fn get_error_correct_polynomial(error_correct_length: i32) -> QRPolynomial {
 
 /// 获取长度位数
 pub fn get_length_in_bits(mode: QRMode, type_num: i32) -> usize {
-    if type_num >= 1 && type_num < 10 {
+    if (1..10).contains(&type_num) {
         match mode {
             QRMode::MODE_NUMBER => 10_usize,
             QRMode::MODE_ALPHA_NUM => 9_usize,

@@ -134,18 +134,22 @@ async function benchmarkNode(): Promise<PackageResult | null> {
   try {
     console.log('🟢 测试 @veaba/qrcode-node...');
 
-    // 动态导入 qrcode-node 模块（使用包名）
+    // 动态导入 qrcode-node 模块（使用相对路径）
     let QRCode: any, generateBatchQRCodes: any, generateQRCodeAsync: any;
     let QRErrorCorrectLevel: any;
 
     try {
-      const module = await import('@veaba/qrcode-node');
+      // 尝试多种导入方式
+      const module = await import('../../packages/qrcode-node/dist/index.js')
+        .catch(() => import('@veaba/qrcode-node'));
       QRCode = module.QRCode;
       generateBatchQRCodes = module.generateBatchQRCodes;
       generateQRCodeAsync = module.generateQRCodeAsync;
       QRErrorCorrectLevel = module.QRErrorCorrectLevel;
-    } catch (importError) {
-      console.log('  ⚠️ 无法导入 @veaba/qrcode-node 模块，可能需要先构建');
+    } catch (importError: any) {
+      console.log('  ⚠️ 无法导入 @veaba/qrcode-node 模块');
+      console.log('  错误详情:', importError?.message || importError);
+      console.log('  提示: 确保 packages/qrcode-node/dist 目录存在');
       return null;
     }
 
@@ -283,16 +287,19 @@ async function benchmarkBun(): Promise<PackageResult | null> {
       return null;
     }
 
-    // 动态导入 qrcode-bun 模块（使用包名）
+    // 动态导入 qrcode-bun 模块（使用相对路径）
     let QRCode: any, generateBatchQRCodes: any;
 
     try {
-      // 使用 Bun 运行时需要动态导入
-      const module = await import('@veaba/qrcode-bun');
+      // 尝试多种导入方式 - 注意：Bun 包需要 .ts 扩展名
+      const module = await import('../../packages/qrcode-bun/src/index.ts')
+        .catch(() => import('@veaba/qrcode-bun'));
       QRCode = module.QRCode;
       generateBatchQRCodes = module.generateBatchQRCodes;
-    } catch (importError) {
-      console.log('  ⚠️ 无法导入 @veaba/qrcode-bun 模块，可能需要在 Bun 环境下运行');
+    } catch (importError: any) {
+      console.log('  ⚠️ 无法导入 @veaba/qrcode-bun 模块');
+      console.log('  错误详情:', importError?.message || importError);
+      console.log('  提示: Bun 包只能在 Bun 运行时中使用，或在 Node.js 中使用 tsx 加载');
       return null;
     }
 
@@ -411,15 +418,58 @@ async function benchmarkFast(): Promise<PackageResult | null> {
       return null;
     }
 
-    // 运行 cargo bench
-    const output = execSync('cargo bench 2>&1', {
-      cwd: pkgPath,
-      encoding: 'utf-8',
-      timeout: 300000, // 5 分钟超时
-    });
+    // 检查 Cargo.toml 中是否有 bench 配置
+    const cargoToml = path.join(pkgPath, 'Cargo.toml');
+    if (!fs.existsSync(cargoToml)) {
+      console.log('  ⚠️ Cargo.toml 不存在，跳过测试');
+      return null;
+    }
+
+    const cargoContent = fs.readFileSync(cargoToml, 'utf-8');
+    if (!cargoContent.includes('[[bench]]') && !cargoContent.includes('[bench]')) {
+      console.log('  ⚠️ 未配置基准测试，跳过');
+      return null;
+    }
+
+    console.log('  🔄 运行 cargo bench (可能需要 1-2 分钟)...');
+
+    // 运行 cargo bench，使用更短的超时时间
+    let output: string;
+    try {
+      output = execSync('cargo bench 2>&1', {
+        cwd: pkgPath,
+        encoding: 'utf-8',
+        timeout: 120000, // 2 分钟超时
+        stdio: ['ignore', 'pipe', 'pipe'],
+      });
+    } catch (execError: any) {
+      // 检查是否是编译错误
+      if (execError.stdout && (
+        execError.stdout.includes('error[E0583]') ||
+        execError.stdout.includes('error: could not compile')
+      )) {
+        console.log('  ⚠️ Rust 代码编译失败，可能正在重构中');
+        console.log('  提示: 跳过 qrcode-fast 基准测试');
+        return null;
+      }
+      if (execError.killed || execError.signal === 'SIGTERM') {
+        console.log('  ⚠️ cargo bench 超时 (120秒)，跳过测试');
+        console.log('  提示: Rust 基准测试可能需要更长时间，请稍后手动运行');
+        return null;
+      }
+      console.log('  ⚠️ cargo bench 执行失败:', execError?.message || '未知错误');
+      return null;
+    }
 
     // 解析输出
     const rawResults = parseRustBenchmarkOutput(output, ['fast']);
+
+    if (rawResults.length === 0) {
+      console.log('  ⚠️ 未能解析基准测试结果');
+      return null;
+    }
+
+    console.log(`  ✅ 解析到 ${rawResults.length} 个测试结果`);
 
     // 映射到标准化测试名称
     const nameMapping: Record<string, { name: string; category: BenchmarkResult['category'] }> = {
@@ -451,7 +501,7 @@ async function benchmarkFast(): Promise<PackageResult | null> {
     // 获取 Rust 版本
     let rustVersion = 'unknown';
     try {
-      rustVersion = execSync('rustc --version', { encoding: 'utf-8' }).trim();
+      rustVersion = execSync('rustc --version', { encoding: 'utf-8', stdio: 'pipe' }).trim();
     } catch { }
 
     return {
@@ -463,137 +513,6 @@ async function benchmarkFast(): Promise<PackageResult | null> {
     };
   } catch (error) {
     console.error('  ❌ qrcode-fast 基准测试失败:', error);
-    return null;
-  }
-}
-
-/**
- * 运行 Rust 基准测试 (qrcode-rust)
- * 使用标准化的测试名称以便跨包对比
- */
-async function benchmarkRust(): Promise<PackageResult | null> {
-  try {
-    console.log('🦀 测试 @veaba/qrcode-rust...');
-
-    const pkgPath = path.join(__dirname, '../../packages/qrcode-rust');
-
-    // 运行 cargo bench
-    const output = execSync('cargo bench --bench comparison_bench 2>&1', {
-      cwd: pkgPath,
-      encoding: 'utf-8',
-      timeout: 300000, // 5 分钟超时
-    });
-
-    // 解析输出 - 提取 veaba 的结果
-    const rawResults = parseRustBenchmarkOutput(output, ['veaba']);
-
-    // 映射到标准化测试名称
-    const nameMapping: Record<string, { name: string; category: BenchmarkResult['category'] }> = {
-      'veaba_single_generation': { name: '单条生成 (medium)', category: 'single' },
-      'veaba_batch_100': { name: '批量生成 (100 条)', category: 'batch' },
-      'veaba_svg_generation': { name: 'SVG 输出', category: 'svg' },
-      'veaba_error_levels/L': { name: '纠错级别 L (低)', category: 'error_level' },
-      'veaba_error_levels/M': { name: '纠错级别 M (中)', category: 'error_level' },
-      'veaba_error_levels/Q': { name: '纠错级别 Q (较高)', category: 'error_level' },
-      'veaba_error_levels/H': { name: '纠错级别 H (高)', category: 'error_level' },
-      'veaba_text_lengths/short_12chars': { name: '单条生成 (short)', category: 'single' },
-      'veaba_text_lengths/medium_36chars': { name: '单条生成 (medium)', category: 'single' },
-      'veaba_text_lengths/long_98chars': { name: '单条生成 (long)', category: 'single' },
-    };
-
-    const results: BenchmarkResult[] = [];
-    for (const r of rawResults) {
-      const mapping = nameMapping[r.name];
-      if (mapping) {
-        results.push({
-          name: mapping.name,
-          ops: r.ops,
-          avgTime: r.avgTime,
-          category: mapping.category,
-        });
-      }
-    }
-
-    // 获取 Rust 版本
-    let rustVersion = 'unknown';
-    try {
-      rustVersion = execSync('rustc --version', { encoding: 'utf-8' }).trim();
-    } catch { }
-
-    return {
-      packageName: PACKAGES.rust.name,
-      version: '1.0.0',
-      runtime: 'Rust',
-      runtimeVersion: rustVersion,
-      results,
-    };
-  } catch (error) {
-    console.error('  ❌ qrcode-rust 基准测试失败:', error);
-    return null;
-  }
-}
-
-/**
- * 运行 kennytm-qrcode 基准测试
- */
-async function benchmarkKennytm(): Promise<PackageResult | null> {
-  try {
-    console.log('📦 测试 kennytm-qrcode...');
-
-    const pkgPath = path.join(__dirname, '../../packages/qrcode-rust');
-
-    // 运行 cargo bench（kennytm 的测试在 qrcode-rust 的 comparison_bench 中）
-    const output = execSync('cargo bench --bench comparison_bench 2>&1', {
-      cwd: pkgPath,
-      encoding: 'utf-8',
-      timeout: 300000, // 5 分钟超时
-    });
-
-    // 解析输出 - 提取 kennytm 的结果
-    const rawResults = parseRustBenchmarkOutput(output, ['kennytm']);
-
-    // 映射到标准化测试名称
-    const nameMapping: Record<string, { name: string; category: BenchmarkResult['category'] }> = {
-      'kennytm_single_generation': { name: '单条生成 (medium)', category: 'single' },
-      'kennytm_batch_100': { name: '批量生成 (100 条)', category: 'batch' },
-      'kennytm_svg_generation': { name: 'SVG 输出', category: 'svg' },
-      'kennytm_error_levels/L': { name: '纠错级别 L (低)', category: 'error_level' },
-      'kennytm_error_levels/M': { name: '纠错级别 M (中)', category: 'error_level' },
-      'kennytm_error_levels/Q': { name: '纠错级别 Q (较高)', category: 'error_level' },
-      'kennytm_error_levels/H': { name: '纠错级别 H (高)', category: 'error_level' },
-      'kennytm_text_lengths/short_12chars': { name: '单条生成 (short)', category: 'single' },
-      'kennytm_text_lengths/medium_36chars': { name: '单条生成 (medium)', category: 'single' },
-      'kennytm_text_lengths/long_98chars': { name: '单条生成 (long)', category: 'single' },
-    };
-
-    const results: BenchmarkResult[] = [];
-    for (const r of rawResults) {
-      const mapping = nameMapping[r.name];
-      if (mapping) {
-        results.push({
-          name: mapping.name,
-          ops: r.ops,
-          avgTime: r.avgTime,
-          category: mapping.category,
-        });
-      }
-    }
-
-    // 获取 Rust 版本
-    let rustVersion = 'unknown';
-    try {
-      rustVersion = execSync('rustc --version', { encoding: 'utf-8' }).trim();
-    } catch { }
-
-    return {
-      packageName: PACKAGES.kennytm.name,
-      version: '0.14.0',
-      runtime: 'Rust',
-      runtimeVersion: rustVersion,
-      results,
-    };
-  } catch (error) {
-    console.error('  ❌ kennytm-qrcode 基准测试失败:', error);
     return null;
   }
 }
@@ -822,6 +741,56 @@ function saveResults(suite: PKBenchmarkSuite): void {
   console.log(`💾 摘要已保存到: ${summaryPath}`);
 }
 
+// 全局变量：缓存 comparison_bench 的输出，避免重复运行
+let comparisonBenchOutput: string | null = null;
+let comparisonBenchRunTimestamp: number | null = null;
+
+/**
+ * 运行 comparison_bench 并缓存结果
+ */
+async function runComparisonBenchOnce(): Promise<string | null> {
+  // 如果 5 秒内已经运行过，直接返回缓存的结果
+  if (comparisonBenchOutput && comparisonBenchRunTimestamp &&
+    Date.now() - comparisonBenchRunTimestamp < 5000) {
+    return comparisonBenchOutput;
+  }
+
+  const pkgPath = path.join(__dirname, '../../packages/qrcode-rust');
+
+  try {
+    console.log('  🔄 运行 cargo bench --bench comparison_bench (可能需要 1-2 分钟)...');
+
+    const output = execSync('cargo bench --bench comparison_bench 2>&1', {
+      cwd: pkgPath,
+      encoding: 'utf-8',
+      timeout: 120000, // 2 分钟超时
+      stdio: ['ignore', 'pipe', 'pipe'],
+    });
+
+    // 缓存结果
+    comparisonBenchOutput = output;
+    comparisonBenchRunTimestamp = Date.now();
+
+    return output;
+  } catch (execError: any) {
+    // 检查是否是编译错误
+    if (execError.stdout && (
+      execError.stdout.includes('error[E0583]') ||
+      execError.stdout.includes('error: could not compile')
+    )) {
+      console.log('  ⚠️ Rust 代码编译失败，可能正在重构中');
+      console.log('  提示: 跳过 Rust 基准测试');
+      return null;
+    }
+    if (execError.killed || execError.signal === 'SIGTERM') {
+      console.log('  ⚠️ cargo bench 超时 (120秒)，跳过测试');
+      return null;
+    }
+    console.log('  ⚠️ cargo bench 执行失败:', execError?.message || '未知错误');
+    return null;
+  }
+}
+
 /**
  * 运行完整的 PK 基准测试
  */
@@ -861,16 +830,104 @@ async function runPKBenchmark(): Promise<void> {
     suite.environment.rustVersion = fastResult.runtimeVersion;
   }
 
-  const rustResult = await benchmarkRust();
-  if (rustResult) {
-    suite.packages.push(rustResult);
-    if (!suite.environment.rustVersion) {
-      suite.environment.rustVersion = rustResult.runtimeVersion;
+  // 运行 comparison_bench 一次，然后复用结果
+  const comparisonOutput = await runComparisonBenchOnce();
+  if (comparisonOutput) {
+    // 解析 veaba 的结果
+    const veabaResults = parseRustBenchmarkOutput(comparisonOutput, ['veaba']);
+
+    // 映射到标准化测试名称
+    const veabaNameMapping: Record<string, { name: string; category: BenchmarkResult['category'] }> = {
+      'veaba_single_generation': { name: '单条生成 (medium)', category: 'single' },
+      'veaba_batch_100': { name: '批量生成 (100 条)', category: 'batch' },
+      'veaba_svg_generation': { name: 'SVG 输出', category: 'svg' },
+      'veaba_error_levels/L': { name: '纠错级别 L (低)', category: 'error_level' },
+      'veaba_error_levels/M': { name: '纠错级别 M (中)', category: 'error_level' },
+      'veaba_error_levels/Q': { name: '纠错级别 Q (较高)', category: 'error_level' },
+      'veaba_error_levels/H': { name: '纠错级别 H (高)', category: 'error_level' },
+      'veaba_text_lengths/short_12chars': { name: '单条生成 (short)', category: 'single' },
+      'veaba_text_lengths/medium_36chars': { name: '单条生成 (medium)', category: 'single' },
+      'veaba_text_lengths/long_98chars': { name: '单条生成 (long)', category: 'single' },
+    };
+
+    const veabaBenchmarkResults: BenchmarkResult[] = [];
+    for (const r of veabaResults) {
+      const mapping = veabaNameMapping[r.name];
+      if (mapping) {
+        veabaBenchmarkResults.push({
+          name: mapping.name,
+          ops: r.ops,
+          avgTime: r.avgTime,
+          category: mapping.category,
+        });
+      }
+    }
+
+    if (veabaBenchmarkResults.length > 0) {
+      let rustVersion = 'unknown';
+      try {
+        rustVersion = execSync('rustc --version', { encoding: 'utf-8', stdio: 'pipe' }).trim();
+      } catch { }
+
+      const rustResult: PackageResult = {
+        packageName: PACKAGES.rust.name,
+        version: '1.0.0',
+        runtime: 'Rust',
+        runtimeVersion: rustVersion,
+        results: veabaBenchmarkResults,
+      };
+      suite.packages.push(rustResult);
+      if (!suite.environment.rustVersion) {
+        suite.environment.rustVersion = rustVersion;
+      }
+    }
+
+    // 解析 kennytm 的结果
+    const kennytmResults = parseRustBenchmarkOutput(comparisonOutput, ['kennytm']);
+
+    // 映射到标准化测试名称
+    const kennytmNameMapping: Record<string, { name: string; category: BenchmarkResult['category'] }> = {
+      'kennytm_single_generation': { name: '单条生成 (medium)', category: 'single' },
+      'kennytm_batch_100': { name: '批量生成 (100 条)', category: 'batch' },
+      'kennytm_svg_generation': { name: 'SVG 输出', category: 'svg' },
+      'kennytm_error_levels/L': { name: '纠错级别 L (低)', category: 'error_level' },
+      'kennytm_error_levels/M': { name: '纠错级别 M (中)', category: 'error_level' },
+      'kennytm_error_levels/Q': { name: '纠错级别 Q (较高)', category: 'error_level' },
+      'kennytm_error_levels/H': { name: '纠错级别 H (高)', category: 'error_level' },
+      'kennytm_text_lengths/short_12chars': { name: '单条生成 (short)', category: 'single' },
+      'kennytm_text_lengths/medium_36chars': { name: '单条生成 (medium)', category: 'single' },
+      'kennytm_text_lengths/long_98chars': { name: '单条生成 (long)', category: 'single' },
+    };
+
+    const kennytmBenchmarkResults: BenchmarkResult[] = [];
+    for (const r of kennytmResults) {
+      const mapping = kennytmNameMapping[r.name];
+      if (mapping) {
+        kennytmBenchmarkResults.push({
+          name: mapping.name,
+          ops: r.ops,
+          avgTime: r.avgTime,
+          category: mapping.category,
+        });
+      }
+    }
+
+    if (kennytmBenchmarkResults.length > 0) {
+      let rustVersion = 'unknown';
+      try {
+        rustVersion = execSync('rustc --version', { encoding: 'utf-8', stdio: 'pipe' }).trim();
+      } catch { }
+
+      const kennytmResult: PackageResult = {
+        packageName: PACKAGES.kennytm.name,
+        version: '0.14.0',
+        runtime: 'Rust',
+        runtimeVersion: rustVersion,
+        results: kennytmBenchmarkResults,
+      };
+      suite.packages.push(kennytmResult);
     }
   }
-
-  const kennytmResult = await benchmarkKennytm();
-  if (kennytmResult) suite.packages.push(kennytmResult);
 
   // 生成对比结果
   console.log('\n─'.repeat(80));

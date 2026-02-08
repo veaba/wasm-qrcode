@@ -118,12 +118,12 @@ mod tests {
             println!("data_cache 长度: {} 字节", data.len());
             println!("期望: 16 字节数据 + 28 字节纠错 = 44 字节 (版本 2-H)");
             println!("数据部分 (前 16 字节):");
-            for i in 0..16.min(data.len()) {
-                println!("  [{:2}] = 0x{:02X}", i, data[i]);
+            for (i, byte) in data.iter().enumerate().take(16) {
+                println!("  [{:2}] = 0x{:02X}", i, byte);
             }
             println!("纠错码部分 (后 28 字节):");
-            for i in 16..data.len() {
-                println!("  [{:2}] = 0x{:02X}", i, data[i]);
+            for (i, byte) in data.iter().enumerate().skip(16) {
+                println!("  [{:2}] = 0x{:02X}", i, byte);
             }
         }
     }
@@ -287,8 +287,8 @@ mod tests {
         if let Some(ref data) = qr.data_cache {
             println!("data_cache 长度: {} 字节", data.len());
             println!("数据字节 (前 32 字节):");
-            for i in 0..32.min(data.len()) {
-                print!("{:02X} ", data[i]);
+            for (i, byte) in data.iter().enumerate().take(32) {
+                print!("{:02X} ", byte);
                 if (i + 1) % 16 == 0 {
                     println!();
                 }
@@ -441,7 +441,7 @@ mod tests {
             buffer.put(0, 4);
         }
         
-        while buffer.length % 8 != 0 {
+        while !buffer.length.is_multiple_of(8) {
             buffer.put_bit(false);
         }
         
@@ -517,7 +517,7 @@ mod tests {
             buffer.put(0, 4);
         }
         
-        while buffer.length % 8 != 0 {
+        while !buffer.length.is_multiple_of(8) {
             buffer.put_bit(false);
         }
         

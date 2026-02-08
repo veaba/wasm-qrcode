@@ -14,8 +14,8 @@
     "resolveJsonModule": true,
     "allowSyntheticDefaultImports": true,
     "paths": {
-      "@veaba/qrcode-shared": [
-        "../qrcode-shared/src/index.ts"
+      "@veaba/js-shared": [
+        "../js-shared/src/index.ts"
       ]
     }
   },

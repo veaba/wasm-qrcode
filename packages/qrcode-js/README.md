@@ -254,7 +254,7 @@ npm run watch
 - `@veaba/qrcode-wasm` - Rust WASM 版本（性能最佳，API 一致）
 - `@veaba/qrcode-node` - Node.js 版本
 - `@veaba/qrcode-bun` - Bun 运行时版本
-- `@veaba/qrcode-shared` - 共享核心库
+- `@veaba/js-shared` - 共享核心库
 
 ## License
 

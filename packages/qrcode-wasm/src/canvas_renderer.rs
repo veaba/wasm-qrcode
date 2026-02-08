@@ -1,4 +1,4 @@
-/**
+/*!
  * Canvas 渲染器
  * 直接操作 Canvas 像素数据，避免创建 SVG 字符串
  */
@@ -30,6 +30,7 @@ impl CanvasRenderer {
     }
 
     /// 设置颜色 (RGBA)
+    #[allow(clippy::too_many_arguments)]
     pub fn set_colors(&mut self, dark_r: u8, dark_g: u8, dark_b: u8, dark_a: u8,
                       light_r: u8, light_g: u8, light_b: u8, light_a: u8) {
         self.color_dark = [dark_r, dark_g, dark_b, dark_a];

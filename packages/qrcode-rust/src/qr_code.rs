@@ -2,11 +2,14 @@
 
 use core::fmt::Write;
 
-use crate::qr_8bit_byte::QR8bitByte;
-use crate::qr_bit_buffer::BitBuffer;
-use crate::qr_code_model::{get_type_number, PATTERN_POSITION_TABLE, QRErrorCorrectLevel, QRMode};
-use crate::qr_rs_block::get_rs_blocks;
-use crate::qr_util::{get_bch_digit, get_length_in_bits};
+use crate::{
+    qr_8bit_byte::QR8bitByte,
+    qr_bit_buffer::BitBuffer,
+    qr_code_model::{get_type_number, PATTERN_POSITION_TABLE, QRErrorCorrectLevel, QRMode},
+    qr_polynomial::Polynomial,
+    qr_rs_block::get_rs_blocks,
+    qr_util::{get_bch_digit, get_length_in_bits},
+};
 
 /// QRCode 选项
 #[derive(Clone)]
@@ -382,14 +385,14 @@ impl QRCode {
             // 生成 Reed-Solomon 纠错码
             // 数据多项式: d(x) = d_0*x^(n-1) + d_1*x^(n-2) + ... + d_{n-1}
             // 系数按降序排列（JS 匹配）
-            let rs_poly = crate::qr_polynomial::Polynomial::generate_rs_poly(ec_count);
+            let rs_poly = Polynomial::generate_rs_poly(ec_count);
 
             // 创建数据多项式并扩展 ec_count 个零
             // 在降序表示中，在末尾添加零相当于乘以 x^ec_count
             let dc = dcdata.last().unwrap();
             let mut raw_coeff = dc.clone();
             raw_coeff.extend(std::iter::repeat_n(0, ec_count as usize));
-            let raw_poly = crate::qr_polynomial::Polynomial::new(raw_coeff, 0);
+            let raw_poly = Polynomial::new(raw_coeff, 0);
 
             // 计算纠错码: (数据多项式 * x^{ec_count}) mod 生成多项式
             let mod_poly = raw_poly.r#mod(&rs_poly);

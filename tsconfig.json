@@ -22,8 +22,8 @@
     "allowSyntheticDefaultImports": true,
     "baseUrl": ".",
     "paths": {
-      "@veaba/qrcode-shared": [
-        "./packages/qrcode-shared/src"
+      "@veaba/js-shared": [
+        "./packages/js-shared/src"
       ],
       "@veaba/qrcode-js": [
         "./packages/qrcode-js/src"

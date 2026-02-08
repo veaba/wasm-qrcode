@@ -1,4 +1,4 @@
-/**
+/*!
  * QRCode 多项式
  * 对应 JS 中的 QRPolynomial
  */
@@ -19,9 +19,7 @@ impl QRPolynomial {
         }
 
         let mut new_num = vec![0; num.len() - offset + shift];
-        for i in 0..(num.len() - offset) {
-            new_num[i] = num[i + offset];
-        }
+        new_num[..(num.len() - offset)].copy_from_slice(&num[offset..((num.len() - offset) + offset)]);
 
         QRPolynomial { num: new_num }
     }
@@ -61,14 +59,11 @@ impl QRPolynomial {
         let glog_e = qr_math::glog(e.get(0)).unwrap_or(0);
         let ratio = glog_self - glog_e;
 
-        let mut num = vec![0; self.get_length()];
-        for i in 0..self.get_length() {
-            num[i] = self.get(i);
-        }
+        let mut num: Vec<i32> = (0..self.get_length()).map(|i| self.get(i)).collect();
 
-        for i in 0..e.get_length() {
+        for (i, item) in num.iter_mut().enumerate().take(e.get_length()) {
             let glog_e_i = qr_math::glog(e.get(i)).unwrap_or(0);
-            num[i] ^= qr_math::gexp(glog_e_i + ratio);
+            *item ^= qr_math::gexp(glog_e_i + ratio);
         }
 
         QRPolynomial::new(&num, 0).modulus(e)

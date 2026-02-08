@@ -1,11 +1,11 @@
 /**
  * @veaba/qrcode-js - Browser-compatible QRCode library with caching
  * 
- * This package re-exports everything from @veaba/qrcode-shared.
- * All functionality is now unified in @veaba/qrcode-shared.
+ * This package re-exports everything from @veaba/js-shared.
+ * All functionality is now unified in @veaba/js-shared.
  * 
- * @deprecated This package is now a thin wrapper around @veaba/qrcode-shared.
- * Please use @veaba/qrcode-shared directly or @veaba/qrcode-js-cache for caching features.
+ * @deprecated This package is now a thin wrapper around @veaba/js-shared.
+ * Please use @veaba/js-shared directly or @veaba/qrcode-js-cache for caching features.
  */
 
 // Re-export everything from shared
@@ -82,7 +82,7 @@ export {
   // Version info
   VERSION,
   getVersionInfo,
-} from '@veaba/qrcode-shared';
+} from '@veaba/js-shared';
 
 // Default export
-export { QRCodeCore as default } from '@veaba/qrcode-shared';
+export { QRCodeCore as default } from '@veaba/js-shared';

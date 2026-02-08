@@ -1,79 +1,63 @@
 {
-  "timestamp": "2026-02-06T16:08:13.398Z",
+  "timestamp": "2026-02-08T16:13:47.310Z",
   "environment": {
     "platform": "darwin",
     "cpu": "x64",
     "nodeVersion": "v22.17.0",
-    "bunVersion": "1.3.8",
-    "rustVersion": "rustc 1.93.0 (254b59607 2026-01-19)"
+    "bunVersion": "1.3.9"
   },
   "summary": [
     {
       "testName": "单条生成 (long)",
       "category": "single",
-      "winner": "@veaba/qrcode-fast",
-      "speedup": 10.804878048780488,
+      "winner": "@veaba/qrcode-node",
+      "speedup": 1.1226622662266226,
       "top3": [
         {
-          "package": "@veaba/qrcode-fast",
-          "ops": 9303,
-          "avgTime": 107.49
-        },
-        {
-          "package": "@veaba/qrcode-rust",
-          "ops": 4803,
-          "avgTime": 208.18
-        },
-        {
           "package": "@veaba/qrcode-node",
-          "ops": 2179,
-          "avgTime": 458.85327900000004
+          "ops": 2041,
+          "avgTime": 490.0649159999999
+        },
+        {
+          "package": "@veaba/qrcode-bun",
+          "ops": 1818,
+          "avgTime": 549.9817810000004
         }
       ]
     },
     {
       "testName": "单条生成 (medium)",
       "category": "single",
-      "winner": "@veaba/qrcode-fast",
-      "speedup": 23.381268882175227,
+      "winner": "@veaba/qrcode-bun",
+      "speedup": 1.0960790667530784,
       "top3": [
         {
-          "package": "@veaba/qrcode-fast",
-          "ops": 38696,
-          "avgTime": 25.84
-        },
-        {
-          "package": "@veaba/qrcode-rust",
-          "ops": 10135,
-          "avgTime": 98.66
-        },
-        {
           "package": "@veaba/qrcode-bun",
-          "ops": 7703,
-          "avgTime": 129.82041000000027
+          "ops": 6765,
+          "avgTime": 147.81584000000112
+        },
+        {
+          "package": "@veaba/qrcode-node",
+          "ops": 6172,
+          "avgTime": 162.02551100000005
         }
       ]
     },
     {
       "testName": "单条生成 (short)",
       "category": "single",
-      "winner": "@veaba/qrcode-fast",
-      "speedup": 13.577538769384692,
+      "winner": "@veaba/qrcode-bun",
+      "speedup": 1.1024518388791593,
       "top3": [
         {
-          "package": "@veaba/qrcode-fast",
-          "ops": 54283,
-          "avgTime": 18.42
-        },
-        {
-          "package": "@veaba/qrcode-rust",
-          "ops": 21635,
-          "avgTime": 46.22
+          "package": "@veaba/qrcode-bun",
+          "ops": 7554,
+          "avgTime": 132.38580999999976
         },
         {
           "package": "@veaba/qrcode-node",
-          "ops": 8894,
-          "avgTime": 112.43162000000001
+          "ops": 6852,
+          "avgTime": 145.95086700000002
         }
       ]
     },
@@ -81,17 +65,17 @@
       "testName": "单条生成 (unicode)",
       "category": "single",
       "winner": "@veaba/qrcode-node",
-      "speedup": 1.3150884495317379,
+      "speedup": 1.1984873262469338,
       "top3": [
         {
           "package": "@veaba/qrcode-node",
-          "ops": 6319,
-          "avgTime": 158.25299299999995
+          "ops": 5863,
+          "avgTime": 170.54900300000008
         },
         {
           "package": "@veaba/qrcode-bun",
-          "ops": 4805,
-          "avgTime": 208.13025000000016
+          "ops": 4892,
+          "avgTime": 204.4033189999991
         }
       ]
     },
@@ -99,17 +83,17 @@
       "testName": "批量生成 (10 条)",
       "category": "single",
       "winner": "@veaba/qrcode-node",
-      "speedup": 1.6052579167496515,
+      "speedup": 1.094924091397025,
       "top3": [
         {
           "package": "@veaba/qrcode-node",
-          "ops": 8060,
-          "avgTime": 1241.0515299999997
+          "ops": 7140,
+          "avgTime": 1400.9417499999995
         },
         {
           "package": "@veaba/qrcode-bun",
-          "ops": 5021,
-          "avgTime": 1991.671979999992
+          "ops": 6521,
+          "avgTime": 1533.4080800000083
         }
       ]
     },
@@ -117,155 +101,53 @@
       "testName": "批量生成 (100 条)",
       "category": "single",
       "winner": "@veaba/qrcode-node",
-      "speedup": 180,
+      "speedup": 1.1259676284306825,
       "top3": [
         {
           "package": "@veaba/qrcode-node",
-          "ops": 3600,
-          "avgTime": 27701.8556
+          "ops": 3200,
+          "avgTime": 30969.490299999983
         },
         {
           "package": "@veaba/qrcode-bun",
-          "ops": 2862,
-          "avgTime": 34938.10219999996
-        },
-        {
-          "package": "@veaba/qrcode-fast",
-          "ops": 439,
-          "avgTime": 2278.7
+          "ops": 2842,
+          "avgTime": 35180.85380000011
         }
       ]
     },
     {
       "testName": "批量生成 (1000 条)",
       "category": "single",
-      "winner": "@veaba/qrcode-bun",
-      "speedup": 1.0575,
+      "winner": "@veaba/qrcode-node",
+      "speedup": 1.279317697228145,
       "top3": [
         {
-          "package": "@veaba/qrcode-bun",
-          "ops": 2115,
-          "avgTime": 472787.42220000003
+          "package": "@veaba/qrcode-node",
+          "ops": 3000,
+          "avgTime": 390318.23329999996
         },
         {
-          "package": "@veaba/qrcode-node",
-          "ops": 2000,
-          "avgTime": 410479.5386999999
+          "package": "@veaba/qrcode-bun",
+          "ops": 2345,
+          "avgTime": 426409.1834999999
         }
       ]
     },
     {
       "testName": "SVG 输出",
       "category": "svg",
-      "winner": "kennytm-qrcode",
-      "speedup": 23.399300273805903,
+      "winner": "@veaba/qrcode-bun",
+      "speedup": 1.0153949129852744,
       "top3": [
         {
-          "package": "kennytm-qrcode",
-          "ops": 153827,
-          "avgTime": 6.5
+          "package": "@veaba/qrcode-bun",
+          "ops": 6068,
+          "avgTime": 164.80036699999982
         },
         {
-          "package": "@veaba/qrcode-fast",
-          "ops": 92486,
-          "avgTime": 10.81
-        },
-        {
-          "package": "@veaba/qrcode-rust",
-          "ops": 20966,
-          "avgTime": 47.7
-        }
-      ]
-    },
-    {
-      "testName": "纠错级别 H (高)",
-      "category": "error_level",
-      "winner": "@veaba/qrcode-fast",
-      "speedup": 29.965887555274794,
-      "top3": [
-        {
-          "package": "@veaba/qrcode-fast",
-          "ops": 47436,
-          "avgTime": 21.08
-        },
-        {
-          "package": "@veaba/qrcode-rust",
-          "ops": 16720,
-          "avgTime": 59.81
-        },
-        {
-          "package": "kennytm-qrcode",
-          "ops": 1583,
-          "avgTime": 631.65
-        }
-      ]
-    },
-    {
-      "testName": "纠错级别 L (低)",
-      "category": "error_level",
-      "winner": "@veaba/qrcode-fast",
-      "speedup": 33.22577152138603,
-      "top3": [
-        {
-          "package": "@veaba/qrcode-fast",
-          "ops": 61368,
-          "avgTime": 16.3
-        },
-        {
-          "package": "@veaba/qrcode-rust",
-          "ops": 24678,
-          "avgTime": 40.52
-        },
-        {
-          "package": "kennytm-qrcode",
-          "ops": 1847,
-          "avgTime": 541.45
-        }
-      ]
-    },
-    {
-      "testName": "纠错级别 M (中)",
-      "category": "error_level",
-      "winner": "@veaba/qrcode-fast",
-      "speedup": 22.505364806866954,
-      "top3": [
-        {
-          "package": "@veaba/qrcode-fast",
-          "ops": 41950,
-          "avgTime": 23.84
-        },
-        {
-          "package": "@veaba/qrcode-rust",
-          "ops": 25014,
-          "avgTime": 39.98
-        },
-        {
-          "package": "kennytm-qrcode",
-          "ops": 1864,
-          "avgTime": 536.45
-        }
-      ]
-    },
-    {
-      "testName": "纠错级别 Q (较高)",
-      "category": "error_level",
-      "winner": "@veaba/qrcode-fast",
-      "speedup": 21.331304347826087,
-      "top3": [
-        {
-          "package": "@veaba/qrcode-fast",
-          "ops": 49062,
-          "avgTime": 20.38
-        },
-        {
-          "package": "@veaba/qrcode-rust",
-          "ops": 18398,
-          "avgTime": 54.35
-        },
-        {
-          "package": "kennytm-qrcode",
-          "ops": 2300,
-          "avgTime": 434.81
+          "package": "@veaba/qrcode-node",
+          "ops": 5976,
+          "avgTime": 167.33232700000008
         }
       ]
     }

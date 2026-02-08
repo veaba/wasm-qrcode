@@ -34,6 +34,7 @@ yarn add @veaba/qrcode-wasm
 ### 自动检测构建工具
 
 `@veaba/qrcode-wasm` 现在**自动检测** Vite、Webpack、Parcel 等构建工具环境：
+
 - **Vite**: 自动使用 `?url` 导入 WASM 文件
 - **Webpack/Parcel**: 使用默认 WASM 加载方式
 - **无需配置**: 所有环境使用相同的 API
@@ -243,11 +244,13 @@ const pixelData = renderer.render('https://github.com/veaba/qrcodes', CorrectLev
 | API | 统一 ✅ | 统一 ✅ |
 
 选择 `@veaba/qrcode-wasm`：
+
 - ✅ 追求极致性能
 - ✅ 高频批量生成
 - ✅ 现代浏览器环境
 
 选择 `@veaba/qrcode-js`：
+
 - ✅ 需要支持 IE11 等旧浏览器
 - ✅ 对包大小敏感
 - ✅ 不想处理 WASM 的异步初始化
@@ -316,7 +319,7 @@ cargo run --bin benchmark    # 测试 Rust 原生性能
 - `@veaba/qrcode-js` - 纯 JavaScript 版本（API 一致）
 - `@veaba/qrcode-node` - Node.js 版本
 - `@veaba/qrcode-bun` - Bun 运行时版本
-- `@veaba/qrcode-shared` - 共享核心库
+- `@veaba/js-shared` - 共享核心库
 
 ## License
 

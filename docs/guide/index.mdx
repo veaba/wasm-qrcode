@@ -110,7 +110,7 @@ cargo run --release --features validation --bin veaba-qr -- "Hello World"
 │  └──────┬──────┘  └──────┬──────┘  └────────┬────────┘  │
 │  ┌─────────────┐  ┌─────────────┐  ┌─────────────────┐  │
 │  │ @veaba/     │  │ @veaba/     │  │ @veaba/         │  │
-│  │ qrcode-bun  │  │ qrcode-rust │  │ qrcode-shared   │  │
+│  │ qrcode-bun  │  │ qrcode-rust │  │ js-shared   │  │
 │  │ (Bun)       │  │ (原生 Rust) │  │ (共享核心)      │  │
 │  └──────┬──────┘  └──────┬──────┘  └────────┬────────┘  │
 └─────────┼────────────────┼──────────────────┼───────────┘
@@ -156,23 +156,23 @@ qrcode-rust = { git = "https://github.com/veaba/qrcodes" }
 
 ## 包对比
 
-| 包 | 环境 | 特点 | 包大小 | 性能 |
-|----|------|------|--------|------|
-| `@veaba/qrcode-js` | 浏览器 | 纯 JS，无需 WASM，兼容性好 | ~15KB | 9,662 ops/s |
-| `@veaba/qrcode-wasm` | 浏览器 | Rust 编译，性能更好 | ~45KB | ~15,000 ops/s |
-| `@veaba/qrcode-node` | Node.js | 支持 PNG Buffer 输出 | ~20KB | 12,078 ops/s |
-| `@veaba/qrcode-bun` | Bun | 批量性能最优 | ~20KB | 18,902 ops/s |
-| `@veaba/qrcode-rust` | Rust | 原生性能，比 kennytm 快 8-10 倍 | - | 54,283 ops/s |
+| 包                   | 环境    | 特点                            | 包大小 | 性能          |
+| -------------------- | ------- | ------------------------------- | ------ | ------------- |
+| `@veaba/qrcode-js`   | 浏览器  | 纯 JS，无需 WASM，兼容性好      | ~15KB  | 9,662 ops/s   |
+| `@veaba/qrcode-wasm` | 浏览器  | Rust 编译，性能更好             | ~45KB  | ~15,000 ops/s |
+| `@veaba/qrcode-node` | Node.js | 支持 PNG Buffer 输出            | ~20KB  | 12,078 ops/s  |
+| `@veaba/qrcode-bun`  | Bun     | 批量性能最优                    | ~20KB  | 18,902 ops/s  |
+| `@veaba/qrcode-rust` | Rust    | 原生性能，比 kennytm 快 8-10 倍 | -      | 54,283 ops/s  |
 
 ## 性能对比概览
 
 基于 2026-02-02 的基准测试结果：
 
-| 测试项 | @veaba/qrcode-rust | @veaba/qrcode-bun | @veaba/qrcode-node |
-|--------|-------------------|-------------------|-------------------|
-| 单条生成 (medium) | 54,283 ops/s | 18,902 ops/s | 12,078 ops/s |
-| SVG 输出 | 92,486 ops/s | 18,003 ops/s | 10,150 ops/s |
-| 纠错级别 H | 47,436 ops/s | 20,170 ops/s | 11,179 ops/s |
+| 测试项            | @veaba/qrcode-rust | @veaba/qrcode-bun | @veaba/qrcode-node |
+| ----------------- | ------------------ | ----------------- | ------------------ |
+| 单条生成 (medium) | 54,283 ops/s       | 18,902 ops/s      | 12,078 ops/s       |
+| SVG 输出          | 92,486 ops/s       | 18,003 ops/s      | 10,150 ops/s       |
+| 纠错级别 H        | 47,436 ops/s       | 20,170 ops/s      | 11,179 ops/s       |
 
 ## 下一步
 

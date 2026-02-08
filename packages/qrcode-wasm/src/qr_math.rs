@@ -1,4 +1,4 @@
-/**
+/*!
  * QRCode Math 数学工具
  * 对应 JS 中的 QRMath
  */
@@ -13,6 +13,7 @@ static mut LOG_TABLE: [i32; 256] = [0; 256];
 pub fn init_tables() {
     INIT.call_once(|| {
         unsafe {
+            #[allow(clippy::needless_range_loop)]
             for i in 0..8 {
                 EXP_TABLE[i] = 1 << i;
             }

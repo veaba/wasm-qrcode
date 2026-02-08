@@ -34,7 +34,7 @@
 
 ### 共享包
 
-- `@veaba/qrcode-shared`，共享的代码，不会发布到 npm，`private: true`
+- `@veaba/js-shared`，共享的代码，不会发布到 npm，`private: true`
 
 ## 基准测试
 
@@ -268,7 +268,7 @@ pnpm run test:coverage
 tests/
 ├── qrcode-js/                  # @veaba/qrcode-js 单元测试
 ├── qrcode-node/                # @veaba/qrcode-node 单元测试
-├── qrcode-shared/              # @veaba/qrcode-shared 单元测试
+├── js-shared/              # @veaba/js-shared 单元测试
 ├── qrcode-bun/                 # @veaba/qrcode-bun 单元测试
 ├── qrcode-wasm/
 │   ├── index.test.ts           # WASM API 单元测试

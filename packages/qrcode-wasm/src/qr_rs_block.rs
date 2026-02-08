@@ -1,4 +1,4 @@
-/**
+/*!
  * QRCode RS 块
  * 对应 JS 中的 QRRSBlock
  */
@@ -20,18 +20,13 @@ impl QRRSBlock {
 }
 
 /// 错误纠正级别
-#[derive(Debug, Clone, Copy, PartialEq)]
+#[derive(Debug, Clone, Copy, PartialEq, Default)]
 pub enum QRErrorCorrectLevel {
     L = 1,
     M = 0,
     Q = 3,
+    #[default]
     H = 2,
-}
-
-impl Default for QRErrorCorrectLevel {
-    fn default() -> Self {
-        QRErrorCorrectLevel::H
-    }
 }
 
 /// RS 块表 - 使用固定长度的数组

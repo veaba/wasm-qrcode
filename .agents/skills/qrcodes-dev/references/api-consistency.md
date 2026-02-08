@@ -11,6 +11,7 @@ Last updated: 2026-02-02
 These APIs are identical between `@veaba/qrcode-node` and `@veaba/qrcode-bun`:
 
 #### QRCode Class
+
 | Property/Method | Type | Description |
 |----------------|------|-------------|
 | `text` | `string` | QR code content |
@@ -23,12 +24,14 @@ These APIs are identical between `@veaba/qrcode-node` and `@veaba/qrcode-bun`:
 | `toStyledSVG(options?)` | `string` | Generate styled SVG |
 
 #### Constants
+
 | Constant | Type | Values |
 |----------|------|--------|
 | `QRErrorCorrectLevel` | `enum` | `L=1, M=0, Q=3, H=2` |
 | `QRMode` | `const` | `{ MODE_8BIT_BYTE: 4 }` |
 
 #### Style Generator Functions
+
 | Function | Signature |
 |----------|-----------|
 | `generateRoundedQRCode` | `(text, size?, radius?) => string` |
@@ -43,6 +46,7 @@ These APIs are identical between `@veaba/qrcode-node` and `@veaba/qrcode-bun`:
 | `generateMinimalStyleQRCode` | `(text, size?) => string` |
 
 #### Batch/Async Functions
+
 | Function | Signature |
 |----------|-----------|
 | `generateBatchQRCodes` | `(texts[], options?) => string[]` |
@@ -54,11 +58,13 @@ These APIs are identical between `@veaba/qrcode-node` and `@veaba/qrcode-bun`:
 These APIs are intentionally different due to runtime capabilities:
 
 #### qrcode-node only
+
 | Method | Return Type | Description |
 |--------|-------------|-------------|
 | `toPNGBuffer(size?)` | `Buffer` | Generate PNG as Node.js Buffer |
 
 #### qrcode-bun only
+
 | Method | Return Type | Description |
 |--------|-------------|-------------|
 | `saveToFile(filepath, size?)` | `Promise<void>` | Save SVG to file |
@@ -75,9 +81,10 @@ These APIs are intentionally different due to runtime capabilities:
 
 **Status**: Both packages must have identical APIs. Verify when making changes.
 
-## Shared Package: qrcode-shared
+## Shared Package: js-shared
 
-The `@veaba/qrcode-shared` package provides:
+The `@veaba/js-shared` package provides:
+
 - Core QRCode logic (`QRCodeCore` class)
 - Shared types and interfaces
 - Style generator implementations
@@ -103,6 +110,7 @@ cd packages/qrcode-bun && npx tsc --noEmit
 ## Recent Changes
 
 ### 2026-02-02
+
 - Fixed `generateAlipayStyleQRCode` implementation in shared package to use Alipay blue (`#1677FF`)
 - Unified test assertions between qrcode-node and qrcode-bun
 - Added missing `toStyledSVG with quiet zone` test to qrcode-node

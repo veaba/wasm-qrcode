@@ -58,8 +58,8 @@ jobs:
       - name: Install Dependencies
         run: pnpm install
 
-      - name: Build @veaba/qrcode-shared
-        run: pnpm --filter @veaba/qrcode-shared build
+      - name: Build @veaba/js-shared
+        run: pnpm --filter @veaba/js-shared build
 
       - name: Build @veaba/qrcode-wasm
         run: pnpm --filter @veaba/qrcode-wasm build

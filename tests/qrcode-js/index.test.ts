@@ -5,7 +5,7 @@
 
 import { describe, it, expect, beforeEach, afterEach } from 'vitest';
 
-describe('@veaba/qrcode-js - Re-exports from @veaba/qrcode-shared', () => {
+describe('@veaba/qrcode-js - Re-exports from @veaba/js-shared', () => {
   it('should re-export QRCodeCore', async () => {
     const mod = await import('../../packages/qrcode-js/src/index.js');
     expect(mod.QRCodeCore).toBeDefined();
@@ -199,7 +199,7 @@ describe('@veaba/qrcode-js - Functional Tests', () => {
     const { QRCodeCore, QRErrorCorrectLevel } = await import('../../packages/qrcode-js/src/index.js');
     const qr = new QRCodeCore('Hello World', QRErrorCorrectLevel.H);
     const count = qr.getModuleCount();
-    
+
     // Check some modules
     for (let row = 0; row < Math.min(3, count); row++) {
       for (let col = 0; col < Math.min(3, count); col++) {
@@ -213,7 +213,7 @@ describe('@veaba/qrcode-js - Functional Tests', () => {
     const { QRCodeCore, QRErrorCorrectLevel } = await import('../../packages/qrcode-js/src/index.js');
     const qr = new QRCodeCore('Hello World', QRErrorCorrectLevel.H);
     const count = qr.getModuleCount();
-    
+
     // Out of bounds should return false or handle gracefully
     // Note: The actual implementation may wrap around or return specific values
     expect(() => qr.isDark(-1, 0)).not.toThrow();
@@ -320,14 +320,14 @@ describe('@veaba/qrcode-js - Style Generators', () => {
 
   it('style generators should handle different error correction levels', async () => {
     const { generateRoundedQRCode, QRErrorCorrectLevel } = await import('../../packages/qrcode-js/src/index.js');
-    
+
     const levels = [
       QRErrorCorrectLevel.L,
       QRErrorCorrectLevel.M,
       QRErrorCorrectLevel.Q,
       QRErrorCorrectLevel.H,
     ];
-    
+
     for (const level of levels) {
       const svg = generateRoundedQRCode('Hello', {
         size: 128,
@@ -373,7 +373,7 @@ describe('@veaba/qrcode-js - Cached Functions', () => {
   it('cached functions should cache different inputs separately', () => {
     mod.generateRoundedQRCodeCached('Hello1', { size: 128 });
     mod.generateRoundedQRCodeCached('Hello2', { size: 128 });
-    
+
     const stats = mod.getCacheStats();
     expect(stats.size).toBe(2);
   });
@@ -402,7 +402,7 @@ describe('@veaba/qrcode-js - Cached Functions', () => {
   it('getCachedQRCode should return cached QRCodeCore', () => {
     const key = 'test-key-123';
     mod.generateRoundedQRCodeCached('Test', { size: 128 }, key);
-    
+
     const cached = mod.getCachedQRCode(key);
     // Cache stores QRCodeCore objects, not SVG strings
     expect(cached).toBeDefined();
@@ -422,16 +422,16 @@ describe('@veaba/qrcode-js - Cached Functions', () => {
   it('clearQRCodeCache should clear all cached items', () => {
     mod.generateRoundedQRCodeCached('Test1', { size: 128 });
     mod.generateRoundedQRCodeCached('Test2', { size: 128 });
-    
+
     expect(mod.getCacheStats().size).toBe(2);
-    
+
     mod.clearQRCodeCache();
     expect(mod.getCacheStats().size).toBe(0);
   });
 
   it('getCacheStats should return correct stats', () => {
     mod.generateRoundedQRCodeCached('Test', { size: 128 });
-    
+
     const stats = mod.getCacheStats();
     expect(stats).toHaveProperty('size');
     expect(stats).toHaveProperty('maxSize');
@@ -490,7 +490,7 @@ describe('@veaba/qrcode-js - Batch and Async Functions', () => {
   it('generateQRCodeAsync should return Promise', async () => {
     const result = mod.generateQRCodeAsync('Hello', { size: 128 });
     expect(result).toBeInstanceOf(Promise);
-    
+
     const svg = await result;
     expect(svg).toContain('<svg');
     expect(svg).toContain('</svg>');
@@ -589,7 +589,7 @@ describe('@veaba/qrcode-js - Edge Cases', () => {
 describe('@veaba/qrcode-js - Snake Case Aliases', () => {
   it('should have all snake_case style aliases defined', async () => {
     const mod = await import('../../packages/qrcode-js/src/index.js');
-    
+
     expect(mod.generate_rounded_qrcode).toBe(mod.generateRoundedQRCode);
     expect(mod.generate_qrcode_with_logo_area).toBe(mod.generateQRCodeWithLogoArea);
     expect(mod.generate_gradient_qrcode).toBe(mod.generateGradientQRCode);
@@ -604,7 +604,7 @@ describe('@veaba/qrcode-js - Snake Case Aliases', () => {
 
   it('snake_case aliases should work correctly', async () => {
     const mod = await import('../../packages/qrcode-js/src/index.js');
-    
+
     const svg = mod.generate_rounded_qrcode('Test', { size: 128 });
     expect(svg).toContain('<svg');
     expect(svg).toContain('</svg>');

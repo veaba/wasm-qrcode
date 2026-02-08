@@ -180,7 +180,7 @@ mod tests {
         // 测试余数的次数总是小于除数的次数
         let divisor = Polynomial::generate_rs_poly(4); // 次数为 4
 
-        for test_data in vec![
+        for test_data in [
             vec![1, 2, 3, 4, 5, 6, 7, 8], // 次数为 8
             vec![1, 0, 0, 0, 0, 0, 0, 0],
             vec![255, 254, 253, 252],

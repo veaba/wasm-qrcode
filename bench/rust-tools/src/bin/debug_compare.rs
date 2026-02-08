@@ -17,7 +17,8 @@ fn main() {
     
     match mode.as_str() {
         "detail" => debug_detail(),
-        "basic" | _ => debug_basic(),
+        "basic" => debug_basic(),
+        _ => debug_basic(),
     }
 }
 
