@@ -66,7 +66,7 @@ jobs:
           bun-version: '1.3.0'
 
       - name: Run Bun tests
-        run: pnpm test --bun
+        run: pnpm test -- --bun
 
       - name: Generate coverage report
         if: matrix.os == 'ubuntu-latest'
@@ -184,7 +184,7 @@ jobs:
 
       - name: Run cargo clippy
         if: matrix.rust == 'stable'
-        run: cargo clippy --workspace --all-targets ${{ env.CLIPPY_ARGS }}
+        run: cargo clippy --workspace --all-targets -- ${{ env.CLIPPY_ARGS }}
 
       - name: Check formatting
         if: matrix.rust == 'stable' && matrix.os == 'ubuntu-latest'
