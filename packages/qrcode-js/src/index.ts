@@ -57,9 +57,9 @@ export {
   generateBatchQRCodes,
   generateBatchQRCodesCached,
 
-  // Async generation (using Advanced versions for QRCodeResult return type)
-  generateQRCodeAsyncAdvanced as generateQRCodeAsync,
-  generateBatchAsyncAdvanced as generateBatchAsync,
+  // Async generation (return SVG strings, not QRCodeResult objects)
+  generateQRCodeAsync,
+  generateBatchAsync,
 
   // Cache management
   getCachedQRCode,

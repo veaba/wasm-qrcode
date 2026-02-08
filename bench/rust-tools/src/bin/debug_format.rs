@@ -26,7 +26,7 @@ fn main() {
     println!("第8行（水平格式信息）:");
     print!("  列 0-14: ");
     for col in 0..15 {
-        let val = qr.is_dark(8, col as i32);
+        let val = qr.is_dark(8, col);
         print!("{}", if val { '1' } else { '0' });
     }
     println!();
@@ -43,7 +43,7 @@ fn main() {
     println!("第8列（垂直格式信息）:");
     print!("  行 0-14: ");
     for row in 0..15 {
-        let val = qr.is_dark(row as i32, 8);
+        let val = qr.is_dark(row, 8);
         print!("{}", if val { '1' } else { '0' });
     }
     println!();

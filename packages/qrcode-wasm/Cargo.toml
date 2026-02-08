@@ -25,7 +25,3 @@ parallel = ['wasm-bindgen-rayon', 'rayon']
 
 [dev-dependencies]
 wasm-bindgen-test = "0.3.13"
-
-[[bin]]
-name = "benchmark"
-path = "src/bin/benchmark.rs"

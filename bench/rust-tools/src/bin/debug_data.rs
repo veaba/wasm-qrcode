@@ -31,7 +31,7 @@ fn main() {
     println!();
 
     // 计算数据长度位
-    let length_bits = if type_number >= 1 && type_number < 10 {
+    let length_bits = if (1..10).contains(&type_number) {
         8
     } else {
         16

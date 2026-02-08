@@ -135,9 +135,7 @@ fn debug_detail() {
         let ken = matches!(qr_kennytm[(8, col)], qrcode_kennytm::Color::Dark);
         print!("{}", if fast == ken {
             if fast { "█" } else { "░" }
-        } else {
-            if fast { "F" } else { "f" }
-        });
+        } else if fast { "F" } else { "f" });
     }
     println!();
 
@@ -148,9 +146,7 @@ fn debug_detail() {
         let ken = matches!(qr_kennytm[(row, 8)], qrcode_kennytm::Color::Dark);
         print!("{}", if fast == ken {
             if fast { "█" } else { "░" }
-        } else {
-            if fast { "F" } else { "f" }
-        });
+        } else if fast { "F" } else { "f" });
     }
     println!();
 
@@ -161,9 +157,7 @@ fn debug_detail() {
         let ken = matches!(qr_kennytm[(row, 6)], qrcode_kennytm::Color::Dark);
         print!("{}", if fast == ken {
             if fast { "█" } else { "░" }
-        } else {
-            if fast { "F" } else { "f" }
-        });
+        } else if fast { "F" } else { "f" });
     }
     println!();
 
@@ -174,9 +168,7 @@ fn debug_detail() {
         let ken = matches!(qr_kennytm[(6, col)], qrcode_kennytm::Color::Dark);
         print!("{}", if fast == ken {
             if fast { "█" } else { "░" }
-        } else {
-            if fast { "F" } else { "f" }
-        });
+        } else if fast { "F" } else { "f" });
     }
     println!();
 }

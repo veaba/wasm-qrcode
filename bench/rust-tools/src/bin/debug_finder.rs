@@ -91,7 +91,7 @@ fn debug_logic() {
             let dark = qr.is_dark(r, c);
 
             let is_outer = r == 0 || r == 6 || c == 0 || c == 6;
-            let is_center = 2 <= r && r <= 4 && 2 <= c && c <= 4;
+            let is_center = (2..=4).contains(&r) && (2..=4).contains(&c);
             let expected = is_outer || is_center;
 
             let status = if dark == expected { "✓" } else { "✗" };
@@ -109,9 +109,9 @@ fn debug_logic() {
                 continue;
             }
 
-            let is_dark = (0 <= r && r <= 6 && (c == 0 || c == 6))
-                || (0 <= c && c <= 6 && (r == 0 || r == 6))
-                || (2 <= r && r <= 4 && 2 <= c && c <= 4);
+            let is_dark = ((0..=6).contains(&r) && (c == 0 || c == 6))
+                || ((0..=6).contains(&c) && (r == 0 || r == 6))
+                || ((2..=4).contains(&r) && (2..=4).contains(&c));
 
             let actual_dark = qr.is_dark(r, c);
             let status = if is_dark == actual_dark { "✓" } else { "✗" };
@@ -126,5 +126,5 @@ fn debug_logic() {
 
 fn is_expected_finder_dark(r: i32, c: i32) -> bool {
     (r == 0 || r == 6 || c == 0 || c == 6) ||
-    (2 <= r && r <= 4 && 2 <= c && c <= 4)
+    ((2..=4).contains(&r) && (2..=4).contains(&c))
 }

@@ -77,18 +77,16 @@ fn main() {
     is_fixed[17][8] = true;
 
     // 格式信息区域
-    // 左上: (8, 0) 到 (8, 8) 和 (0, 8) 到 (8, 8)
-    for (i, is_fixed_row) in is_fixed[8].iter_mut().take(9).enumerate() {
-        *is_fixed_row = true;
+    // 左上: 第8行和第8列的0-8区域
+    for i in 0..9 {
+        is_fixed[8][i] = true;
         is_fixed[i][8] = true;
     }
-    // 右上: (8, module_count-8) 到 (8, module_count-1)
-    for i in (module_count - 8)..module_count {
-        is_fixed[8][i as usize] = true;
-    }
-    // 左下: (module_count-8, 8) 到 (module_count-1, 8)
-    for i in (module_count - 8)..module_count {
-        is_fixed[i as usize][8] = true;
+    // 右上和左下区域
+    let mc = module_count as usize;
+    for i in (mc - 8)..mc {
+        is_fixed[8][i] = true;  // 右上
+        is_fixed[i][8] = true;  // 左下
     }
 
     println!();

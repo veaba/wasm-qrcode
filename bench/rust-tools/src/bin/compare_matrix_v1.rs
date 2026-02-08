@@ -82,7 +82,7 @@ fn main() {
     println!("qrcode-rust 矩阵:");
     for row in 0..qr.module_count {
         for col in 0..qr.module_count {
-            let is_dark = qr.is_dark(row as i32, col as i32);
+            let is_dark = qr.is_dark(row, col);
             print!("{}", if is_dark { '1' } else { '0' });
         }
         println!();

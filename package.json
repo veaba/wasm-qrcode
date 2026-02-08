@@ -7,7 +7,12 @@
   "scripts": {
     "clean": "node scripts/clean.js",
     "rsw": "rsw",
-    "watch": "yarn rsw watch",
+    "watch": "pnpm rsw watch",
+    "build": "pnpm -r --filter './packages/*' run build",
+    "build:js": "pnpm --filter @veaba/qrcode-shared build && pnpm --filter @veaba/qrcode-js build",
+    "build:node": "pnpm --filter @veaba/qrcode-shared build && pnpm --filter @veaba/qrcode-node build",
+    "build:wasm": "pnpm --filter @veaba/qrcode-wasm build",
+    "build:rust": "pnpm --filter @veaba/qrcode-fast build && pnpm --filter @veaba/qrcode-rust build",
     "test": "node scripts/test.js",
     "test:unit": "vitest run",
     "test:browser": "vitest run --config vitest.config.browser.ts",

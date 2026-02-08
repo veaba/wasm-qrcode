@@ -502,5 +502,5 @@ export { init_thread_pool, is_parallel_supported, QRCodeGenerator, greet };
 // Default Export
 // ============================================
 
-// Default to auto-detect init
-export default initWasm;
+// Default export for unified API consistency with qrcode-js/qrcode-shared
+export default QRCodeCore;

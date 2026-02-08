@@ -467,15 +467,11 @@ describe('@veaba/qrcode-js - Batch and Async Functions', () => {
   });
 
   it('generateBatchQRCodes should generate multiple QR codes', () => {
-    const items = [
-      { text: 'Test1', options: { size: 128 } },
-      { text: 'Test2', options: { size: 128 } },
-      { text: 'Test3', options: { size: 128 } },
-    ];
-    
-    const results = mod.generateBatchQRCodes(items);
+    const texts = ['Test1', 'Test2', 'Test3'];
+
+    const results = mod.generateBatchQRCodes(texts, { size: 128 });
     expect(results).toHaveLength(3);
-    
+
     for (const svg of results) {
       expect(svg).toContain('<svg');
       expect(svg).toContain('</svg>');
@@ -483,12 +479,9 @@ describe('@veaba/qrcode-js - Batch and Async Functions', () => {
   });
 
   it('generateBatchQRCodesCached should cache results', () => {
-    const items = [
-      { text: 'Test1', options: { size: 128 } },
-      { text: 'Test2', options: { size: 128 } },
-    ];
-    
-    mod.generateBatchQRCodesCached(items);
+    const texts = ['Test1', 'Test2'];
+
+    mod.generateBatchQRCodesCached(texts, { size: 128 });
     const stats = mod.getCacheStats();
     // Batch caching may use different keys
     expect(stats.size).toBeGreaterThanOrEqual(1);
@@ -504,17 +497,14 @@ describe('@veaba/qrcode-js - Batch and Async Functions', () => {
   });
 
   it('generateBatchAsync should return Promise with array', async () => {
-    const items = [
-      { text: 'Test1', options: { size: 128 } },
-      { text: 'Test2', options: { size: 128 } },
-    ];
-    
-    const result = mod.generateBatchAsync(items);
+    const texts = ['Test1', 'Test2'];
+
+    const result = mod.generateBatchAsync(texts, { size: 128 });
     expect(result).toBeInstanceOf(Promise);
-    
+
     const svgs = await result;
     expect(svgs).toHaveLength(2);
-    
+
     for (const svg of svgs) {
       expect(svg).toContain('<svg');
       expect(svg).toContain('</svg>');
@@ -524,11 +514,11 @@ describe('@veaba/qrcode-js - Batch and Async Functions', () => {
   it('generateQRCodeAsync should use cached version when available', async () => {
     // First call
     const svg1 = await mod.generateQRCodeAsync('Hello', { size: 128 });
-    
-    // Second call should be faster (cached)
+
+    // Second call should produce the same result
     const svg2 = await mod.generateQRCodeAsync('Hello', { size: 128 });
-    
-    expect(svg1).toBe(svg2);
+
+    expect(svg1).toEqual(svg2);
   });
 });
 

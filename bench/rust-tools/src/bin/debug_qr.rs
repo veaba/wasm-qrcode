@@ -89,7 +89,7 @@ fn main() {
         
         // qrcode-rust
         for col in 0..9 {
-            let c = if qr_rust.is_dark(row as i32, col as i32) {
+            let c = if qr_rust.is_dark(row as i32, col) {
                 "██"
             } else {
                 "  "
