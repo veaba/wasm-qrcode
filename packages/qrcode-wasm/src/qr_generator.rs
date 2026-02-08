@@ -37,7 +37,7 @@ impl QRCodeGenerator {
             3 => QRErrorCorrectLevel::Q,
             _ => QRErrorCorrectLevel::H,
         };
-        
+
         QRCodeGenerator {
             options: QRCodeOptions {
                 width,
@@ -66,13 +66,13 @@ impl QRCodeGenerator {
     /// 生成 QRCode（复用实例）
     pub fn generate(&mut self, text: &str) -> Result<(), JsValue> {
         let type_number = get_type_number(text, self.options.correct_level);
-        
+
         // 检查是否可以复用现有模型
         let need_recreate = match &self.model {
             None => true,
             Some(model) => {
-                model.type_number != type_number || 
-                model.error_correct_level as i32 != self.options.correct_level as i32
+                model.type_number != type_number
+                    || model.error_correct_level as i32 != self.options.correct_level as i32
             }
         };
 
@@ -112,17 +112,17 @@ impl QRCodeGenerator {
         let cell_size = size / count;
         let actual_size = cell_size * count;
         let offset = (size - actual_size) / 2; // 居中偏移
-        
+
         // 使用 String::with_capacity 预分配内存
         let estimated_capacity = (count * count * 100) as usize;
         let mut svg = String::with_capacity(estimated_capacity);
-        
+
         // SVG 头部
         svg.push_str(&format!(
             r#"<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 {0} {0}" width="{0}" height="{0}">"#,
             size
         ));
-        
+
         // 背景
         svg.push_str(&format!(
             r#"<rect width="{0}" height="{0}" fill="{1}"/>"#,
@@ -152,7 +152,8 @@ impl QRCodeGenerator {
     /// 获取模块数据作为 JSON
     pub fn get_modules_json(&self) -> String {
         if let Some(ref model) = self.model {
-            let mut result = String::with_capacity((model.module_count * model.module_count * 2) as usize);
+            let mut result =
+                String::with_capacity((model.module_count * model.module_count * 2) as usize);
             result.push('[');
             for (i, row) in model.modules.iter().enumerate() {
                 if i > 0 {
@@ -177,7 +178,7 @@ impl QRCodeGenerator {
     /// 批量生成 QRCode
     pub fn generate_batch(&mut self, texts: Vec<String>) -> Vec<String> {
         let mut results = Vec::with_capacity(texts.len());
-        
+
         for text in texts {
             if self.generate(&text).is_ok() {
                 results.push(self.get_svg());
@@ -185,7 +186,7 @@ impl QRCodeGenerator {
                 results.push(String::new());
             }
         }
-        
+
         results
     }
 
@@ -246,8 +247,9 @@ pub fn generate_qrcode_fast(text: &str, size: i32) -> String {
 #[wasm_bindgen]
 pub fn generate_qrcode_parallel(texts: Vec<String>, size: i32) -> Vec<String> {
     use rayon::prelude::*;
-    
-    texts.par_iter()
+
+    texts
+        .par_iter()
         .map(|text| {
             let mut generator = QRCodeGenerator::with_options(size, size, 2);
             generator.generate(text).ok();

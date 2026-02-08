@@ -5,7 +5,7 @@ use core::fmt::Write;
 use rust_shared::{
     qr_8bit_byte::QR8bitByte,
     qr_bit_buffer::BitBuffer,
-    qr_code_model::{get_type_number, PATTERN_POSITION_TABLE, QRErrorCorrectLevel, QRMode},
+    qr_code_model::{get_type_number, QRErrorCorrectLevel, QRMode, PATTERN_POSITION_TABLE},
     qr_polynomial::Polynomial,
     qr_rs_block::get_rs_blocks,
     qr_util::{get_bch_digit, get_length_in_bits},
@@ -155,25 +155,25 @@ impl QRCode {
             for j in 0..pos.len() {
                 let row = pos[i];
                 let col = pos[j];
-                
+
                 // 跳过无效位置（0 表示没有位置调整图案）
                 if row == 0 || col == 0 {
                     continue;
                 }
-                
+
                 // 跳过与位置探测图案重叠的位置
                 // 位置探测图案在：(0,0), (module_count-7, 0), (0, module_count-7)
                 // 每个位置探测图案占 7x7，加上 1 格分隔符是 9x9
                 if row <= 8 && col <= 8 {
-                    continue;  // 左上角区域
+                    continue; // 左上角区域
                 }
                 if row <= 8 && col >= self.module_count - 8 {
-                    continue;  // 右上角区域
+                    continue; // 右上角区域
                 }
                 if row >= self.module_count - 8 && col <= 8 {
-                    continue;  // 左下角区域
+                    continue; // 左下角区域
                 }
-                
+
                 // 跳过已经设置的位置
                 if self.modules[row as usize][col as usize].is_some() {
                     continue;
@@ -184,8 +184,11 @@ impl QRCode {
                         let new_row = row + r;
                         let new_col = col + c;
                         // 确保不越界
-                        if new_row < 0 || new_row >= self.module_count ||
-                           new_col < 0 || new_col >= self.module_count {
+                        if new_row < 0
+                            || new_row >= self.module_count
+                            || new_col < 0
+                            || new_col >= self.module_count
+                        {
                             continue;
                         }
                         let is_dark = r == -2 || r == 2 || c == -2 || c == 2 || (r == 0 && c == 0);
@@ -213,7 +216,7 @@ impl QRCode {
         let g15 = (1 << 10) | (1 << 8) | (1 << 5) | (1 << 4) | (1 << 2) | (1 << 1) | (1 << 0);
         let g15_mask = (1 << 14) | (1 << 12) | (1 << 10) | (1 << 4) | (1 << 1);
 
-        let mask_pattern = 0;  // kennytm 选择的最优 mask pattern
+        let mask_pattern = 0; // kennytm 选择的最优 mask pattern
         let correct_level = match self.options.correct_level {
             QRErrorCorrectLevel::L => 1,
             QRErrorCorrectLevel::M => 0,
@@ -328,12 +331,15 @@ impl QRCode {
 
     fn create_data(&self) -> Vec<i32> {
         let rs_blocks = get_rs_blocks(self.type_number, self.options.correct_level);
-        
+
         let mut buffer = BitBuffer::new();
 
         for data in &self.data_list {
             buffer.put(QRMode::MODE_8BIT_BYTE, 4);
-            buffer.put(data.get_length() as i32, get_length_in_bits(QRMode::MODE_8BIT_BYTE, self.type_number));
+            buffer.put(
+                data.get_length() as i32,
+                get_length_in_bits(QRMode::MODE_8BIT_BYTE, self.type_number),
+            );
             data.write(&mut buffer);
         }
 
@@ -362,15 +368,22 @@ impl QRCode {
         }
 
         #[cfg(test)]
-        eprintln!("DEBUG: buffer.length={}, buffer.buffer.len={}, total_data_count*8={}", buffer.length, buffer.buffer.len(), total_data_count as usize * 8);
+        eprintln!(
+            "DEBUG: buffer.length={}, buffer.buffer.len={}, total_data_count*8={}",
+            buffer.length,
+            buffer.buffer.len(),
+            total_data_count as usize * 8
+        );
 
         let data = buffer.buffer;
-        
 
-        
         let mut offset = 0;
         let max_dc_count = rs_blocks.iter().map(|b| b.data_count).max().unwrap_or(0);
-        let max_ec_count = rs_blocks.iter().map(|b| b.total_count - b.data_count).max().unwrap_or(0);
+        let max_ec_count = rs_blocks
+            .iter()
+            .map(|b| b.total_count - b.data_count)
+            .max()
+            .unwrap_or(0);
 
         let mut dcdata: Vec<Vec<i32>> = Vec::new();
         let mut ecdata: Vec<Vec<i32>> = Vec::new();
@@ -409,14 +422,16 @@ impl QRCode {
                     0
                 };
                 #[cfg(test)]
-                if i < 5 { eprintln!("DEBUG: ec[{}] = {} (mod_index={})", i, val, mod_index); }
+                if i < 5 {
+                    eprintln!("DEBUG: ec[{}] = {} (mod_index={})", i, val, mod_index);
+                }
                 ec.push(val);
             }
             ecdata.push(ec);
         }
 
         let mut result: Vec<i32> = Vec::new();
-        
+
         for i in 0..max_dc_count {
             for (_r, item) in dcdata.iter().enumerate().take(rs_blocks.len()) {
                 if i < item.len() as i32 {
@@ -424,9 +439,7 @@ impl QRCode {
                 }
             }
         }
-        
 
-        
         for i in 0..max_ec_count {
             for (_r, item) in ecdata.iter().enumerate().take(rs_blocks.len()) {
                 if i < item.len() as i32 {
@@ -434,8 +447,6 @@ impl QRCode {
                 }
             }
         }
-
-
 
         result
     }
@@ -453,11 +464,11 @@ impl QRCode {
         let cell_size = size / count;
         let actual_size = cell_size * count;
         let offset = (size - actual_size) / 2;
-        
+
         // 估算容量：约 50% 模块为深色，每个模块约 25 字节
         let estimated_dark = (count * count) as usize / 2;
         let mut svg = String::with_capacity(350 + estimated_dark * 25);
-        
+
         // SVG 头部 - 使用 write! 避免临时字符串
         write!(
             svg,
@@ -467,10 +478,12 @@ impl QRCode {
 
         // 使用单个 Path 绘制所有深色模块
         // 展平二维访问为一维，减少边界检查开销
-        let modules_flat: Vec<bool> = self.modules.iter()
+        let modules_flat: Vec<bool> = self
+            .modules
+            .iter()
             .flat_map(|row| row.iter().map(|&m| m.unwrap_or(false)))
             .collect();
-        
+
         let count_i32 = count;
         for (idx, is_dark) in modules_flat.iter().enumerate() {
             if *is_dark {
@@ -481,7 +494,7 @@ impl QRCode {
                 write!(svg, "M{x} {y}h{cell_size}v{cell_size}h-{cell_size}z").unwrap();
             }
         }
-        
+
         svg.push_str(r#""/></svg>"#);
         svg
     }

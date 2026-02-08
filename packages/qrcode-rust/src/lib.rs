@@ -1,5 +1,5 @@
 //! @veaba/qrcode-rust - Pure Rust QRCode Generator
-//! 
+//!
 //! A pure Rust QRCode generator library.
 //! Provides consistent API with qrcode-node and qrcode-bun.
 
@@ -10,7 +10,7 @@ mod qr_code;
 pub use rust_shared::{
     qr_8bit_byte::QR8bitByte,
     qr_bit_buffer::BitBuffer,
-    qr_code_model::{get_type_number, QRMode, QRErrorCorrectLevel, PATTERN_POSITION_TABLE},
+    qr_code_model::{get_type_number, QRErrorCorrectLevel, QRMode, PATTERN_POSITION_TABLE},
     qr_math::QRMath,
     qr_polynomial::Polynomial,
     qr_rs_block::{get_rs_blocks, QRRSBlock},
@@ -199,16 +199,48 @@ mod tests {
         assert!(qr.is_dark(6, 6), "左上角 (6,6) 应该是深色");
 
         // 右上角位置探测图案
-        assert!(qr.is_dark(0, count - 1), "右上角 (0,{}) 应该是深色", count - 1);
-        assert!(qr.is_dark(0, count - 7), "右上角 (0,{}) 应该是深色", count - 7);
-        assert!(qr.is_dark(6, count - 1), "右上角 (6,{}) 应该是深色", count - 1);
-        assert!(qr.is_dark(6, count - 7), "右上角 (6,{}) 应该是深色", count - 7);
+        assert!(
+            qr.is_dark(0, count - 1),
+            "右上角 (0,{}) 应该是深色",
+            count - 1
+        );
+        assert!(
+            qr.is_dark(0, count - 7),
+            "右上角 (0,{}) 应该是深色",
+            count - 7
+        );
+        assert!(
+            qr.is_dark(6, count - 1),
+            "右上角 (6,{}) 应该是深色",
+            count - 1
+        );
+        assert!(
+            qr.is_dark(6, count - 7),
+            "右上角 (6,{}) 应该是深色",
+            count - 7
+        );
 
         // 左下角位置探测图案
-        assert!(qr.is_dark(count - 1, 0), "左下角 ({},0) 应该是深色", count - 1);
-        assert!(qr.is_dark(count - 7, 0), "左下角 ({},0) 应该是深色", count - 7);
-        assert!(qr.is_dark(count - 1, 6), "左下角 ({},6) 应该是深色", count - 1);
-        assert!(qr.is_dark(count - 7, 6), "左下角 ({},6) 应该是深色", count - 7);
+        assert!(
+            qr.is_dark(count - 1, 0),
+            "左下角 ({},0) 应该是深色",
+            count - 1
+        );
+        assert!(
+            qr.is_dark(count - 7, 0),
+            "左下角 ({},0) 应该是深色",
+            count - 7
+        );
+        assert!(
+            qr.is_dark(count - 1, 6),
+            "左下角 ({},6) 应该是深色",
+            count - 1
+        );
+        assert!(
+            qr.is_dark(count - 7, 6),
+            "左下角 ({},6) 应该是深色",
+            count - 7
+        );
     }
 
     #[test]
@@ -222,13 +254,23 @@ mod tests {
         // 水平定时图案应该在第 6 行，从第 8 列开始
         for col in 8..count - 8 {
             let expected = col % 2 == 0;
-            assert_eq!(qr.is_dark(6, col), expected, "水平定时图案在 (6,{}) 不匹配", col);
+            assert_eq!(
+                qr.is_dark(6, col),
+                expected,
+                "水平定时图案在 (6,{}) 不匹配",
+                col
+            );
         }
 
         // 垂直定时图案应该在第 6 列，从第 8 行开始
         for row in 8..count - 8 {
             let expected = row % 2 == 0;
-            assert_eq!(qr.is_dark(row, 6), expected, "垂直定时图案在 ({},6) 不匹配", row);
+            assert_eq!(
+                qr.is_dark(row, 6),
+                expected,
+                "垂直定时图案在 ({},6) 不匹配",
+                row
+            );
         }
     }
 
@@ -236,8 +278,12 @@ mod tests {
     fn test_different_error_correction_levels() {
         let test_data = "Hello World";
 
-        for level in [QRErrorCorrectLevel::L, QRErrorCorrectLevel::M, 
-                      QRErrorCorrectLevel::Q, QRErrorCorrectLevel::H] {
+        for level in [
+            QRErrorCorrectLevel::L,
+            QRErrorCorrectLevel::M,
+            QRErrorCorrectLevel::Q,
+            QRErrorCorrectLevel::H,
+        ] {
             let mut qr = QRCode::with_options(QRCodeOptions {
                 width: 256,
                 height: 256,
@@ -247,7 +293,11 @@ mod tests {
             });
             qr.make_code(test_data);
 
-            assert!(qr.module_count > 0, "纠错级别 {:?} 应该生成有效的二维码", level);
+            assert!(
+                qr.module_count > 0,
+                "纠错级别 {:?} 应该生成有效的二维码",
+                level
+            );
         }
     }
 
@@ -315,24 +365,43 @@ mod tests {
             qr.make_code(text);
 
             assert!(qr.module_count > 0, "文本 '{}' 应该生成二维码", text);
-            println!("文本 '{}' -> 类型号 {}, 模块数 {}", text, qr.type_number, qr.module_count);
+            println!(
+                "文本 '{}' -> 类型号 {}, 模块数 {}",
+                text, qr.type_number, qr.module_count
+            );
         }
     }
 
     #[test]
     fn test_get_rs_blocks() {
         // 测试类型号 1，所有纠错级别
-        for level in [QRErrorCorrectLevel::L, QRErrorCorrectLevel::M,
-                      QRErrorCorrectLevel::Q, QRErrorCorrectLevel::H] {
+        for level in [
+            QRErrorCorrectLevel::L,
+            QRErrorCorrectLevel::M,
+            QRErrorCorrectLevel::Q,
+            QRErrorCorrectLevel::H,
+        ] {
             let blocks = get_rs_blocks(1, level);
-            assert!(!blocks.is_empty(), "类型号 1 纠错级别 {:?} 应该有 RS 块", level);
+            assert!(
+                !blocks.is_empty(),
+                "类型号 1 纠错级别 {:?} 应该有 RS 块",
+                level
+            );
         }
 
         // 测试类型号 2，所有纠错级别
-        for level in [QRErrorCorrectLevel::L, QRErrorCorrectLevel::M,
-                      QRErrorCorrectLevel::Q, QRErrorCorrectLevel::H] {
+        for level in [
+            QRErrorCorrectLevel::L,
+            QRErrorCorrectLevel::M,
+            QRErrorCorrectLevel::Q,
+            QRErrorCorrectLevel::H,
+        ] {
             let blocks = get_rs_blocks(2, level);
-            assert!(!blocks.is_empty(), "类型号 2 纠错级别 {:?} 应该有 RS 块", level);
+            assert!(
+                !blocks.is_empty(),
+                "类型号 2 纠错级别 {:?} 应该有 RS 块",
+                level
+            );
         }
     }
 }

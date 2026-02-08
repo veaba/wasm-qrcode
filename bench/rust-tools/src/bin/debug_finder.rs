@@ -12,8 +12,12 @@ use std::env;
 
 fn main() {
     let args: Vec<String> = env::args().collect();
-    let mode = if args.len() > 1 { args[1].clone() } else { "basic".to_string() };
-    
+    let mode = if args.len() > 1 {
+        args[1].clone()
+    } else {
+        "basic".to_string()
+    };
+
     match mode.as_str() {
         "logic" => debug_logic(),
         "basic" => debug_basic(),
@@ -58,10 +62,14 @@ fn debug_basic() {
             let dark = qr.is_dark(r, c);
             let expected = is_expected_finder_dark(r, c);
             let status = if dark == expected { "✓" } else { "✗" };
-            println!("  ({},{}) expected={}, actual={} {}", r, c,
-                     if expected { "█" } else { "░" },
-                     if dark { "█" } else { "░" },
-                     status);
+            println!(
+                "  ({},{}) expected={}, actual={} {}",
+                r,
+                c,
+                if expected { "█" } else { "░" },
+                if dark { "█" } else { "░" },
+                status
+            );
         }
     }
 
@@ -97,8 +105,10 @@ fn debug_logic() {
 
             let status = if dark == expected { "✓" } else { "✗" };
 
-            println!("  ({},{}): dark={}, expected={}, outer={}, center={} {}",
-                     r, c, dark, expected, is_outer, is_center, status);
+            println!(
+                "  ({},{}): dark={}, expected={}, outer={}, center={} {}",
+                r, c, dark, expected, is_outer, is_center, status
+            );
         }
     }
 
@@ -118,14 +128,15 @@ fn debug_logic() {
             let status = if is_dark == actual_dark { "✓" } else { "✗" };
 
             if is_dark != actual_dark {
-                println!("  ({},{}): formula={}, actual={} {}",
-                         r, c, is_dark, actual_dark, status);
+                println!(
+                    "  ({},{}): formula={}, actual={} {}",
+                    r, c, is_dark, actual_dark, status
+                );
             }
         }
     }
 }
 
 fn is_expected_finder_dark(r: i32, c: i32) -> bool {
-    (r == 0 || r == 6 || c == 0 || c == 6) ||
-    ((2..=4).contains(&r) && (2..=4).contains(&c))
+    (r == 0 || r == 6 || c == 0 || c == 6) || ((2..=4).contains(&r) && (2..=4).contains(&c))
 }

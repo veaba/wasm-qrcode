@@ -1,7 +1,7 @@
 {
   "name": "@veaba/qrcode-rust & @veaba/qrcode-fast",
   "description": "Rust QRCode 生成性能测试",
-  "timestamp": "2026-02-06T16:18:13.199Z",
+  "timestamp": "2026-02-08T16:51:39.509Z",
   "results": [
     {
       "name": "单条生成",

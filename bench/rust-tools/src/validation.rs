@@ -22,7 +22,11 @@ pub fn validate_qr_code(
     if scanned == expected_content {
         Ok(())
     } else {
-        Err(format!("QR code content mismatch: expected '{}', got '{}'", expected_content, scanned).into())
+        Err(format!(
+            "QR code content mismatch: expected '{}', got '{}'",
+            expected_content, scanned
+        )
+        .into())
     }
 }
 
@@ -38,8 +42,8 @@ fn scan_qr_from_svg(svg_bytes: &[u8]) -> Result<String, Box<dyn std::error::Erro
     let width = (size.width() * scale) as u32;
     let height = (size.height() * scale) as u32;
 
-    let mut pixmap = resvg::tiny_skia::Pixmap::new(width, height)
-        .ok_or("Failed to create pixmap")?;
+    let mut pixmap =
+        resvg::tiny_skia::Pixmap::new(width, height).ok_or("Failed to create pixmap")?;
 
     let transform = resvg::tiny_skia::Transform::from_scale(scale, scale);
     resvg::render(&tree, transform, &mut pixmap.as_mut());
@@ -47,7 +51,7 @@ fn scan_qr_from_svg(svg_bytes: &[u8]) -> Result<String, Box<dyn std::error::Erro
     // 将 RGBA 转换为灰度图像
     let img_data = pixmap.data();
     let mut gray_img = image::GrayImage::new(width, height);
-    
+
     for (i, chunk) in img_data.chunks(4).enumerate() {
         let x = (i as u32) % width;
         let y = (i as u32) / width;
@@ -59,11 +63,11 @@ fn scan_qr_from_svg(svg_bytes: &[u8]) -> Result<String, Box<dyn std::error::Erro
     // 使用 rqrr 解码
     let mut img = rqrr::PreparedImage::prepare(gray_img);
     let grids = img.detect_grids();
-    
+
     if grids.is_empty() {
         return Err("No QR code found in image".into());
     }
-    
+
     // 尝试解码第一个找到的二维码
     match grids[0].decode() {
         Ok((_meta, content)) => Ok(content),
@@ -77,7 +81,8 @@ pub fn validate_qr_code(
     _expected_content: &str,
 ) -> Result<(), Box<dyn std::error::Error>> {
     Err("Validation feature is not enabled. \
-         Enable it with: cargo run --features validation".into())
+         Enable it with: cargo run --features validation"
+        .into())
 }
 
 /// 检查 SVG 字符串是否看起来像一个有效的二维码 SVG

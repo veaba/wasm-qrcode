@@ -105,10 +105,7 @@ impl StyledQRCode {
     }
 
     pub fn with_style(style: QRCodeStyle) -> Self {
-        StyledQRCode {
-            style,
-            model: None,
-        }
+        StyledQRCode { style, model: None }
     }
 
     /// 生成 QRCode
@@ -121,11 +118,11 @@ impl StyledQRCode {
         };
 
         let type_number = get_type_number(text, level);
-        
+
         let mut model = QRCodeModel::new(type_number, level);
         model.add_data(text);
         model.make();
-        
+
         self.model = Some(model);
         Ok(())
     }
@@ -140,14 +137,14 @@ impl StyledQRCode {
         let count = model.module_count;
         let quiet_zone = self.style.quiet_zone;
         let total_count = count + quiet_zone * 2;
-        
+
         let size = self.style.width;
         let cell_size = size / total_count;
         let actual_size = cell_size * total_count;
         let offset = (size - actual_size) / 2; // 居中偏移
 
         let mut svg = String::with_capacity(10000);
-        
+
         // SVG 头部
         svg.push_str(&format!(
             r#"<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 {0} {0}" width="{0}" height="{0}">"#,
@@ -161,7 +158,7 @@ impl StyledQRCode {
         } else {
             String::new()
         };
-        
+
         // 定义渐变
         if self.style.use_gradient {
             svg.push_str(&format!(
@@ -216,7 +213,7 @@ impl StyledQRCode {
                         let x = (col + quiet_zone) * cell_size + offset;
                         let y = (row + quiet_zone) * cell_size + offset;
                         let radius = self.style.border_radius.min(cell_size / 4);
-                    svg.push_str(&format!(
+                        svg.push_str(&format!(
                             r#"<rect x="{}" y="{}" width="{}" height="{}" fill="{}" rx="{}" ry="{}"/>"#,
                             x, y, cell_size, cell_size, fill_color, radius, radius
                         ));
@@ -252,14 +249,13 @@ impl StyledQRCode {
                 let logo_x = (start + quiet_zone) * cell_size + offset;
                 let logo_y = (start + quiet_zone) * cell_size + offset;
                 let logo_size = (end - start) * cell_size;
-                
+
                 // Logo 背景
                 svg.push_str(&format!(
                     r#"<rect x="{}" y="{}" width="{}" height="{}" fill="{}" rx="{}"/>"#,
-                    logo_x, logo_y, logo_size, logo_size, 
-                    self.style.color_light, cell_size
+                    logo_x, logo_y, logo_size, logo_size, self.style.color_light, cell_size
                 ));
-                
+
                 // Logo 边框
                 svg.push_str(&format!(
                     r#"<rect x="{}" y="{}" width="{}" height="{}" fill="none" stroke="{}" stroke-width="{}" rx="{}"/>"#,
@@ -289,7 +285,7 @@ impl StyledQRCode {
         let logo_cells = (count as f64 * self.style.logo_ratio) as i32;
         let logo_start = (count - logo_cells) / 2;
         let cell_size = self.style.width / (count + self.style.quiet_zone * 2);
-        
+
         Some(vec![
             logo_start * cell_size,
             logo_start * cell_size,
@@ -311,7 +307,7 @@ pub fn generate_rounded_qrcode(text: &str, size: i32, radius: i32) -> String {
     let mut style = QRCodeStyle::new();
     style.set_size(size);
     style.set_border_radius(radius);
-    
+
     let mut qr = StyledQRCode::with_style(style);
     if qr.generate(text, 2).is_ok() {
         qr.get_styled_svg()
@@ -326,7 +322,7 @@ pub fn generate_qrcode_with_logo_area(text: &str, size: i32, logo_ratio: f64) ->
     let mut style = QRCodeStyle::new();
     style.set_size(size);
     style.set_logo(true, logo_ratio);
-    
+
     let mut qr = StyledQRCode::with_style(style);
     if qr.generate(text, 2).is_ok() {
         qr.get_styled_svg()
@@ -341,7 +337,7 @@ pub fn generate_gradient_qrcode(text: &str, size: i32, color1: &str, color2: &st
     let mut style = QRCodeStyle::new();
     style.set_size(size);
     style.set_gradient(true, color1, color2);
-    
+
     let mut qr = StyledQRCode::with_style(style);
     if qr.generate(text, 2).is_ok() {
         qr.get_styled_svg()
@@ -357,7 +353,7 @@ pub fn generate_wechat_style_qrcode(text: &str, size: i32) -> String {
     style.set_size(size);
     style.set_colors("#07C160", "#ffffff");
     style.set_border_radius(4);
-    
+
     let mut qr = StyledQRCode::with_style(style);
     if qr.generate(text, 2).is_ok() {
         qr.get_styled_svg()
@@ -374,7 +370,7 @@ pub fn generate_douyin_style_qrcode(text: &str, size: i32) -> String {
     style.set_colors("#00F2EA", "#000000");
     style.set_gradient(true, "#00F2EA", "#FF0050");
     style.set_border_radius(6);
-    
+
     let mut qr = StyledQRCode::with_style(style);
     if qr.generate(text, 2).is_ok() {
         qr.get_styled_svg()
@@ -391,7 +387,7 @@ pub fn generate_alipay_style_qrcode(text: &str, size: i32) -> String {
     style.set_colors("#1677FF", "#ffffff");
     style.set_border_radius(8);
     style.set_logo(true, 0.15);
-    
+
     let mut qr = StyledQRCode::with_style(style);
     if qr.generate(text, 2).is_ok() {
         qr.get_styled_svg()
@@ -407,7 +403,7 @@ pub fn generate_xiaohongshu_style_qrcode(text: &str, size: i32) -> String {
     style.set_size(size);
     style.set_colors("#FF2442", "#ffffff");
     style.set_border_radius(12);
-    
+
     let mut qr = StyledQRCode::with_style(style);
     if qr.generate(text, 2).is_ok() {
         qr.get_styled_svg()
@@ -424,7 +420,7 @@ pub fn generate_cyberpunk_style_qrcode(text: &str, size: i32) -> String {
     style.set_colors("#FF00FF", "#0a0a0a");
     style.set_gradient(true, "#FF00FF", "#00FFFF");
     style.set_border_radius(2);
-    
+
     let mut qr = StyledQRCode::with_style(style);
     if qr.generate(text, 2).is_ok() {
         qr.get_styled_svg()
@@ -440,7 +436,7 @@ pub fn generate_retro_style_qrcode(text: &str, size: i32) -> String {
     style.set_size(size);
     style.set_colors("#8B4513", "#F5F5DC");
     style.set_border_radius(0);
-    
+
     let mut qr = StyledQRCode::with_style(style);
     if qr.generate(text, 2).is_ok() {
         qr.get_styled_svg()
@@ -457,7 +453,7 @@ pub fn generate_minimal_style_qrcode(text: &str, size: i32) -> String {
     style.set_colors("#333333", "#fafafa");
     style.set_border_radius(16);
     style.set_quiet_zone(2);
-    
+
     let mut qr = StyledQRCode::with_style(style);
     if qr.generate(text, 2).is_ok() {
         qr.get_styled_svg()

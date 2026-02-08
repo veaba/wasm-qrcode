@@ -17,7 +17,7 @@ pub fn get_length_in_bits(mode: i32, type_num: i32) -> i32 {
         // MODE_8BIT_BYTE
         panic!("Invalid mode");
     }
-    
+
     if (1..10).contains(&type_num) {
         8
     } else {

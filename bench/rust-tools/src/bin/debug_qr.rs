@@ -10,7 +10,7 @@ fn main() {
     } else {
         "Hello World".to_string()
     };
-    
+
     println!("🔍 QRCode 调试工具");
     println!("═══════════════════════════════════════");
     println!("文本: {}", text);
@@ -22,7 +22,7 @@ fn main() {
     let qr_kennytm = qrcode_kennytm::QrCode::new(&text).unwrap();
     let width = qr_kennytm.width();
     println!("版本: {} ({}x{} 模块)", (width - 17) / 4, width, width);
-    
+
     // 打印模块数据
     println!("\n前 10x10 模块:");
     for row in 0..10.min(width) {
@@ -41,7 +41,7 @@ fn main() {
     println!("📦 @veaba/qrcode-rust");
     println!("───────────────────────────────────────");
     use qrcode_rust::{QRCode, QRCodeOptions, QRErrorCorrectLevel};
-    
+
     let mut qr_rust = QRCode::with_options(QRCodeOptions {
         width: 256,
         height: 256,
@@ -50,10 +50,10 @@ fn main() {
         correct_level: QRErrorCorrectLevel::H,
     });
     qr_rust.make_code(&text);
-    
+
     println!("类型号: {}", qr_rust.type_number);
     println!("模块数: {}x{}", qr_rust.module_count, qr_rust.module_count);
-    
+
     // 打印模块数据
     let count = qr_rust.module_count as usize;
     println!("\n前 10x10 模块:");
@@ -75,7 +75,7 @@ fn main() {
     println!("───────────────────────────────────────");
     println!("kennytm    |    qrcode-rust");
     println!("           |");
-    
+
     for row in 0..9 {
         // kennytm
         for col in 0..9 {
@@ -86,7 +86,7 @@ fn main() {
             print!("{}", c);
         }
         print!("   |   ");
-        
+
         // qrcode-rust
         for col in 0..9 {
             let c = if qr_rust.is_dark(row as i32, col) {
@@ -105,20 +105,23 @@ fn main() {
     println!("───────────────────────────────────────");
     let mut diff_count = 0;
     let mut total_modules = 0;
-    
+
     for row in 0..width.min(qr_rust.module_count as usize) {
         for col in 0..width.min(qr_rust.module_count as usize) {
             let kennytm_dark = matches!(qr_kennytm[(col, row)], qrcode_kennytm::Color::Dark);
             let rust_dark = qr_rust.is_dark(row as i32, col as i32);
-            
+
             if kennytm_dark != rust_dark {
                 diff_count += 1;
             }
             total_modules += 1;
         }
     }
-    
+
     println!("总模块数: {}", total_modules);
     println!("差异模块数: {}", diff_count);
-    println!("差异比例: {:.2}%", (diff_count as f64 / total_modules as f64) * 100.0);
+    println!(
+        "差异比例: {:.2}%",
+        (diff_count as f64 / total_modules as f64) * 100.0
+    );
 }

@@ -5,9 +5,9 @@
 //
 // 此工具已迁移到 bench/rust-tools
 
+use qrcode_kennytm::QrCode;
 #[cfg(feature = "validation")]
 use rust_tools::validation::validate_qr_code;
-use qrcode_kennytm::QrCode;
 
 use std::env;
 use std::fs;

@@ -16,16 +16,16 @@ fn init_tables() {
             for i in 1..256 {
                 let mut v = EXP_TABLE[i - 1] << 1;
                 if v > 255 {
-                    v ^= 0x11d;  // 异或生成多项式
+                    v ^= 0x11d; // 异或生成多项式
                 }
                 EXP_TABLE[i] = v;
             }
-            
+
             // 构建对数表
             for i in 0..255 {
                 LOG_TABLE[EXP_TABLE[i] as usize] = i as i32;
             }
-            LOG_TABLE[0] = 0;  // log(0) 未定义，设为 0
+            LOG_TABLE[0] = 0; // log(0) 未定义，设为 0
         }
     });
 }

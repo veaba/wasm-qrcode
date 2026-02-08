@@ -91,17 +91,20 @@ fn generate_with_rust(text: &str) -> (String, bool) {
         height: 256,
         color_dark: String::from("#000000"),
         color_light: String::from("#ffffff"),
-        correct_level: QRErrorCorrectLevel::M,  // 使用 M 级别以匹配 kennytm 默认值
+        correct_level: QRErrorCorrectLevel::M, // 使用 M 级别以匹配 kennytm 默认值
     });
     qr.make_code(text);
-    
+
     let svg = generate_svg_from_rust(&qr);
     let elapsed = start.elapsed();
-    
+
     println!("⏱️  生成耗时: {:?}", elapsed);
-    println!("📐 二维码版本: {} ({}x{} 模块)", qr.type_number, qr.module_count, qr.module_count);
+    println!(
+        "📐 二维码版本: {} ({}x{} 模块)",
+        qr.type_number, qr.module_count, qr.module_count
+    );
     println!("📄 SVG 大小: {} bytes", svg.len());
-    
+
     // 验证
     #[cfg(feature = "validation")]
     {
@@ -117,7 +120,7 @@ fn generate_with_rust(text: &str) -> (String, bool) {
             }
         }
     }
-    
+
     #[cfg(not(feature = "validation"))]
     {
         println!("⚠️  跳过验证（validation 特性未启用）");
@@ -132,18 +135,18 @@ fn generate_svg_from_rust(qr: &qrcode_rust::QRCode) -> String {
     let cell_size = size / count;
     let actual_size = cell_size * count;
     let offset = (size - actual_size) / 2;
-    
+
     let mut svg = format!(
         "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 {} {}\" width=\"{}\" height=\"{}\">",
         size, size, size, size
     );
-    
+
     // 背景
     svg.push_str(&format!(
         "<rect width=\"{}\" height=\"{}\" fill=\"#ffffff\" />",
         size, size
     ));
-    
+
     // 绘制模块
     for row in 0..count {
         for col in 0..count {
@@ -158,7 +161,7 @@ fn generate_svg_from_rust(qr: &qrcode_rust::QRCode) -> String {
             }
         }
     }
-    
+
     svg.push_str("</svg>");
     svg
 }
@@ -169,14 +172,17 @@ fn generate_with_fast(text: &str) -> (String, bool) {
 
     let start = Instant::now();
 
-    let mut qr = QRCode::with_options(QRErrorCorrectLevel::M);  // 使用 M 级别
+    let mut qr = QRCode::with_options(QRErrorCorrectLevel::M); // 使用 M 级别
     qr.make_code(text);
 
     let svg = qr.get_svg();
     let elapsed = start.elapsed();
 
     println!("⏱️  生成耗时: {:?}", elapsed);
-    println!("📐 二维码版本: {} ({}x{} 模块)", qr.module_count, qr.module_count, qr.module_count);
+    println!(
+        "📐 二维码版本: {} ({}x{} 模块)",
+        qr.module_count, qr.module_count, qr.module_count
+    );
     println!("📄 SVG 大小: {} bytes", svg.len());
     println!("✅ 完整 QR 码实现，高性能优化版");
 
@@ -205,8 +211,8 @@ fn generate_with_fast(text: &str) -> (String, bool) {
 
 /// 使用 kennytm-qrcode 生成二维码 (对比)
 fn generate_with_kennytm(text: &str) -> (String, bool) {
-    use qrcode_kennytm::QrCode;
     use qrcode_kennytm::render::svg;
+    use qrcode_kennytm::QrCode;
 
     let start = Instant::now();
 

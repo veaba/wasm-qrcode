@@ -116,8 +116,8 @@ fn decode_qr_from_svg(svg: &str) -> Result<String, Box<dyn std::error::Error>> {
     let width = (size.width() * scale) as u32;
     let height = (size.height() * scale) as u32;
 
-    let mut pixmap = resvg::tiny_skia::Pixmap::new(width, height)
-        .ok_or("Failed to create pixmap")?;
+    let mut pixmap =
+        resvg::tiny_skia::Pixmap::new(width, height).ok_or("Failed to create pixmap")?;
 
     let transform = resvg::tiny_skia::Transform::from_scale(scale, scale);
     resvg::render(&tree, transform, &mut pixmap.as_mut());

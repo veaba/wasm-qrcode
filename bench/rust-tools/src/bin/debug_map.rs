@@ -87,8 +87,8 @@ fn main() {
     let mc = module_count as usize;
     #[allow(clippy::needless_range_loop)]
     for i in (mc - 8)..mc {
-        is_fixed[8][i] = true;  // 右上
-        is_fixed[i][8] = true;  // 左下
+        is_fixed[8][i] = true; // 右上
+        is_fixed[i][8] = true; // 左下
     }
 
     println!();

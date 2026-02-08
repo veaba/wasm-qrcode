@@ -12,16 +12,26 @@
 //   cargo run --release --bin compare-impls -- modules "Hello World"
 //   cargo run --release --bin compare-impls -- full "Test"
 
-use qrcode_rust::{QRCode as QRCodeRust, QRCodeOptions, QRErrorCorrectLevel as QRErrorCorrectLevelRust};
 use qrcode_fast::{QRCode as QRCodeFast, QRErrorCorrectLevel as QRErrorCorrectLevelFast};
+use qrcode_rust::{
+    QRCode as QRCodeRust, QRCodeOptions, QRErrorCorrectLevel as QRErrorCorrectLevelRust,
+};
 use std::env;
 
 fn main() {
     let args: Vec<String> = env::args().collect();
-    
-    let mode = if args.len() > 1 { args[1].clone() } else { "modules".to_string() };
-    let text = if args.len() > 2 { args[2].clone() } else { "Hello World".to_string() };
-    
+
+    let mode = if args.len() > 1 {
+        args[1].clone()
+    } else {
+        "modules".to_string()
+    };
+    let text = if args.len() > 2 {
+        args[2].clone()
+    } else {
+        "Hello World".to_string()
+    };
+
     match mode.as_str() {
         "full" => compare_full(&text),
         "modules" => compare_modules(&text),
@@ -47,8 +57,14 @@ fn compare_modules(text: &str) {
     qr_fast.make_code(text);
 
     println!("Module counts:");
-    println!("  qrcode-rust: {}x{}", qr_rust.module_count, qr_rust.module_count);
-    println!("  qrcode-fast: {}x{}\n", qr_fast.module_count, qr_fast.module_count);
+    println!(
+        "  qrcode-rust: {}x{}",
+        qr_rust.module_count, qr_rust.module_count
+    );
+    println!(
+        "  qrcode-fast: {}x{}\n",
+        qr_fast.module_count, qr_fast.module_count
+    );
 
     // Check finder patterns
     println!("Top-left finder pattern (7x7):");
@@ -96,8 +112,11 @@ fn compare_modules(text: &str) {
         }
     }
 
-    println!("\nTotal differences: {} out of {} modules",
-             diff_count, qr_rust.module_count * qr_rust.module_count);
+    println!(
+        "\nTotal differences: {} out of {} modules",
+        diff_count,
+        qr_rust.module_count * qr_rust.module_count
+    );
 }
 
 fn compare_full(text: &str) {

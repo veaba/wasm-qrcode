@@ -19,7 +19,8 @@ impl QRPolynomial {
         }
 
         let mut new_num = vec![0; num.len() - offset + shift];
-        new_num[..(num.len() - offset)].copy_from_slice(&num[offset..((num.len() - offset) + offset)]);
+        new_num[..(num.len() - offset)]
+            .copy_from_slice(&num[offset..((num.len() - offset) + offset)]);
 
         QRPolynomial { num: new_num }
     }

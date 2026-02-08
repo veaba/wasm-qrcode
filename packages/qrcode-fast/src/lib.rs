@@ -36,7 +36,7 @@ mod tests {
     fn test_qrcode_basic_creation() {
         let mut qr = QRCode::new();
         qr.make_code("Hello World");
-        
+
         assert!(qr.module_count > 0, "模块数应该大于 0");
         assert!(qr.type_number > 0, "类型号应该大于 0");
     }
@@ -45,7 +45,7 @@ mod tests {
     fn test_qrcode_with_options() {
         let mut qr = QRCode::with_options(QRErrorCorrectLevel::H);
         qr.make_code("Test");
-        
+
         assert_eq!(qr.options.correct_level, QRErrorCorrectLevel::H);
     }
 
@@ -53,9 +53,9 @@ mod tests {
     fn test_qrcode_is_dark_in_range() {
         let mut qr = QRCode::new();
         qr.make_code("Test");
-        
+
         let count = qr.module_count;
-        
+
         // 测试边界内的访问
         for row in 0..count {
             for col in 0..count {
@@ -69,9 +69,9 @@ mod tests {
         // qrcode-fast 的 is_dark 在越界时返回 false 而不是 panic
         let mut qr = QRCode::new();
         qr.make_code("Test");
-        
+
         let count = qr.module_count;
-        
+
         // 越界访问应该返回 false
         assert!(!qr.is_dark(count, 0), "越界访问应该返回 false");
         assert!(!qr.is_dark(-1, 0), "负索引应该返回 false");
@@ -82,9 +82,9 @@ mod tests {
     fn test_qrcode_svg_generation() {
         let mut qr = QRCode::new();
         qr.make_code("Hello");
-        
+
         let svg = qr.get_svg();
-        
+
         assert!(!svg.is_empty(), "SVG 不应该为空");
         assert!(svg.contains("<svg"), "SVG 应该包含 <svg 标签");
         assert!(svg.contains("</svg>"), "SVG 应该包含 </svg> 标签");
@@ -95,26 +95,58 @@ mod tests {
         // 测试位置探测图案是否正确
         let mut qr = QRCode::new();
         qr.make_code("Test");
-        
+
         let count = qr.module_count;
-        
+
         // 左上角位置探测图案的角落应该是深色的
         assert!(qr.is_dark(0, 0), "左上角 (0,0) 应该是深色");
         assert!(qr.is_dark(0, 6), "左上角 (0,6) 应该是深色");
         assert!(qr.is_dark(6, 0), "左上角 (6,0) 应该是深色");
         assert!(qr.is_dark(6, 6), "左上角 (6,6) 应该是深色");
-        
+
         // 右上角位置探测图案
-        assert!(qr.is_dark(0, count - 1), "右上角 (0,{}) 应该是深色", count - 1);
-        assert!(qr.is_dark(0, count - 7), "右上角 (0,{}) 应该是深色", count - 7);
-        assert!(qr.is_dark(6, count - 1), "右上角 (6,{}) 应该是深色", count - 1);
-        assert!(qr.is_dark(6, count - 7), "右上角 (6,{}) 应该是深色", count - 7);
-        
+        assert!(
+            qr.is_dark(0, count - 1),
+            "右上角 (0,{}) 应该是深色",
+            count - 1
+        );
+        assert!(
+            qr.is_dark(0, count - 7),
+            "右上角 (0,{}) 应该是深色",
+            count - 7
+        );
+        assert!(
+            qr.is_dark(6, count - 1),
+            "右上角 (6,{}) 应该是深色",
+            count - 1
+        );
+        assert!(
+            qr.is_dark(6, count - 7),
+            "右上角 (6,{}) 应该是深色",
+            count - 7
+        );
+
         // 左下角位置探测图案
-        assert!(qr.is_dark(count - 1, 0), "左下角 ({},0) 应该是深色", count - 1);
-        assert!(qr.is_dark(count - 7, 0), "左下角 ({},0) 应该是深色", count - 7);
-        assert!(qr.is_dark(count - 1, 6), "左下角 ({},6) 应该是深色", count - 1);
-        assert!(qr.is_dark(count - 7, 6), "左下角 ({},6) 应该是深色", count - 7);
+        assert!(
+            qr.is_dark(count - 1, 0),
+            "左下角 ({},0) 应该是深色",
+            count - 1
+        );
+        assert!(
+            qr.is_dark(count - 7, 0),
+            "左下角 ({},0) 应该是深色",
+            count - 7
+        );
+        assert!(
+            qr.is_dark(count - 1, 6),
+            "左下角 ({},6) 应该是深色",
+            count - 1
+        );
+        assert!(
+            qr.is_dark(count - 7, 6),
+            "左下角 ({},6) 应该是深色",
+            count - 7
+        );
     }
 
     #[test]
@@ -122,31 +154,45 @@ mod tests {
         // 测试定时图案
         let mut qr = QRCode::new();
         qr.make_code("Test");
-        
+
         let count = qr.module_count;
-        
+
         // 水平定时图案应该在第 6 行，从第 8 列开始
         for col in 8..count - 8 {
             let expected = col % 2 == 0;
-            assert_eq!(qr.is_dark(6, col), expected, "水平定时图案在 (6,{}) 不匹配", col);
+            assert_eq!(
+                qr.is_dark(6, col),
+                expected,
+                "水平定时图案在 (6,{}) 不匹配",
+                col
+            );
         }
-        
+
         // 垂直定时图案应该在第 6 列，从第 8 行开始
         for row in 8..count - 8 {
             let expected = row % 2 == 0;
-            assert_eq!(qr.is_dark(row, 6), expected, "垂直定时图案在 ({},6) 不匹配", row);
+            assert_eq!(
+                qr.is_dark(row, 6),
+                expected,
+                "垂直定时图案在 ({},6) 不匹配",
+                row
+            );
         }
     }
 
     #[test]
     fn test_different_error_correction_levels() {
         let test_data = "Hello World";
-        
-        for level in [QRErrorCorrectLevel::L, QRErrorCorrectLevel::M, 
-                      QRErrorCorrectLevel::Q, QRErrorCorrectLevel::H] {
+
+        for level in [
+            QRErrorCorrectLevel::L,
+            QRErrorCorrectLevel::M,
+            QRErrorCorrectLevel::Q,
+            QRErrorCorrectLevel::H,
+        ] {
             let mut qr = QRCode::with_options(level);
             qr.make_code(test_data);
-            
+
             assert!(qr.module_count > 0, "纠错级别应该生成有效的二维码");
         }
     }
@@ -155,7 +201,7 @@ mod tests {
     fn test_empty_string() {
         let mut qr = QRCode::new();
         qr.make_code("");
-        
+
         assert!(qr.module_count > 0, "空字符串也应该生成二维码");
     }
 
@@ -164,7 +210,7 @@ mod tests {
         let long_text = "a".repeat(100);
         let mut qr = QRCode::new();
         qr.make_code(&long_text);
-        
+
         assert!(qr.module_count > 0, "长文本应该生成二维码");
         assert!(qr.type_number > 1, "长文本应该使用更高的类型号");
     }
@@ -175,10 +221,10 @@ mod tests {
         let text = "Test QR Code 123";
         let mut qr = QRCode::new();
         qr.make_code(text);
-        
+
         assert!(qr.module_count > 0, "复杂文本应该生成二维码");
         assert!(qr.type_number >= 2, "此文本应该使用类型号 >= 2");
-        
+
         // 打印调试信息
         println!("\n=== test_complex_text_hello_world_123 (qrcode-fast) ===");
         println!("文本: {}", text);
@@ -202,7 +248,10 @@ mod tests {
             qr.make_code(text);
 
             assert!(qr.module_count > 0, "文本 '{}' 应该生成二维码", text);
-            println!("文本 '{}' -> 类型号 {}, 模块数 {}", text, qr.type_number, qr.module_count);
+            println!(
+                "文本 '{}' -> 类型号 {}, 模块数 {}",
+                text, qr.type_number, qr.module_count
+            );
         }
     }
 
@@ -211,24 +260,48 @@ mod tests {
         use crate::get_rs_blocks;
 
         // 测试类型号 1，所有纠错级别
-        for level in [QRErrorCorrectLevel::L, QRErrorCorrectLevel::M,
-                      QRErrorCorrectLevel::Q, QRErrorCorrectLevel::H] {
+        for level in [
+            QRErrorCorrectLevel::L,
+            QRErrorCorrectLevel::M,
+            QRErrorCorrectLevel::Q,
+            QRErrorCorrectLevel::H,
+        ] {
             let blocks = get_rs_blocks(1, level);
-            assert!(!blocks.is_empty(), "类型号 1 纠错级别 {:?} 应该有 RS 块", level);
+            assert!(
+                !blocks.is_empty(),
+                "类型号 1 纠错级别 {:?} 应该有 RS 块",
+                level
+            );
         }
 
         // 测试类型号 2，所有纠错级别
-        for level in [QRErrorCorrectLevel::L, QRErrorCorrectLevel::M,
-                      QRErrorCorrectLevel::Q, QRErrorCorrectLevel::H] {
+        for level in [
+            QRErrorCorrectLevel::L,
+            QRErrorCorrectLevel::M,
+            QRErrorCorrectLevel::Q,
+            QRErrorCorrectLevel::H,
+        ] {
             let blocks = get_rs_blocks(2, level);
-            assert!(!blocks.is_empty(), "类型号 2 纠错级别 {:?} 应该有 RS 块", level);
+            assert!(
+                !blocks.is_empty(),
+                "类型号 2 纠错级别 {:?} 应该有 RS 块",
+                level
+            );
         }
 
         // 测试类型号 10，所有纠错级别
-        for level in [QRErrorCorrectLevel::L, QRErrorCorrectLevel::M,
-                      QRErrorCorrectLevel::Q, QRErrorCorrectLevel::H] {
+        for level in [
+            QRErrorCorrectLevel::L,
+            QRErrorCorrectLevel::M,
+            QRErrorCorrectLevel::Q,
+            QRErrorCorrectLevel::H,
+        ] {
             let blocks = get_rs_blocks(10, level);
-            assert!(!blocks.is_empty(), "类型号 10 纠错级别 {:?} 应该有 RS 块", level);
+            assert!(
+                !blocks.is_empty(),
+                "类型号 10 纠错级别 {:?} 应该有 RS 块",
+                level
+            );
         }
     }
 }

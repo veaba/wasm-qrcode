@@ -13,8 +13,12 @@ use std::env;
 
 fn main() {
     let args: Vec<String> = env::args().collect();
-    let mode = if args.len() > 1 { args[1].clone() } else { "basic".to_string() };
-    
+    let mode = if args.len() > 1 {
+        args[1].clone()
+    } else {
+        "basic".to_string()
+    };
+
     match mode.as_str() {
         "detail" => debug_detail(),
         "basic" => debug_basic(),
@@ -33,11 +37,15 @@ fn debug_basic() {
     qr_fast.make_code(text);
     let count_fast = qr_fast.module_count;
 
-    let qr_kennytm = KennytmQRCode::with_error_correction_level(text, qrcode_kennytm::EcLevel::H).unwrap();
+    let qr_kennytm =
+        KennytmQRCode::with_error_correction_level(text, qrcode_kennytm::EcLevel::H).unwrap();
     let count_kennytm = qr_kennytm.width();
 
     println!("📦 qrcode-fast: {}x{} modules", count_fast, count_fast);
-    println!("📦 kennytm:     {}x{} modules\n", count_kennytm, count_kennytm);
+    println!(
+        "📦 kennytm:     {}x{} modules\n",
+        count_kennytm, count_kennytm
+    );
 
     if count_fast as usize != count_kennytm {
         println!("⚠️  Module count mismatch!");
@@ -83,7 +91,8 @@ fn debug_detail() {
     qr_fast.make_code(text);
     let count = qr_fast.module_count as usize;
 
-    let qr_kennytm = KennytmQRCode::with_error_correction_level(text, qrcode_kennytm::EcLevel::H).unwrap();
+    let qr_kennytm =
+        KennytmQRCode::with_error_correction_level(text, qrcode_kennytm::EcLevel::H).unwrap();
 
     println!("Module count: {}x{}\n", count, count);
 
@@ -104,10 +113,14 @@ fn debug_detail() {
     println!("📊 First {} module differences:", differences.len());
     println!("═══════════════════════════════════════");
     for (i, (row, col, fast, kennytm)) in differences.iter().enumerate() {
-        println!("  [{}] ({},{:2}): fast={}, kennytm={}",
-                 i + 1, row, col,
-                 if *fast { "██" } else { "░░" },
-                 if *kennytm { "██" } else { "░░" });
+        println!(
+            "  [{}] ({},{:2}): fast={}, kennytm={}",
+            i + 1,
+            row,
+            col,
+            if *fast { "██" } else { "░░" },
+            if *kennytm { "██" } else { "░░" }
+        );
     }
 
     println!("\n🔍 Region: Finder pattern area (0-8, 0-8)");
@@ -134,9 +147,20 @@ fn debug_detail() {
     for col in 4..11.min(count) {
         let fast = qr_fast.is_dark(8, col as i32);
         let ken = matches!(qr_kennytm[(8, col)], qrcode_kennytm::Color::Dark);
-        print!("{}", if fast == ken {
-            if fast { "█" } else { "░" }
-        } else if fast { "F" } else { "f" });
+        print!(
+            "{}",
+            if fast == ken {
+                if fast {
+                    "█"
+                } else {
+                    "░"
+                }
+            } else if fast {
+                "F"
+            } else {
+                "f"
+            }
+        );
     }
     println!();
 
@@ -145,9 +169,20 @@ fn debug_detail() {
     for row in 4..11.min(count) {
         let fast = qr_fast.is_dark(row as i32, 8);
         let ken = matches!(qr_kennytm[(row, 8)], qrcode_kennytm::Color::Dark);
-        print!("{}", if fast == ken {
-            if fast { "█" } else { "░" }
-        } else if fast { "F" } else { "f" });
+        print!(
+            "{}",
+            if fast == ken {
+                if fast {
+                    "█"
+                } else {
+                    "░"
+                }
+            } else if fast {
+                "F"
+            } else {
+                "f"
+            }
+        );
     }
     println!();
 
@@ -156,9 +191,20 @@ fn debug_detail() {
     for row in 4..11.min(count) {
         let fast = qr_fast.is_dark(row as i32, 6);
         let ken = matches!(qr_kennytm[(row, 6)], qrcode_kennytm::Color::Dark);
-        print!("{}", if fast == ken {
-            if fast { "█" } else { "░" }
-        } else if fast { "F" } else { "f" });
+        print!(
+            "{}",
+            if fast == ken {
+                if fast {
+                    "█"
+                } else {
+                    "░"
+                }
+            } else if fast {
+                "F"
+            } else {
+                "f"
+            }
+        );
     }
     println!();
 
@@ -167,9 +213,20 @@ fn debug_detail() {
     for col in 4..11.min(count) {
         let fast = qr_fast.is_dark(6, col as i32);
         let ken = matches!(qr_kennytm[(6, col)], qrcode_kennytm::Color::Dark);
-        print!("{}", if fast == ken {
-            if fast { "█" } else { "░" }
-        } else if fast { "F" } else { "f" });
+        print!(
+            "{}",
+            if fast == ken {
+                if fast {
+                    "█"
+                } else {
+                    "░"
+                }
+            } else if fast {
+                "F"
+            } else {
+                "f"
+            }
+        );
     }
     println!();
 }
@@ -189,7 +246,10 @@ fn print_finder_pattern_kennytm(qr: &KennytmQRCode, offset_row: usize, offset_co
     for r in 0..7 {
         print!("    ");
         for c in 0..7 {
-            let dark = matches!(qr[(offset_row + r, offset_col + c)], qrcode_kennytm::Color::Dark);
+            let dark = matches!(
+                qr[(offset_row + r, offset_col + c)],
+                qrcode_kennytm::Color::Dark
+            );
             print!("{}", if dark { "█" } else { "░" });
         }
         println!();

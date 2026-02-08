@@ -11,18 +11,17 @@ static mut LOG_TABLE: [i32; 256] = [0; 256];
 
 /// 初始化 EXP_TABLE 和 LOG_TABLE
 pub fn init_tables() {
-    INIT.call_once(|| {
-        unsafe {
-            #[allow(clippy::needless_range_loop)]
-            for i in 0..8 {
-                EXP_TABLE[i] = 1 << i;
-            }
-            for i in 8..256 {
-                EXP_TABLE[i] = EXP_TABLE[i - 4] ^ EXP_TABLE[i - 5] ^ EXP_TABLE[i - 6] ^ EXP_TABLE[i - 8];
-            }
-            for i in 0..255 {
-                LOG_TABLE[EXP_TABLE[i] as usize] = i as i32;
-            }
+    INIT.call_once(|| unsafe {
+        #[allow(clippy::needless_range_loop)]
+        for i in 0..8 {
+            EXP_TABLE[i] = 1 << i;
+        }
+        for i in 8..256 {
+            EXP_TABLE[i] =
+                EXP_TABLE[i - 4] ^ EXP_TABLE[i - 5] ^ EXP_TABLE[i - 6] ^ EXP_TABLE[i - 8];
+        }
+        for i in 0..255 {
+            LOG_TABLE[EXP_TABLE[i] as usize] = i as i32;
         }
     });
 }

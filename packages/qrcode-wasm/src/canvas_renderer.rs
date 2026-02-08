@@ -24,15 +24,24 @@ impl CanvasRenderer {
         CanvasRenderer {
             width,
             height,
-            color_dark: [0, 0, 0, 255],   // 黑色
+            color_dark: [0, 0, 0, 255],        // 黑色
             color_light: [255, 255, 255, 255], // 白色
         }
     }
 
     /// 设置颜色 (RGBA)
     #[allow(clippy::too_many_arguments)]
-    pub fn set_colors(&mut self, dark_r: u8, dark_g: u8, dark_b: u8, dark_a: u8,
-                      light_r: u8, light_g: u8, light_b: u8, light_a: u8) {
+    pub fn set_colors(
+        &mut self,
+        dark_r: u8,
+        dark_g: u8,
+        dark_b: u8,
+        dark_a: u8,
+        light_r: u8,
+        light_g: u8,
+        light_b: u8,
+        light_a: u8,
+    ) {
         self.color_dark = [dark_r, dark_g, dark_b, dark_a];
         self.color_light = [light_r, light_g, light_b, light_a];
     }
@@ -54,10 +63,10 @@ impl CanvasRenderer {
 
         let module_count = model.get_module_count() as u32;
         let cell_size = self.width / module_count;
-        
+
         // 创建像素缓冲区
         let mut pixels = vec![0u8; (self.width * self.height * 4) as usize];
-        
+
         // 填充背景色
         for y in 0..self.height {
             for x in 0..self.width {
@@ -75,12 +84,12 @@ impl CanvasRenderer {
                 if model.is_dark(row as i32, col as i32) {
                     let start_y = row * cell_size;
                     let start_x = col * cell_size;
-                    
+
                     for dy in 0..cell_size {
                         for dx in 0..cell_size {
                             let y = start_y + dy;
                             let x = start_x + dx;
-                            
+
                             if y < self.height && x < self.width {
                                 let idx = ((y * self.width + x) * 4) as usize;
                                 pixels[idx] = self.color_dark[0];
@@ -98,8 +107,12 @@ impl CanvasRenderer {
     }
 
     /// 生成带边距的 QRCode 像素数据
-    pub fn render_with_quiet_zone(&self, text: &str, correct_level: i32, quiet_zone: u32) 
-        -> Result<Vec<u8>, JsValue> {
+    pub fn render_with_quiet_zone(
+        &self,
+        text: &str,
+        correct_level: i32,
+        quiet_zone: u32,
+    ) -> Result<Vec<u8>, JsValue> {
         let level = match correct_level {
             1 => QRErrorCorrectLevel::L,
             0 => QRErrorCorrectLevel::M,
@@ -115,9 +128,9 @@ impl CanvasRenderer {
         let module_count = model.get_module_count() as u32;
         let total_modules = module_count + quiet_zone * 2;
         let cell_size = self.width / total_modules;
-        
+
         let mut pixels = vec![0u8; (self.width * self.height * 4) as usize];
-        
+
         // 填充背景
         for y in 0..self.height {
             for x in 0..self.width {
@@ -135,12 +148,12 @@ impl CanvasRenderer {
                 if model.is_dark(row as i32, col as i32) {
                     let start_y = (row + quiet_zone) * cell_size;
                     let start_x = (col + quiet_zone) * cell_size;
-                    
+
                     for dy in 0..cell_size {
                         for dx in 0..cell_size {
                             let y = start_y + dy;
                             let x = start_x + dx;
-                            
+
                             if y < self.height && x < self.width {
                                 let idx = ((y * self.width + x) * 4) as usize;
                                 pixels[idx] = self.color_dark[0];

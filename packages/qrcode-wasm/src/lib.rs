@@ -1,41 +1,34 @@
-mod qr_math;
-mod qr_util;
-mod qr_bit_buffer;
 mod qr_8bit_byte;
+mod qr_bit_buffer;
+mod qr_code;
+mod qr_code_model;
+mod qr_math;
 mod qr_polynomial;
 mod qr_rs_block;
-mod qr_code_model;
-mod qr_code;
+mod qr_util;
 mod utils;
 
 // 新增模块
+mod canvas_renderer;
 mod qr_generator;
 mod qr_styled;
-mod canvas_renderer;
 
-use wasm_bindgen::prelude::*;
 use qr_code::{QRCode, QRCodeOptions};
 use qr_rs_block::QRErrorCorrectLevel;
+use wasm_bindgen::prelude::*;
 
 // 导出新增模块
-pub use qr_generator::{QRCodeGenerator, generate_qrcode_batch, generate_qrcode_fast};
+pub use canvas_renderer::{render_qrcode_batch_pixels, render_qrcode_to_pixels, CanvasRenderer};
 #[cfg(feature = "parallel")]
 pub use qr_generator::generate_qrcode_parallel;
 pub use qr_generator::is_parallel_supported;
+pub use qr_generator::{generate_qrcode_batch, generate_qrcode_fast, QRCodeGenerator};
 pub use qr_styled::{
-    StyledQRCode, QRCodeStyle, 
-    generate_rounded_qrcode, 
-    generate_qrcode_with_logo_area, 
-    generate_gradient_qrcode,
-    generate_wechat_style_qrcode,
-    generate_douyin_style_qrcode,
-    generate_alipay_style_qrcode,
-    generate_xiaohongshu_style_qrcode,
-    generate_cyberpunk_style_qrcode,
-    generate_retro_style_qrcode,
-    generate_minimal_style_qrcode,
+    generate_alipay_style_qrcode, generate_cyberpunk_style_qrcode, generate_douyin_style_qrcode,
+    generate_gradient_qrcode, generate_minimal_style_qrcode, generate_qrcode_with_logo_area,
+    generate_retro_style_qrcode, generate_rounded_qrcode, generate_wechat_style_qrcode,
+    generate_xiaohongshu_style_qrcode, QRCodeStyle, StyledQRCode,
 };
-pub use canvas_renderer::{CanvasRenderer, render_qrcode_to_pixels, render_qrcode_batch_pixels};
 
 #[cfg(feature = "wee_alloc")]
 #[global_allocator]
@@ -95,9 +88,7 @@ impl QRCodeWasm {
     /// 创建新的 QRCode
     #[wasm_bindgen(constructor)]
     pub fn new() -> Self {
-        QRCodeWasm {
-            qr: QRCode::new(),
-        }
+        QRCodeWasm { qr: QRCode::new() }
     }
 
     /// 使用选项创建 QRCode
@@ -163,12 +154,12 @@ impl QRCodeWasm {
         let cell_size = size / count;
         let actual_size = cell_size * count;
         let offset = (size - actual_size) / 2; // 居中偏移
-        
+
         let mut svg = format!(
             r#"<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 {} {}" width="{}" height="{}">"#,
             size, size, size, size
         );
-        
+
         // 背景
         svg.push_str(&format!(
             r#"<rect width="{}" height="{}" fill="{}"/>"#,
@@ -219,7 +210,8 @@ pub fn version() -> String {
 /// 获取版本信息
 #[wasm_bindgen]
 pub fn get_version_info() -> String {
-    String::from(r#"{
+    String::from(
+        r#"{
         "version": "0.2.0",
         "features": [
             "basic_qrcode",
@@ -228,7 +220,8 @@ pub fn get_version_info() -> String {
             "canvas_renderer",
             "instance_reuse"
         ]
-    }"#)
+    }"#,
+    )
 }
 
 /// 简单的问候函数

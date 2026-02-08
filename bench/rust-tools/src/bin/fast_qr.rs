@@ -15,50 +15,55 @@ use std::time::Instant;
 
 fn main() {
     let args: Vec<String> = env::args().collect();
-    
+
     let text = if args.len() > 1 {
         args[1].clone()
     } else {
         "Hello World".to_string()
     };
-    
+
     let output_file = if args.len() > 2 {
         args[2].clone()
     } else {
         "qrcode_fast.svg".to_string()
     };
-    
+
     println!("🚀 高性能二维码生成器 (优化版)");
     println!("═══════════════════════════════════════");
     println!("文本: {}", text);
     println!("输出: {}", output_file);
     println!();
-    
+
     // 生成二维码数据
     let qr = QrCode::new(&text).unwrap();
-    
+
     // 使用优化的方式生成 SVG
     let start = Instant::now();
     let svg = generate_optimized_svg(&qr);
     let elapsed = start.elapsed();
-    
+
     // 保存文件
     fs::write(&output_file, &svg).expect("❌ 无法写入文件");
-    
+
     println!("✅ SVG 生成成功！");
     println!("───────────────────────────────────────");
     println!("⏱️  SVG 生成耗时: {:?}", elapsed);
-    println!("📐 二维码版本:   {} ({}x{} 模块)", qr.width(), qr.width(), qr.width());
+    println!(
+        "📐 二维码版本:   {} ({}x{} 模块)",
+        qr.width(),
+        qr.width(),
+        qr.width()
+    );
     println!("📄 SVG 大小:     {} bytes", svg.len());
     println!("💾 输出文件:     {}", output_file);
     println!();
-    
+
     // 验证二维码
     #[cfg(feature = "validation")]
     {
         println!("🔍 正在验证二维码...");
         println!("───────────────────────────────────────");
-        
+
         let validate_start = Instant::now();
         match validate_qr_code(&svg, &text) {
             Ok(()) => {
@@ -74,13 +79,13 @@ fn main() {
             }
         }
     }
-    
+
     #[cfg(not(feature = "validation"))]
     {
         println!("⚠️  跳过验证（validation 特性未启用）");
         println!("   启用方式: cargo run --release --features validation --bin fast-qr");
     }
-    
+
     println!();
     println!("═══════════════════════════════════════");
     println!("🎉 完成！");
@@ -89,18 +94,22 @@ fn main() {
 /// 优化的 SVG 生成 - 使用 kennytm 的坐标系统
 fn generate_optimized_svg(qr: &QrCode) -> String {
     let width = qr.width();
-    
+
     // 使用 kennytm 的默认配置
     let cell_size = 8;
     let quiet_zone = 4;
     let offset = cell_size * quiet_zone;
     let total_size = width * cell_size + 2 * offset;
-    
+
     // 预分配容量
-    let dark_count = qr.to_colors().iter().filter(|&&c| c == qrcode_kennytm::Color::Dark).count();
+    let dark_count = qr
+        .to_colors()
+        .iter()
+        .filter(|&&c| c == qrcode_kennytm::Color::Dark)
+        .count();
     let capacity = 200 + dark_count * 30;
     let mut svg = String::with_capacity(capacity);
-    
+
     // SVG 头部
     svg.push_str(r#"<?xml version="1.0" standalone="yes"?><svg xmlns="http://www.w3.org/2000/svg" version="1.1" width=""#);
     push_usize(&mut svg, total_size);
@@ -122,7 +131,7 @@ fn generate_optimized_svg(qr: &QrCode) -> String {
             if qr[(x, y)] == qrcode_kennytm::Color::Dark {
                 let px = x * cell_size + offset;
                 let py = y * cell_size + offset;
-                
+
                 svg.push('M');
                 push_usize(&mut svg, px);
                 svg.push(' ');

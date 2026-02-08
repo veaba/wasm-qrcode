@@ -64,7 +64,7 @@ impl QRCodeModel {
     /// 内部实现
     fn make_impl(&mut self, test: bool, mask_pattern: QRMaskPattern) {
         self.module_count = self.type_number * 4 + 17;
-        
+
         // 初始化模块矩阵为 None
         self.modules = vec![vec![None; self.module_count as usize]; self.module_count as usize];
 
@@ -167,11 +167,13 @@ impl QRCodeModel {
         let bits = qr_util::get_bch_type_number(self.type_number);
         for i in 0..18 {
             let mod_val = !test && ((bits >> i) & 1) == 1;
-            self.modules[(i / 3) as usize][(self.module_count - 8 - 3 + (i % 3)) as usize] = Some(mod_val);
+            self.modules[(i / 3) as usize][(self.module_count - 8 - 3 + (i % 3)) as usize] =
+                Some(mod_val);
         }
         for i in 0..18 {
             let mod_val = !test && ((bits >> i) & 1) == 1;
-            self.modules[(self.module_count - 8 - 3 + (i % 3)) as usize][(i / 3) as usize] = Some(mod_val);
+            self.modules[(self.module_count - 8 - 3 + (i % 3)) as usize][(i / 3) as usize] =
+                Some(mod_val);
         }
     }
 
@@ -251,13 +253,20 @@ impl QRCodeModel {
 }
 
 /// 创建数据
-fn create_data(type_number: i32, error_correct_level: QRErrorCorrectLevel, data_list: &[QR8bitByte]) -> Vec<u8> {
+fn create_data(
+    type_number: i32,
+    error_correct_level: QRErrorCorrectLevel,
+    data_list: &[QR8bitByte],
+) -> Vec<u8> {
     let rs_blocks = get_rs_blocks(type_number, error_correct_level);
     let mut buffer = QRBitBuffer::new();
 
     for data in data_list {
         buffer.put(QRMode::MODE_8BIT_BYTE as u32, 4);
-        buffer.put(data.get_length() as u32, qr_util::get_length_in_bits(QRMode::MODE_8BIT_BYTE, type_number));
+        buffer.put(
+            data.get_length() as u32,
+            qr_util::get_length_in_bits(QRMode::MODE_8BIT_BYTE, type_number),
+        );
         data.write(&mut buffer);
     }
 
@@ -319,7 +328,10 @@ fn create_bytes(buffer: &QRBitBuffer, rs_blocks: &[crate::qr_rs_block::QRRSBlock
         offset += dc_count;
 
         let rs_poly = qr_util::get_error_correct_polynomial(ec_count as i32);
-        let raw_poly = QRPolynomial::new(&dcdata[r].iter().map(|&x| x as i32).collect::<Vec<_>>(), rs_poly.get_length() - 1);
+        let raw_poly = QRPolynomial::new(
+            &dcdata[r].iter().map(|&x| x as i32).collect::<Vec<_>>(),
+            rs_poly.get_length() - 1,
+        );
         let mod_poly = raw_poly.modulo(&rs_poly);
 
         ecdata[r] = vec![0; rs_poly.get_length() - 1];

@@ -150,11 +150,11 @@ impl QRCode {
             options,
             model: None,
         };
-        
+
         if !qr.options.text.is_empty() {
             qr.make_code(&qr.options.text.clone());
         }
-        
+
         qr
     }
 

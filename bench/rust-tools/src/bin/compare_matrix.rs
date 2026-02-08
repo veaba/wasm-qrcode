@@ -33,12 +33,12 @@ const KENNYTM_MATRIX: &str = r#"
 
 fn main() {
     let text = "Test QR Code 123";
-    
+
     println!("🔍 对比 QR 码模块矩阵");
     println!("═══════════════════════════════════════════════════════════════════");
     println!("文本: {}", text);
     println!();
-    
+
     // 创建 qrcode-rust 实例
     let mut qr = QRCodeRust::with_options(QRCodeOptions {
         width: 256,
@@ -48,35 +48,38 @@ fn main() {
         correct_level: LevelRust::M,
     });
     qr.make_code(text);
-    
+
     // 解析 kennytm 矩阵
     let kennytm_lines: Vec<&str> = KENNYTM_MATRIX.trim().lines().collect();
-    
+
     let mut total_diff = 0;
     let mut diff_positions = Vec::new();
-    
+
     println!("差异位置 (行,列):");
     for (row, line) in kennytm_lines.iter().enumerate() {
         for (col, c) in line.chars().enumerate() {
             let kennytm_dark = c == '1';
             let rust_dark = qr.is_dark(row as i32, col as i32);
-            
+
             if kennytm_dark != rust_dark {
                 total_diff += 1;
                 if diff_positions.len() < 30 {
                     diff_positions.push((row, col, kennytm_dark, rust_dark));
-                    println!("  ({:2}, {:2}): kennytm={}, rust={}", 
-                             row, col, 
-                             if kennytm_dark { 1 } else { 0 },
-                             if rust_dark { 1 } else { 0 });
+                    println!(
+                        "  ({:2}, {:2}): kennytm={}, rust={}",
+                        row,
+                        col,
+                        if kennytm_dark { 1 } else { 0 },
+                        if rust_dark { 1 } else { 0 }
+                    );
                 }
             }
         }
     }
-    
+
     println!();
     println!("总差异数: {}", total_diff);
-    
+
     // 打印两个矩阵的对比
     println!("\n═══════════════════════════════════════════════════════════════════");
     println!("并排对比 (K=kennytm, R=rust, X=不同):");
@@ -85,7 +88,7 @@ fn main() {
         for (col, c) in line.chars().enumerate() {
             let kennytm_dark = c == '1';
             let rust_dark = qr.is_dark(row as i32, col as i32);
-            
+
             if kennytm_dark == rust_dark {
                 row_str.push(if kennytm_dark { '█' } else { ' ' });
             } else {
