@@ -259,7 +259,7 @@ impl StyledQRCode {
                 // Logo 边框
                 svg.push_str(&format!(
                     r#"<rect x="{}" y="{}" width="{}" height="{}" fill="none" stroke="{}" stroke-width="{}" rx="{}"/>"#,
-                    logo_x + cell_size, logo_y + cell_size, 
+                    logo_x + cell_size, logo_y + cell_size,
                     logo_size - 2 * cell_size, logo_size - 2 * cell_size,
                     self.style.color_dark, cell_size / 2, cell_size
                 ));
