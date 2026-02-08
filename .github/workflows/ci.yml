@@ -415,7 +415,7 @@ jobs:
           pnpm --filter @veaba/js-shared build
           pnpm --filter @veaba/qrcode-js build
           pnpm --filter @veaba/qrcode-node build
-          pnpm --filter @veaba/qrcode-bun build
+          # pnpm --filter @veaba/qrcode-bun build (no build step)
           pnpm --filter @veaba/qrcode-wasm build
 
       - name: Verify build artifacts
@@ -423,6 +423,6 @@ jobs:
           test -f packages/js-shared/dist/index.js
           test -f packages/qrcode-js/dist/index.js
           test -f packages/qrcode-node/dist/index.js
-          test -f packages/qrcode-bun/dist/index.js
+          # qrcode-bun uses TypeScript source directly (no build step)
           test -f packages/qrcode-wasm/dist/index.js
           test -f packages/qrcode-wasm/pkg/qrcodes_bg.wasm
