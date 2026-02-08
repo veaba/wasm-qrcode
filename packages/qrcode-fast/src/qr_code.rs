@@ -6,7 +6,7 @@
 //! 3. 使用内联数字转换避免 format! 开销
 //! 4. 避免所有不必要的内存分配
 
-use crate::{
+use rust_shared::{
     qr_8bit_byte::QR8bitByte,
     qr_bit_buffer::BitBuffer,
     qr_code_model::{get_min_version, QRErrorCorrectLevel},

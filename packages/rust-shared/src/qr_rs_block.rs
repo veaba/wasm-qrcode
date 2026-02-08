@@ -1,7 +1,6 @@
-//! Reed-Solomon Block
+//! Reed-Solomon Block - RS block table and lookup
 
-// Re-export QRErrorCorrectLevel from qr_code_model
-pub use crate::qr_code_model::QRErrorCorrectLevel;
+use crate::qr_code_model::QRErrorCorrectLevel;
 
 pub struct QRRSBlock {
     pub total_count: i32,
@@ -17,7 +16,7 @@ impl QRRSBlock {
     }
 }
 
-// RS 块表
+// RS 块表: [count, total_count, data_count, count2, total_count2, data_count2]
 const RS_BLOCK_TABLE: &[[i32; 6]] = &[
     [1, 26, 19, 0, 0, 0], [1, 26, 16, 0, 0, 0], [1, 26, 13, 0, 0, 0], [1, 26, 9, 0, 0, 0],
     [1, 44, 34, 0, 0, 0], [1, 44, 28, 0, 0, 0], [1, 44, 22, 0, 0, 0], [1, 44, 16, 0, 0, 0],
@@ -81,4 +80,24 @@ pub fn get_rs_blocks(type_number: i32, error_correct_level: QRErrorCorrectLevel)
     }
     
     list
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_get_rs_blocks_v1() {
+        let blocks = get_rs_blocks(1, QRErrorCorrectLevel::H);
+        assert!(!blocks.is_empty());
+    }
+
+    #[test]
+    fn test_get_rs_blocks_all_levels() {
+        for level in [QRErrorCorrectLevel::L, QRErrorCorrectLevel::M,
+                      QRErrorCorrectLevel::Q, QRErrorCorrectLevel::H] {
+            let blocks = get_rs_blocks(2, level);
+            assert!(!blocks.is_empty(), "Version 2 {:?} should have blocks", level);
+        }
+    }
 }

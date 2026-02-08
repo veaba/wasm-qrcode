@@ -2,7 +2,7 @@
 
 use core::fmt::Write;
 
-use crate::{
+use rust_shared::{
     qr_8bit_byte::QR8bitByte,
     qr_bit_buffer::BitBuffer,
     qr_code_model::{get_type_number, PATTERN_POSITION_TABLE, QRErrorCorrectLevel, QRMode},

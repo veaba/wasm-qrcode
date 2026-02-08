@@ -36,3 +36,26 @@ impl Default for BitBuffer {
         Self::new()
     }
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_bit_buffer_basic() {
+        let mut buf = BitBuffer::new();
+        buf.put(0x0F, 4); // 1111
+        assert_eq!(buf.length, 4);
+        assert_eq!(buf.buffer[0], 0xF0); // 11110000
+    }
+
+    #[test]
+    fn test_bit_buffer_multiple_bytes() {
+        let mut buf = BitBuffer::new();
+        buf.put(0xFF, 8);
+        buf.put(0x01, 1);
+        assert_eq!(buf.length, 9);
+        assert_eq!(buf.buffer[0], 0xFF);
+        assert_eq!(buf.buffer[1], 0x80);
+    }
+}

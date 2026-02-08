@@ -4,17 +4,22 @@
 //!
 //! 注意: 验证和比较工具已迁移到 bench/rust-tools
 
-mod qr_8bit_byte;
-mod qr_bit_buffer;
+// 本地模块：核心 QRCode 实现（特有，不共享）
 mod qr_code;
-mod qr_code_model;
-mod qr_math;
-mod qr_polynomial;
-mod qr_rs_block;
-mod qr_util;
 
+// 从 rust-shared 重新导出
+pub use rust_shared::{
+    qr_8bit_byte::QR8bitByte,
+    qr_bit_buffer::BitBuffer,
+    qr_code_model::{get_min_version, QRErrorCorrectLevel, QRErrorCorrectLevel as CorrectLevel},
+    qr_math::QRMath,
+    qr_polynomial::Polynomial,
+    qr_rs_block::get_rs_blocks,
+    qr_util::get_bch_digit,
+};
+
+// 重新导出本地模块
 pub use qr_code::{QRCode, QRCodeOptions};
-pub use qr_code_model::{QRErrorCorrectLevel, QRErrorCorrectLevel as CorrectLevel};
 
 // 重新导出，保持 API 兼容
 pub use qr_code::QRCode as QRCodeWasm;
@@ -203,7 +208,7 @@ mod tests {
 
     #[test]
     fn test_get_rs_blocks() {
-        use crate::qr_rs_block::get_rs_blocks;
+        use crate::get_rs_blocks;
 
         // 测试类型号 1，所有纠错级别
         for level in [QRErrorCorrectLevel::L, QRErrorCorrectLevel::M,

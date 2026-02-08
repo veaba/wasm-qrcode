@@ -1,4 +1,4 @@
-//! QR Code Model
+//! QR Code Model - Shared constants and types
 
 /// QR Code 模式
 pub struct QRMode;
@@ -11,15 +11,16 @@ impl QRMode {
 }
 
 /// 错误纠正级别
-#[derive(Debug, Clone, Copy, PartialEq)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Default)]
 pub enum QRErrorCorrectLevel {
     L = 1,  // 低 (~7%)
     M = 0,  // 中 (~15%)
     Q = 3,  // 高 (~25%)
+    #[default]
     H = 2,  // 最高 (~30%)
 }
 
-/// 位置调整图案位置表
+/// 位置调整图案位置表 (完整 40 版本)
 pub const PATTERN_POSITION_TABLE: &[[i32; 7]] = &[
     [0, 0, 0, 0, 0, 0, 0],
     [6, 18, 0, 0, 0, 0, 0],
@@ -63,7 +64,7 @@ pub const PATTERN_POSITION_TABLE: &[[i32; 7]] = &[
     [6, 30, 58, 86, 114, 142, 170],
 ];
 
-/// 容量表
+/// 完整容量表 (40 版本 x 4 纠错级别)
 pub const QR_CODE_LIMIT_LENGTH: &[[i32; 4]] = &[
     [17, 14, 11, 7], [32, 26, 20, 14], [53, 42, 32, 24],
     [78, 62, 46, 34], [106, 84, 60, 44], [134, 106, 74, 58],
@@ -81,17 +82,12 @@ pub const QR_CODE_LIMIT_LENGTH: &[[i32; 4]] = &[
     [2953, 2331, 1663, 1273]
 ];
 
-/// 获取类型号
+/// 获取类型号 (完整版本，支持 40 个版本)
 pub fn get_type_number(text: &str, correct_level: QRErrorCorrectLevel) -> i32 {
     let length = text.len();
-
-    // 错误纠正级别映射
     let level_map = [1, 0, 3, 2];
     let level_index = level_map[correct_level as usize];
-
-    // 加 2 是为了考虑模式指示符(1字节)和长度字段(1字节)
-    // 这与 JS 实现保持一致
-    let data_length = length + 2;
+    let data_length = length + 2; // 考虑模式指示符和长度字段
 
     for (i, limits) in QR_CODE_LIMIT_LENGTH.iter().enumerate() {
         let limit = limits[level_index as usize];
@@ -99,7 +95,64 @@ pub fn get_type_number(text: &str, correct_level: QRErrorCorrectLevel) -> i32 {
             return (i + 1) as i32;
         }
     }
+    40 // 最大版本号
+}
 
-    // 如果文本太长，返回最大版本号
-    40
+/// 快速版本：获取最小版本号 (支持 1-10 版本，用于 qrcode-fast)
+pub fn get_min_version(text_len: usize, level: QRErrorCorrectLevel) -> i32 {
+    let level_idx = match level {
+        QRErrorCorrectLevel::L => 0,
+        QRErrorCorrectLevel::M => 1,
+        QRErrorCorrectLevel::Q => 2,
+        QRErrorCorrectLevel::H => 3,
+    };
+    
+    for (version, limits) in QR_CODE_LIMIT_LENGTH.iter().enumerate().skip(1).take(10) {
+        if limits[level_idx] >= text_len as i32 {
+            return version as i32;
+        }
+    }
+    10 // 最大支持 Version 10 (fast mode)
+}
+
+/// 获取位置调整图案位置
+pub fn get_pattern_position(type_number: i32) -> Vec<i32> {
+    let pos = &PATTERN_POSITION_TABLE[(type_number - 1) as usize];
+    pos.iter().copied().filter(|&x| x > 0).collect()
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_error_correct_level_values() {
+        assert_eq!(QRErrorCorrectLevel::L as i32, 1);
+        assert_eq!(QRErrorCorrectLevel::M as i32, 0);
+        assert_eq!(QRErrorCorrectLevel::Q as i32, 3);
+        assert_eq!(QRErrorCorrectLevel::H as i32, 2);
+    }
+
+    #[test]
+    fn test_get_type_number_basic() {
+        // "Hello" (5 chars) with H level should fit in version 1
+        let version = get_type_number("Hello", QRErrorCorrectLevel::H);
+        assert!((1..=40).contains(&version));
+    }
+
+    #[test]
+    fn test_get_min_version_fast() {
+        // Short text should fit in version 1-2
+        let v = get_min_version(5, QRErrorCorrectLevel::H);
+        assert!((1..=10).contains(&v));
+    }
+
+    #[test]
+    fn test_get_pattern_position() {
+        let pos = get_pattern_position(2);
+        assert_eq!(pos, vec![6, 18]);
+        
+        let pos = get_pattern_position(7);
+        assert_eq!(pos, vec![6, 22, 38]);
+    }
 }

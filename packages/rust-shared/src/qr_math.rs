@@ -1,4 +1,4 @@
-//! QR Code Math utilities
+//! QR Code Math utilities - Galois Field operations
 
 /// Galois Field 数学运算
 pub struct QRMath;
@@ -10,7 +10,7 @@ static INIT: std::sync::Once = std::sync::Once::new();
 fn init_tables() {
     INIT.call_once(|| {
         unsafe {
-            // Galois Field 指数表初始化 - QR 码标准
+            // Galois Field 指数表初始化
             // 生成多项式: x^8 + x^4 + x^3 + x^2 + 1 (0x11d)
             EXP_TABLE[0] = 1;
             for i in 1..256 {
@@ -20,7 +20,7 @@ fn init_tables() {
                 }
                 EXP_TABLE[i] = v;
             }
-
+            
             // 构建对数表
             for i in 0..255 {
                 LOG_TABLE[EXP_TABLE[i] as usize] = i as i32;
@@ -31,6 +31,7 @@ fn init_tables() {
 }
 
 impl QRMath {
+    /// Galois Field 对数
     pub fn glog(n: i32) -> i32 {
         init_tables();
         if n < 1 {
@@ -39,6 +40,7 @@ impl QRMath {
         unsafe { LOG_TABLE[n as usize] }
     }
 
+    /// Galois Field 指数
     pub fn gexp(n: i32) -> i32 {
         init_tables();
         let mut n = n;
@@ -58,41 +60,31 @@ mod tests {
 
     #[test]
     fn test_gexp_basic() {
-        // gexp(0) 应该等于 1
         assert_eq!(QRMath::gexp(0), 1);
-        // gexp(1) 应该等于 2 (α^1)
         assert_eq!(QRMath::gexp(1), 2);
-        // gexp(2) 应该等于 4 (α^2)
         assert_eq!(QRMath::gexp(2), 4);
     }
 
     #[test]
     fn test_gexp_overflow() {
-        // gexp(255) 应该等于 1 (α^255 = 1)
         assert_eq!(QRMath::gexp(255), 1);
-        // gexp(256) 应该等于 2 (α^256 = α^1)
         assert_eq!(QRMath::gexp(256), 2);
     }
 
     #[test]
     fn test_gexp_negative() {
-        // gexp(-1) 应该等于 α^254
         assert_eq!(QRMath::gexp(-1), QRMath::gexp(254));
     }
 
     #[test]
     fn test_glog_basic() {
-        // glog(1) 应该等于 0
         assert_eq!(QRMath::glog(1), 0);
-        // glog(2) 应该等于 1
         assert_eq!(QRMath::glog(2), 1);
-        // glog(4) 应该等于 2
         assert_eq!(QRMath::glog(4), 2);
     }
 
     #[test]
     fn test_glog_gexp_inverse() {
-        // glog(gexp(x)) == x (mod 255)
         for i in 0..255 {
             let exp = QRMath::gexp(i);
             let log = QRMath::glog(exp);
@@ -102,7 +94,6 @@ mod tests {
 
     #[test]
     fn test_gexp_glog_inverse() {
-        // gexp(glog(x)) == x (for x != 0)
         for i in 1..256 {
             let log = QRMath::glog(i);
             let exp = QRMath::gexp(log);

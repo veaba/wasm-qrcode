@@ -1,0 +1,20 @@
+[package]
+name = "rust-shared"
+version = "0.0.1-alpha"
+authors = ["veaba <Godpu@outlook.com>"]
+description = "Core QR Code library shared between qrcode-rust and qrcode-fast"
+repository = "https://github.com/veaba/qrcodes"
+license = "MIT"
+edition = "2021"
+
+[lib]
+crate-type = ["rlib"]
+
+[features]
+default = ["full"]
+# 完整功能：支持所有 40 个版本和完整 API
+full = []
+# 快速模式：仅支持版本 1-10，优化性能
+fast = []
+
+[dependencies]

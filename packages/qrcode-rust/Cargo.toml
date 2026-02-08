@@ -11,6 +11,7 @@ edition = "2021"
 crate-type = ["rlib"]
 
 [dependencies]
+rust-shared = { path = "../rust-shared" }
 serde = { version = "1.0", features = ["derive"], optional = true }
 serde_json = { version = "1.0", optional = true }
 image = { version = "0.24", optional = true }
