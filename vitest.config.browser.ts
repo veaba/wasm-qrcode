@@ -24,7 +24,10 @@ export default defineConfig({
       // Use system Chrome/Chromium instead of downloading
       providerOptions: {
         launch: {
-          executablePath: '/Applications/Google Chrome.app/Contents/MacOS/Google Chrome',
+          // In CI, use Playwright's bundled Chromium; locally, use system Chrome
+          ...(process.env.CI ? {} : {
+            executablePath: '/Applications/Google Chrome.app/Contents/MacOS/Google Chrome',
+          }),
           args: ['--no-sandbox', '--disable-setuid-sandbox'],
         },
         headless: !process.env.HEADED,
