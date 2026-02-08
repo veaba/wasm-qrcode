@@ -246,6 +246,12 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
+      - name: Setup Rust
+        uses: dtolnay/rust-toolchain@stable
+
+      - name: Install wasm-pack
+        run: curl https://rustwasm.github.io/wasm-pack/installer/init.sh -sSf | sh
+
       - name: Setup pnpm
         uses: pnpm/action-setup@v2
         with:
@@ -267,6 +273,9 @@ jobs:
 
       - name: Build js-shared
         run: pnpm --filter @veaba/js-shared build
+
+      - name: Build qrcode-wasm
+        run: pnpm --filter @veaba/qrcode-wasm build
 
       - name: Type check all packages
         run: |
