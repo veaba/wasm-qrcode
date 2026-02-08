@@ -78,8 +78,8 @@ fn main() {
 
     // 格式信息区域
     // 左上: (8, 0) 到 (8, 8) 和 (0, 8) 到 (8, 8)
-    for i in 0..9 {
-        is_fixed[8][i] = true;
+    for (i, is_fixed_row) in is_fixed[8].iter_mut().take(9).enumerate() {
+        *is_fixed_row = true;
         is_fixed[i][8] = true;
     }
     // 右上: (8, module_count-8) 到 (8, module_count-1)
@@ -96,7 +96,7 @@ fn main() {
     for row in 0..module_count {
         for col in 0..module_count {
             let is_data = !is_fixed[row as usize][col as usize];
-            let is_dark = qr.is_dark(row as i32, col as i32);
+            let is_dark = qr.is_dark(row, col);
 
             if is_data {
                 print!("{}", if is_dark { 'D' } else { 'd' });
