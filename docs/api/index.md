@@ -11,7 +11,7 @@ QRCode 生成器的完整 API 文档。
 | `@veaba/qrcode-node` | Node.js | `QRCode`, `QRErrorCorrectLevel` | Node.js 环境 |
 | `@veaba/qrcode-bun` | Bun | `QRCode`, `QRErrorCorrectLevel` | Bun 运行时 |
 | `@veaba/qrcode-rust` | Rust | `QRCode`, `QRErrorCorrectLevel` | 纯 Rust crate |
-| `@veaba/js-shared` | 通用 | `QRCodeCore`, 工具函数 | 内部共享包 |
+| `@veaba/qrcode-js-shared` | 通用 | `QRCodeCore`, 工具函数 | 内部共享包 |
 
 ## 统一 API
 

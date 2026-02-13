@@ -319,7 +319,7 @@ cargo run --bin benchmark    # 测试 Rust 原生性能
 - `@veaba/qrcode-js` - 纯 JavaScript 版本（API 一致）
 - `@veaba/qrcode-node` - Node.js 版本
 - `@veaba/qrcode-bun` - Bun 运行时版本
-- `@veaba/js-shared` - 共享核心库
+- `@veaba/qrcode-js-shared` - 共享核心库
 
 ## License
 

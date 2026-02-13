@@ -4,7 +4,7 @@ Node.js 专用的 QRCode 生成器 - 纯 JavaScript 实现。
 
 ## 简介
 
-基于 `@veaba/js-shared` 核心库构建，专为 Node.js 环境优化，支持生成 SVG 和 PNG Buffer。
+基于 `@veaba/qrcode-js-shared` 核心库构建，专为 Node.js 环境优化，支持生成 SVG 和 PNG Buffer。
 
 ## 安装
 
@@ -193,7 +193,7 @@ interface StyledSVGOptions {
 
 ## 依赖
 
-- `@veaba/js-shared` - 核心共享库
+- `@veaba/qrcode-js-shared` - 核心共享库
 
 ## 性能测试
 

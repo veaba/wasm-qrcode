@@ -1,13 +1,17 @@
 [package]
 name = "qrcode-fast"
 version = "0.0.1-alpha"
+authors = ["veaba <Godpu@outlook.com>"]
+description = "High-performance QR Code generator using WebAssembly"
+repository = "https://github.com/veaba/qrcodes"
+license = "MIT"
 edition = "2021"
 
 [lib]
 crate-type = ["cdylib", "rlib"]
 
 [dependencies]
-rust-shared = { path = "../rust-shared" }
+qrcode-rust-shared = { path = "../qrcode-rust-shared", version = "0.0.1-alpha" }
 
 [dev-dependencies]
 criterion = { version = "0.5", features = ["html_reports"] }

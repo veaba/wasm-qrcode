@@ -1,4 +1,4 @@
-# @veaba/js-shared
+# @veaba/qrcode-js-shared
 
 **注意：** 这是一个内部私有包，不对外发布。所有功能都通过其他公开包（`@veaba/qrcode-js`、`@veaba/qrcode-node`、`@veaba/qrcode-bun`）自动提供，无需单独安装。
 
@@ -175,11 +175,11 @@ export async function getServerSideProps() {
 
 ## 架构位置
 
-`@veaba/js-shared` 是项目的内部核心库，所有 JavaScript/TypeScript 包都基于它构建。你不需要直接安装或导入此包，所有功能都通过公开包自动提供。
+`@veaba/qrcode-js-shared` 是项目的内部核心库，所有 JavaScript/TypeScript 包都基于它构建。你不需要直接安装或导入此包，所有功能都通过公开包自动提供。
 
 ```
 内部核心（私有，不对外发布）
-└── @veaba/js-shared
+└── @veaba/qrcode-js-shared
     ├── QRCodeCore (核心算法)
     ├── 预设样式函数
     └── 工具函数

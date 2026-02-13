@@ -81,9 +81,9 @@ These APIs are intentionally different due to runtime capabilities:
 
 **Status**: Both packages must have identical APIs. Verify when making changes.
 
-## Shared Package: js-shared
+## Shared Package: qrcode-js-shared
 
-The `@veaba/js-shared` package provides:
+The `@veaba/qrcode-js-shared` package provides:
 
 - Core QRCode logic (`QRCodeCore` class)
 - Shared types and interfaces

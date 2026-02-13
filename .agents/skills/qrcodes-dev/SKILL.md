@@ -37,7 +37,7 @@ This is a pnpm monorepo containing QRCode generators for multiple runtimes and p
 
 ### Shared Package
 
-- `@veaba/js-shared` - Core logic, private (not published)
+- `@veaba/qrcode-js-shared` - Core logic, private (not published)
 
 ## Environment Requirements
 

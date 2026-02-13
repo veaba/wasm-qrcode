@@ -1,5 +1,5 @@
 [workspace]
-members = ["packages/rust-shared", "packages/qrcode-rust", "packages/qrcode-fast", "packages/qrcode-wasm", "bench/rust-tools"]
+members = ["packages/qrcode-rust-shared", "packages/qrcode-rust", "packages/qrcode-fast", "packages/qrcode-wasm", "bench/rust-tools"]
 resolver = "2"
 
 # Workspace-wide release profile (applies to all members)

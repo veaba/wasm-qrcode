@@ -1,4 +1,4 @@
-# @veaba/js-shared
+# @veaba/qrcode-js-shared
 
 QRCode 生成器的共享核心库（私有包）。
 
@@ -33,7 +33,7 @@ QRCode 生成器的共享核心库（私有包）。
 QRCode 核心实现类，使用 Uint8Array 优化内存使用。
 
 ```typescript
-import { QRCodeCore, QRErrorCorrectLevel } from '@veaba/js-shared';
+import { QRCodeCore, QRErrorCorrectLevel } from '@veaba/qrcode-js-shared';
 
 const qr = new QRCodeCore('Hello World', QRErrorCorrectLevel.H);
 
@@ -65,7 +65,7 @@ import {
   generateWechatStyleQRCode,
   generateDouyinStyleQRCode,
   // ... 更多
-} from '@veaba/js-shared';
+} from '@veaba/qrcode-js-shared';
 
 // 圆角二维码
 const svg1 = generateRoundedQRCode('Hello', 256, 8);
@@ -87,7 +87,7 @@ import {
   generateBatchQRCodes,
   generateQRCodeAsync,
   generateBatchAsync
-} from '@veaba/js-shared';
+} from '@veaba/qrcode-js-shared';
 
 // 批量生成
 const svgs = generateBatchQRCodes(['text1', 'text2', 'text3']);
@@ -108,7 +108,7 @@ import {
   getCacheStats,
   configureCache,
   generateRoundedQRCodeCached
-} from '@veaba/js-shared';
+} from '@veaba/qrcode-js-shared';
 
 // 获取缓存的 QRCode
 const qr = getCachedQRCode('text', QRErrorCorrectLevel.H);

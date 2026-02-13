@@ -1,6 +1,6 @@
 # 缓存系统
 
-**注意：** `@veaba/js-shared` 是内部私有包。缓存功能通过以下公开包自动提供：
+**注意：** `@veaba/qrcode-js-shared` 是内部私有包。缓存功能通过以下公开包自动提供：
 
 - `@veaba/qrcode-js`
 - `@veaba/qrcode-node`
@@ -8,7 +8,7 @@
 
 所有公开包都包含相同的缓存 API，无需单独安装内部包。
 
-`@veaba/js-shared` 提供 LRU (Least Recently Used) 缓存系统，用于优化重复 QRCode 的生成性能。
+`@veaba/qrcode-js-shared` 提供 LRU (Least Recently Used) 缓存系统，用于优化重复 QRCode 的生成性能。
 
 ## 核心概念
 

@@ -17,8 +17,8 @@
     "noEmit": true,
     "baseUrl": ".",
     "paths": {
-      "@veaba/js-shared": [
-        "../packages/js-shared/src"
+      "@veaba/qrcode-js-shared": [
+        "../packages/qrcode-js-shared/src"
       ],
       "@veaba/qrcode-js": [
         "../packages/qrcode-js/src"

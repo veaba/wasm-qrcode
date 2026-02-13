@@ -1,8 +1,8 @@
 # Build all packages in the correct order
 $ErrorActionPreference = "Stop"
 
-Write-Host "Building @veaba/js-shared..." -ForegroundColor Green
-Set-Location packages/js-shared
+Write-Host "Building @veaba/qrcode-js-shared..." -ForegroundColor Green
+Set-Location packages/qrcode-js-shared
 pnpm run build
 Set-Location ../..
 

@@ -12,7 +12,7 @@ tests/
 │   └── index.test.ts
 ├── qrcode-node/         # Node.js 运行时测试
 │   └── index.test.ts
-├── js-shared/       # 共享核心库测试
+├── qrcode-js-shared/       # 共享核心库测试
 │   └── index.test.ts
 └── qrcode-wasm/         # WebAssembly 测试
     ├── index.test.ts
@@ -41,7 +41,7 @@ npx vitest run tests/qrcode-bun
 npx vitest run tests/qrcode-node
 
 # Shared 核心库测试
-npx vitest run tests/js-shared
+npx vitest run tests/qrcode-js-shared
 ```
 
 ### 监视模式
@@ -64,7 +64,7 @@ npx vitest --watch
 - **测试内容**: Node.js 运行时的 QRCode 生成、PNG Buffer 生成
 - **特有功能**: `toPNGBuffer()` 测试
 
-### js-shared
+### qrcode-js-shared
 
 - **运行环境**: 任何 JavaScript 运行时
 - **测试内容**: 核心 QRCode 算法、数学运算、缓存系统、样式生成
@@ -73,7 +73,7 @@ npx vitest --watch
 ### qrcode-js
 
 - **运行环境**: 浏览器/Node.js/Bun
-- **测试内容**: 验证从 `js-shared` 的 re-export 是否正确
+- **测试内容**: 验证从 `qrcode-js-shared` 的 re-export 是否正确
 
 ### qrcode-wasm
 
@@ -90,7 +90,7 @@ npx vitest --watch
 import { QRCode } from '../../packages/qrcode-bun/src/index.ts';
 
 // 从 packages 导入 shared 模块
-import { QRCodeCore } from '../../packages/js-shared/src/index.js';
+import { QRCodeCore } from '../../packages/qrcode-js-shared/src/index.js';
 
 // 测试框架
 import { describe, it, expect } from 'vitest';

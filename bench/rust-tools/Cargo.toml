@@ -2,6 +2,7 @@
 name = "rust-tools"
 version = "0.1.0"
 edition = "2021"
+publish = false
 
 [dependencies]
 qrcode-fast = { path = "../../packages/qrcode-fast" }

@@ -7,7 +7,7 @@
 // 本地模块：核心 QRCode 实现（特有，不共享）
 mod qr_code;
 
-// 从 rust-shared 重新导出
+// 从 qrcode-rust-shared 重新导出
 pub use rust_shared::{
     qr_8bit_byte::QR8bitByte,
     qr_bit_buffer::BitBuffer,

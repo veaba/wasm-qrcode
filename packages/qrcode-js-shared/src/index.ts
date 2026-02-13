@@ -1079,7 +1079,7 @@ export const VERSION = '1.0.0';
 export function getVersionInfo(): string {
   return JSON.stringify({
     version: VERSION,
-    name: '@veaba/js-shared',
+    name: '@veaba/qrcode-js-shared',
     features: [
       'basic_qrcode',
       'styled_svg',
