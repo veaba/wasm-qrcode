@@ -55,6 +55,7 @@ export default defineConfig({
             { text: '概览', link: '/api/' },
             { text: 'QRCodeCore', link: '/api/core' },
             { text: 'QRCodeWasm', link: '/api/wasm' },
+            { text: 'Rust API', link: '/api/rust' },
             { text: '缓存系统', link: '/api/cache' },
           ],
         },

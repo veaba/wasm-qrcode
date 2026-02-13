@@ -10,7 +10,8 @@ QRCode 生成器的完整 API 文档。
 | `@veaba/qrcode-wasm` | 浏览器 | `QRCodeCore`, `QRErrorCorrectLevel`, `init` | Rust WASM，性能最佳 |
 | `@veaba/qrcode-node` | Node.js | `QRCode`, `QRErrorCorrectLevel` | Node.js 环境 |
 | `@veaba/qrcode-bun` | Bun | `QRCode`, `QRErrorCorrectLevel` | Bun 运行时 |
-| `@veaba/qrcode-rust` | Rust | `QRCode`, `QRErrorCorrectLevel` | 纯 Rust crate |
+| `qrcode-rust` | Rust | `QRCode`, `QRCodeOptions` | 纯 Rust crate |
+| `qrcode-fast` | Rust | `QRCode`, `QRErrorCorrectLevel` | 极致性能 Rust crate |
 | `@veaba/qrcode-js-shared` | 通用 | `QRCodeCore`, 工具函数 | 内部共享包 |
 
 ## 统一 API
@@ -40,6 +41,7 @@ const svg = qr.toSVG(256);
 
 - [QRCodeCore](./core) - 核心 QRCode 类
 - [QRCodeWasm](./wasm) - WASM 特定 API
+- [Rust API](./rust) - Rust 原生 API
 - [缓存系统](./cache) - LRU 缓存 API
 
 ## 类型定义
