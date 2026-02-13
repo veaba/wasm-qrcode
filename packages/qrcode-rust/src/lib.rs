@@ -7,7 +7,7 @@
 mod qr_code;
 
 // 从 qrcode-rust-shared 重新导出
-pub use rust_shared::{
+pub use qrcode_rust_shared::{
     qr_8bit_byte::QR8bitByte,
     qr_bit_buffer::BitBuffer,
     qr_code_model::{get_type_number, QRErrorCorrectLevel, QRMode, PATTERN_POSITION_TABLE},

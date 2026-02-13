@@ -2,7 +2,7 @@
 
 use core::fmt::Write;
 
-use rust_shared::{
+use qrcode_rust_shared::{
     qr_8bit_byte::QR8bitByte,
     qr_bit_buffer::BitBuffer,
     qr_code_model::{get_type_number, QRErrorCorrectLevel, QRMode, PATTERN_POSITION_TABLE},
