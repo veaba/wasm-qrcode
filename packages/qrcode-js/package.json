@@ -1,13 +1,13 @@
 {
   "name": "@veaba/qrcode-js",
-  "version": "0.0.6",
+  "version": "0.1.0",
   "author": "veaba",
   "license": "MIT",
   "repository": {
     "type": "git",
     "url": "https://github.com/veaba/qrcodes"
   },
-  "description": "A browser-compatible QRCode library with caching - extends @veaba/js-shared",
+  "description": "A browser-compatible QRCode library with caching - extends @veaba/qrcode-js-shared",
   "type": "module",
   "main": "dist/index.js",
   "module": "dist/index.js",
@@ -44,7 +44,7 @@
     "cache"
   ],
   "dependencies": {
-    "@veaba/js-shared": "workspace:*"
+    "@veaba/qrcode-js-shared": "workspace:*"
   },
   "devDependencies": {
     "tsdown": "^0.10.0",

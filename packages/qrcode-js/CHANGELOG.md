@@ -1,5 +1,16 @@
 # @veaba/qrcode-js
 
+## 0.1.0
+
+### Minor Changes
+
+- release: v0.1.0
+
+### Patch Changes
+
+- Updated dependencies
+  - @veaba/qrcode-js-shared@0.1.0
+
 ## 0.0.6
 
 ### Patch Changes

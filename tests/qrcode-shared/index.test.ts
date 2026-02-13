@@ -1,5 +1,5 @@
 /**
- * @veaba/js-shared - Unit Tests
+ * @veaba/qrcode-js-shared - Unit Tests
  */
 
 import { describe, it, expect, beforeEach, afterEach } from 'vitest';
@@ -31,9 +31,9 @@ import {
   configureCache,
   generateRoundedQRCodeCached,
   generateBatchQRCodesCached,
-} from '../../packages/js-shared/src/index.js';
+} from '../../packages/qrcode-js-shared/src/index.js';
 
-describe('@veaba/js-shared - QRMath', () => {
+describe('@veaba/qrcode-js-shared - QRMath', () => {
   it('should initialize EXP_TABLE and LOG_TABLE correctly', () => {
     expect(QRMath.EXP_TABLE).toBeInstanceOf(Uint8Array);
     expect(QRMath.EXP_TABLE.length).toBe(256);
@@ -65,7 +65,7 @@ describe('@veaba/js-shared - QRMath', () => {
   });
 });
 
-describe('@veaba/js-shared - Polynomial', () => {
+describe('@veaba/qrcode-js-shared - Polynomial', () => {
   it('should create polynomial from array', () => {
     const poly = new Polynomial([1, 2, 3]);
     expect(poly.length).toBe(3);
@@ -101,7 +101,7 @@ describe('@veaba/js-shared - Polynomial', () => {
   });
 });
 
-describe('@veaba/js-shared - BitBuffer', () => {
+describe('@veaba/qrcode-js-shared - BitBuffer', () => {
   it('should create empty buffer', () => {
     const buffer = new BitBuffer();
     expect(buffer.buffer).toEqual([]);
@@ -132,7 +132,7 @@ describe('@veaba/js-shared - BitBuffer', () => {
   });
 });
 
-describe('@veaba/js-shared - getErrorCorrectPolynomial', () => {
+describe('@veaba/qrcode-js-shared - getErrorCorrectPolynomial', () => {
   it('should cache results', () => {
     const poly1 = getErrorCorrectPolynomial(5);
     const poly2 = getErrorCorrectPolynomial(5);
@@ -145,7 +145,7 @@ describe('@veaba/js-shared - getErrorCorrectPolynomial', () => {
   });
 });
 
-describe('@veaba/js-shared - getTypeNumber', () => {
+describe('@veaba/qrcode-js-shared - getTypeNumber', () => {
   it('should return correct type number for short text', () => {
     const typeNumber = getTypeNumber(10, QRErrorCorrectLevel.H);
     // Type 2 is correct for 10 bytes with H level (L=0,M=1,Q=3,H=2)
@@ -162,7 +162,7 @@ describe('@veaba/js-shared - getTypeNumber', () => {
   });
 });
 
-describe('@veaba/js-shared - QRCodeCore', () => {
+describe('@veaba/qrcode-js-shared - QRCodeCore', () => {
   it('should create QRCode with text', () => {
     const qr = new QRCodeCore('Hello World');
     expect(qr.text).toBe('Hello World');
@@ -262,7 +262,7 @@ describe('@veaba/js-shared - QRCodeCore', () => {
   });
 });
 
-describe('@veaba/js-shared - Style Generator Functions', () => {
+describe('@veaba/qrcode-js-shared - Style Generator Functions', () => {
   it('generateRoundedQRCode should return SVG', () => {
     const svg = generateRoundedQRCode('test', 256, 8);
     expect(svg).toContain('<svg');
@@ -319,7 +319,7 @@ describe('@veaba/js-shared - Style Generator Functions', () => {
   });
 });
 
-describe('@veaba/js-shared - Batch Generation', () => {
+describe('@veaba/qrcode-js-shared - Batch Generation', () => {
   it('generateBatchQRCodes should return array of SVGs', () => {
     const svgs = generateBatchQRCodes(['test1', 'test2', 'test3']);
     expect(svgs).toHaveLength(3);
@@ -335,7 +335,7 @@ describe('@veaba/js-shared - Batch Generation', () => {
   });
 });
 
-describe('@veaba/js-shared - Async Generation', () => {
+describe('@veaba/qrcode-js-shared - Async Generation', () => {
   it('generateQRCodeAsync should return Promise with SVG', async () => {
     const svg = await generateQRCodeAsync('test');
     expect(svg).toContain('<svg');
@@ -355,7 +355,7 @@ describe('@veaba/js-shared - Async Generation', () => {
   });
 });
 
-describe('@veaba/js-shared - Cache System', () => {
+describe('@veaba/qrcode-js-shared - Cache System', () => {
   beforeEach(() => {
     clearQRCodeCache();
   });
@@ -428,7 +428,7 @@ describe('@veaba/js-shared - Cache System', () => {
   });
 });
 
-describe('@veaba/js-shared - Edge Cases', () => {
+describe('@veaba/qrcode-js-shared - Edge Cases', () => {
   it('should handle empty string', () => {
     const qr = new QRCodeCore('');
     expect(qr.text).toBe('');
@@ -461,7 +461,7 @@ describe('@veaba/js-shared - Edge Cases', () => {
   });
 });
 
-describe('@veaba/js-shared - Constants', () => {
+describe('@veaba/qrcode-js-shared - Constants', () => {
   it('should export QRErrorCorrectLevel enum', () => {
     expect(QRErrorCorrectLevel.L).toBe(1);
     expect(QRErrorCorrectLevel.M).toBe(0);

@@ -1,5 +1,5 @@
 /**
- * @veaba/js-shared - Input Validation Security Tests
+ * @veaba/qrcode-js-shared - Input Validation Security Tests
  *
  * 这些测试验证了独立的输入验证模块的功能
  * 注意：由于主 index.ts 文件被回滚，这里只测试验证模块本身
@@ -11,9 +11,9 @@ import {
   validateStyledOptions,
   isValidColor,
   QRCodeInputError,
-} from '../../packages/js-shared/src/validation-module.js';
+} from '../../packages/qrcode-js-shared/src/validation-module.js';
 
-describe('@veaba/js-shared - Input Validation (Standalone Module)', () => {
+describe('@veaba/qrcode-js-shared - Input Validation (Standalone Module)', () => {
   describe('validateQRCodeInput', () => {
     it('should accept valid text input', () => {
       const result = validateQRCodeInput('Hello World');
@@ -330,7 +330,7 @@ describe('@veaba/js-shared - Input Validation (Standalone Module)', () => {
   });
 });
 
-describe('@veaba/js-shared - Validation Performance', () => {
+describe('@veaba/qrcode-js-shared - Validation Performance', () => {
   it('should validate input quickly', () => {
     const start = performance.now();
     for (let i = 0; i < 1000; i++) {
@@ -355,7 +355,7 @@ describe('@veaba/js-shared - Validation Performance', () => {
   });
 });
 
-describe('@veaba/js-shared - Validation Edge Cases', () => {
+describe('@veaba/qrcode-js-shared - Validation Edge Cases', () => {
   it('should handle strings with mixed unicode', () => {
     const result = validateQRCodeInput('Hello你好🌍World');
     expect(result.valid).toBe(true);

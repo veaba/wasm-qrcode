@@ -466,7 +466,7 @@ export function generateBatchQRCodesCached(texts: string[], options: { correctLe
 
 /**
  * Generate QRCode asynchronously
- * Returns SVG string directly for API consistency with qrcode-js/js-shared
+ * Returns SVG string directly for API consistency with qrcode-js/qrcode-js-shared
  */
 export function generateQRCodeAsync(
   text: string,
@@ -489,7 +489,7 @@ export function generateQRCodeAsync(
 
 /**
  * Generate batch QRCodes asynchronously
- * Returns array of SVG strings for API consistency with qrcode-js/js-shared
+ * Returns array of SVG strings for API consistency with qrcode-js/qrcode-js-shared
  */
 export function generateBatchAsync(texts: string[], options: { cache?: boolean; correctLevel?: CorrectLevel; size?: number; styled?: boolean; style?: StyledSVGOptions } = {}): Promise<string[]> {
   return Promise.all(texts.map(text => generateQRCodeAsync(text, options)));
@@ -546,7 +546,7 @@ export function generateBatchAsyncAdvanced(
 }
 
 // ============================================
-// Snake_case Aliases (for API consistency with qrcode-js/js-shared)
+// Snake_case Aliases (for API consistency with qrcode-js/qrcode-js-shared)
 // ============================================
 
 export const generate_rounded_qrcode = generateRoundedQRCodeCached;
@@ -580,5 +580,5 @@ export { init_thread_pool, is_parallel_supported, QRCodeGenerator, greet };
 // Default Export
 // ============================================
 
-// Default export for unified API consistency with qrcode-js/js-shared
+// Default export for unified API consistency with qrcode-js/qrcode-js-shared
 export default QRCodeCore;

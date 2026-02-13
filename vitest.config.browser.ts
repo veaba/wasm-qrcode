@@ -11,7 +11,7 @@ export default defineConfig({
   resolve: {
     alias: {
       '@veaba/qrcode-js': path.resolve(__dirname, 'packages/qrcode-js/src/index.ts'),
-      '@veaba/js-shared': path.resolve(__dirname, 'packages/js-shared/dist/index.js'),
+      '@veaba/qrcode-js-shared': path.resolve(__dirname, 'packages/qrcode-js-shared/dist/index.js'),
       '@veaba/qrcode-wasm': path.resolve(__dirname, 'packages/qrcode-wasm/src/index.ts'),
     },
   },

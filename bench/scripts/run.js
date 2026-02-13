@@ -63,8 +63,8 @@ function ensurePublicDir() {
 
 // 构建 shared 包
 function buildShared() {
-  log('🔨 构建 @veaba/js-shared...', 'yellow');
-  const sharedDir = path.join(rootDir, 'packages/js-shared');
+  log('🔨 构建 @veaba/qrcode-js-shared...', 'yellow');
+  const sharedDir = path.join(rootDir, 'packages/qrcode-js-shared');
 
   // 检查目录是否存在
   if (!fs.existsSync(sharedDir)) {

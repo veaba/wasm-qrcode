@@ -37,7 +37,7 @@ function check(condition, message) {
 }
 
 const packages = [
-  { name: '@veaba/js-shared', path: 'packages/js-shared' },
+  { name: '@veaba/qrcode-js-shared', path: 'packages/qrcode-js-shared' },
   { name: '@veaba/qrcode-wasm', path: 'packages/qrcode-wasm' },
   { name: '@veaba/qrcode-node', path: 'packages/qrcode-node' },
   { name: '@veaba/qrcode-bun', path: 'packages/qrcode-bun' },

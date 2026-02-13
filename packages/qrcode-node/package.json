@@ -1,6 +1,6 @@
 {
   "name": "@veaba/qrcode-node",
-  "version": "0.0.6",
+  "version": "0.1.0",
   "description": "Node.js version of QRCode generator - Pure JavaScript implementation",
   "type": "module",
   "main": "dist/index.js",
@@ -38,7 +38,7 @@
     "url": "https://github.com/veaba/qrcodes"
   },
   "dependencies": {
-    "@veaba/js-shared": "workspace:*"
+    "@veaba/qrcode-js-shared": "workspace:*"
   },
   "devDependencies": {
     "typescript": "^5.0.0"

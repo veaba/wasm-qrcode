@@ -9,7 +9,7 @@ export default defineConfig({
   sourcemap: true,
   minify: true,
   // 将 workspace 依赖打包进 bundle
-  noExternal: ['@veaba/js-shared'],
+  noExternal: ['@veaba/qrcode-js-shared'],
   // IIFE 格式配置
   globalName: 'QRCodeJS',
 });

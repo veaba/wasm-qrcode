@@ -5,7 +5,7 @@
 
 import { describe, it, expect, beforeEach, afterEach } from 'vitest';
 
-describe('@veaba/qrcode-js - Re-exports from @veaba/js-shared', () => {
+describe('@veaba/qrcode-js - Re-exports from @veaba/qrcode-js-shared', () => {
   it('should re-export QRCodeCore', async () => {
     const mod = await import('../../packages/qrcode-js/src/index.js');
     expect(mod.QRCodeCore).toBeDefined();

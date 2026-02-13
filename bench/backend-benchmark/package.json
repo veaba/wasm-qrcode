@@ -10,7 +10,7 @@
   "dependencies": {
     "@veaba/qrcode-node": "workspace:*",
     "@veaba/qrcode-bun": "workspace:*",
-    "@veaba/js-shared": "workspace:*"
+    "@veaba/qrcode-js-shared": "workspace:*"
   },
   "devDependencies": {
     "tsx": "^4.0.0",

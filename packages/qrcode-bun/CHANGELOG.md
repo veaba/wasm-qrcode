@@ -1,5 +1,11 @@
 # @veaba/qrcode-bun
 
+## 0.1.0
+
+### Minor Changes
+
+- release: v0.1.0
+
 ## 0.0.6
 
 ### Patch Changes

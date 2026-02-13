@@ -1,5 +1,11 @@
 # @veaba/qrcode-wasm
 
+## 0.1.0
+
+### Minor Changes
+
+- release: v0.1.0
+
 ## 0.0.8
 
 ### Patch Changes
