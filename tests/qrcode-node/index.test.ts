@@ -252,3 +252,91 @@ describe('@veaba/qrcode-node - Edge Cases', () => {
     expect(Buffer.isBuffer(buffer)).toBe(true);
   });
 });
+
+describe('@veaba/qrcode-node - URL String Tests', () => {
+  const testUrls = [
+    'http://127.0.0.1:8080/106p.zip',
+    'http://127.0.0.1:8080/%E9%80%89%E7%89%87.zip',
+  ];
+
+  it('should generate QR codes for test URLs', () => {
+    for (const url of testUrls) {
+      const qr = new QRCode(url, QRErrorCorrectLevel.H);
+      expect(qr.text).toBe(url);
+      expect(qr.moduleCount).toBeGreaterThan(0);
+      
+      const svg = qr.toSVG();
+      expect(svg).toContain('<svg');
+      expect(svg).toContain('</svg>');
+    }
+  });
+
+  it('should generate styled QR codes for test URLs', () => {
+    for (const url of testUrls) {
+      const roundedSvg = generateRoundedQRCode(url, 256, 8);
+      expect(roundedSvg).toContain('<svg');
+      expect(roundedSvg).toContain('</svg>');
+
+      const gradientSvg = generateGradientQRCode(url, 256, '#667eea', '#764ba2');
+      expect(gradientSvg).toContain('<svg');
+      expect(gradientSvg).toContain('</svg>');
+    }
+  });
+
+  it('should generate consistent module counts for test URLs', () => {
+    for (const url of testUrls) {
+      const qr1 = new QRCode(url, QRErrorCorrectLevel.H);
+      const qr2 = new QRCode(url, QRErrorCorrectLevel.H);
+      
+      // Same input should produce same module count
+      expect(qr1.moduleCount).toBe(qr2.moduleCount);
+    }
+  });
+
+  it('should handle URL with ASCII characters correctly', () => {
+    const url = 'http://127.0.0.1:8080/106p.zip';
+    const qr = new QRCode(url, QRErrorCorrectLevel.H);
+    
+    expect(qr.text).toBe(url);
+    expect(qr.moduleCount).toBeGreaterThanOrEqual(21);
+    expect(qr.moduleCount).toBeLessThanOrEqual(41);
+  });
+
+  it('should handle URL with percent-encoded characters correctly', () => {
+    const url = 'http://127.0.0.1:8080/%E9%80%89%E7%89%87.zip';
+    const qr = new QRCode(url, QRErrorCorrectLevel.H);
+    
+    expect(qr.text).toBe(url);
+    expect(qr.moduleCount).toBeGreaterThanOrEqual(21);
+    expect(qr.moduleCount).toBeLessThanOrEqual(41);
+  });
+
+  it('should generate PNG buffers for test URLs', () => {
+    for (const url of testUrls) {
+      const qr = new QRCode(url, QRErrorCorrectLevel.H);
+      const buffer = qr.toPNGBuffer(256);
+      expect(Buffer.isBuffer(buffer)).toBe(true);
+      expect(buffer.length).toBeGreaterThan(0);
+      // BMP file signature
+      expect(buffer[0]).toBe(0x42); // 'B'
+      expect(buffer[1]).toBe(0x4D); // 'M'
+    }
+  });
+
+  it('should batch generate QR codes for test URLs', () => {
+    const svgs = generateBatchQRCodes(testUrls, { size: 256, correctLevel: QRErrorCorrectLevel.H });
+    expect(svgs).toHaveLength(2);
+    svgs.forEach(svg => {
+      expect(svg).toContain('<svg');
+      expect(svg).toContain('</svg>');
+    });
+  });
+
+  it('should async generate QR codes for test URLs', async () => {
+    for (const url of testUrls) {
+      const svg = await generateQRCodeAsync(url, { size: 256, correctLevel: QRErrorCorrectLevel.H });
+      expect(svg).toContain('<svg');
+      expect(svg).toContain('</svg>');
+    }
+  });
+});

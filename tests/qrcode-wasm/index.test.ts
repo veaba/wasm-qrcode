@@ -290,4 +290,60 @@ describe('@veaba/qrcode-wasm', () => {
     it.skip('should generate QR codes', () => {});
     it.skip('should use cache', () => {});
   });
+
+  describe('URL String Tests', () => {
+    const testUrls = [
+      'http://127.0.0.1:8080/106p.zip',
+      'http://127.0.0.1:8080/%E9%80%89%E7%89%87.zip',
+    ];
+
+    it('should export functions for test URLs', () => {
+      // Verify the module exports the necessary functions
+      expect(mod.QRCodeCore).toBeDefined();
+      expect(mod.QRErrorCorrectLevel).toBeDefined();
+      expect(mod.generateRoundedQRCode).toBeDefined();
+      expect(mod.generateGradientQRCode).toBeDefined();
+    });
+
+    it.skip('should generate QR codes for test URLs (requires WASM)', () => {
+      // This test requires WASM to be initialized
+      for (const url of testUrls) {
+        const qr = new mod.QRCodeCore(url, mod.QRErrorCorrectLevel.H);
+        expect(qr.text).toBe(url);
+        expect(qr.moduleCount).toBeGreaterThan(0);
+        
+        const svg = qr.toSVG();
+        expect(svg).toContain('<svg');
+        expect(svg).toContain('</svg>');
+      }
+    });
+
+    it.skip('should generate styled QR codes for test URLs (requires WASM)', () => {
+      for (const url of testUrls) {
+        const roundedSvg = mod.generateRoundedQRCode(url, 256, 8);
+        expect(roundedSvg).toContain('<svg');
+        expect(roundedSvg).toContain('</svg>');
+
+        const gradientSvg = mod.generateGradientQRCode(url, 256, '#667eea', '#764ba2');
+        expect(gradientSvg).toContain('<svg');
+        expect(gradientSvg).toContain('</svg>');
+      }
+    });
+
+    it.skip('should handle URL with ASCII characters correctly (requires WASM)', () => {
+      const url = 'http://127.0.0.1:8080/106p.zip';
+      const qr = new mod.QRCodeCore(url, mod.QRErrorCorrectLevel.H);
+      expect(qr.text).toBe(url);
+      expect(qr.moduleCount).toBeGreaterThanOrEqual(21);
+      expect(qr.moduleCount).toBeLessThanOrEqual(41);
+    });
+
+    it.skip('should handle URL with percent-encoded characters correctly (requires WASM)', () => {
+      const url = 'http://127.0.0.1:8080/%E9%80%89%E7%89%87.zip';
+      const qr = new mod.QRCodeCore(url, mod.QRErrorCorrectLevel.H);
+      expect(qr.text).toBe(url);
+      expect(qr.moduleCount).toBeGreaterThanOrEqual(21);
+      expect(qr.moduleCount).toBeLessThanOrEqual(41);
+    });
+  });
 });

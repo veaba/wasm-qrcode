@@ -18,38 +18,9 @@ pub struct QR8bitByte {
 impl QR8bitByte {
     /// 创建新的 8bit 字节数据
     pub fn new(data: &str) -> Self {
-        let mut parsed_data: Vec<u8> = Vec::new();
-
-        // 处理 UTF-8 字符
-        for ch in data.chars() {
-            let code = ch as u32;
-            if code > 0x10000 {
-                // 4字节 UTF-8
-                parsed_data.push((0xf0 | ((code & 0x1c0000) >> 18)) as u8);
-                parsed_data.push((0x80 | ((code & 0x3f000) >> 12)) as u8);
-                parsed_data.push((0x80 | ((code & 0xfc0) >> 6)) as u8);
-                parsed_data.push((0x80 | (code & 0x3f)) as u8);
-            } else if code > 0x800 {
-                // 3字节 UTF-8
-                parsed_data.push((0xe0 | ((code & 0xf000) >> 12)) as u8);
-                parsed_data.push((0x80 | ((code & 0xfc0) >> 6)) as u8);
-                parsed_data.push((0x80 | (code & 0x3f)) as u8);
-            } else if code > 0x80 {
-                // 2字节 UTF-8
-                parsed_data.push((0xc0 | ((code & 0x7c0) >> 6)) as u8);
-                parsed_data.push((0x80 | (code & 0x3f)) as u8);
-            } else {
-                // 1字节 ASCII
-                parsed_data.push(code as u8);
-            }
-        }
-
-        // 如果解析后的数据长度与原始字符串长度不同（说明有 UTF-8 多字节字符），添加 BOM
-        if parsed_data.len() != data.len() {
-            parsed_data.insert(0, 191);
-            parsed_data.insert(0, 187);
-            parsed_data.insert(0, 239);
-        }
+        // 使用与 JS TextEncoder 一致的方式：直接使用 UTF-8 字节
+        // 不添加 BOM，与 qrcode-js-shared 保持一致
+        let parsed_data = data.as_bytes().to_vec();
 
         QR8bitByte {
             mode: QRMode::MODE_8BIT_BYTE,

@@ -617,3 +617,74 @@ describe('@veaba/qrcode-js - Default Export', () => {
     expect(mod.default).toBe(mod.QRCodeCore);
   });
 });
+
+describe('@veaba/qrcode-js - URL String Tests', () => {
+  const testUrls = [
+    'http://127.0.0.1:8080/106p.zip',
+    'http://127.0.0.1:8080/%E9%80%89%E7%89%87.zip',
+  ];
+
+  it('should generate QR codes for test URLs', async () => {
+    const { QRCodeCore, QRErrorCorrectLevel } = await import('../../packages/qrcode-js/src/index.js');
+    
+    for (const url of testUrls) {
+      const qr = new QRCodeCore(url, QRErrorCorrectLevel.H);
+      expect(qr.text).toBe(url);
+      expect(qr.moduleCount).toBeGreaterThan(0);
+      
+      const svg = qr.toSVG();
+      expect(svg).toContain('<svg');
+      expect(svg).toContain('</svg>');
+    }
+  });
+
+  it('should generate styled QR codes for test URLs', async () => {
+    const { generateRoundedQRCode, generateGradientQRCode } = await import('../../packages/qrcode-js/src/index.js');
+    
+    for (const url of testUrls) {
+      const roundedSvg = generateRoundedQRCode(url, { size: 256 });
+      expect(roundedSvg).toContain('<svg');
+      expect(roundedSvg).toContain('</svg>');
+
+      const gradientSvg = generateGradientQRCode(url, { size: 256 });
+      expect(gradientSvg).toContain('<svg');
+      expect(gradientSvg).toContain('</svg>');
+    }
+  });
+
+  it('should generate consistent module counts for test URLs', async () => {
+    const { QRCodeCore, QRErrorCorrectLevel } = await import('../../packages/qrcode-js/src/index.js');
+    
+    for (const url of testUrls) {
+      const qr1 = new QRCodeCore(url, QRErrorCorrectLevel.H);
+      const qr2 = new QRCodeCore(url, QRErrorCorrectLevel.H);
+      
+      // Same input should produce same module count
+      expect(qr1.moduleCount).toBe(qr2.moduleCount);
+    }
+  });
+
+  it('should handle URL with ASCII characters correctly', async () => {
+    const { QRCodeCore, QRErrorCorrectLevel } = await import('../../packages/qrcode-js/src/index.js');
+    const url = 'http://127.0.0.1:8080/106p.zip';
+    
+    const qr = new QRCodeCore(url, QRErrorCorrectLevel.H);
+    // Verify the text is stored correctly
+    expect(qr.text).toBe(url);
+    // Verify module count is reasonable (should be around 25-33 for this URL)
+    expect(qr.moduleCount).toBeGreaterThanOrEqual(21);
+    expect(qr.moduleCount).toBeLessThanOrEqual(41);
+  });
+
+  it('should handle URL with percent-encoded characters correctly', async () => {
+    const { QRCodeCore, QRErrorCorrectLevel } = await import('../../packages/qrcode-js/src/index.js');
+    const url = 'http://127.0.0.1:8080/%E9%80%89%E7%89%87.zip';
+    
+    const qr = new QRCodeCore(url, QRErrorCorrectLevel.H);
+    // Verify the text is stored correctly
+    expect(qr.text).toBe(url);
+    // Verify module count is reasonable
+    expect(qr.moduleCount).toBeGreaterThanOrEqual(21);
+    expect(qr.moduleCount).toBeLessThanOrEqual(41);
+  });
+});

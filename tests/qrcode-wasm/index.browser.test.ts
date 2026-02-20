@@ -387,4 +387,84 @@ describe('@veaba/qrcode-wasm - Browser Mode', () => {
       expect(advancedResults[0]).toHaveProperty('text');
     });
   });
+
+  describe('URL String Tests', () => {
+    const testUrls = [
+      'http://127.0.0.1:8080/106p.zip',
+      'http://127.0.0.1:8080/%E9%80%89%E7%89%87.zip',
+    ];
+
+    itIfWasm('should generate QR codes for test URLs', () => {
+      for (const url of testUrls) {
+        const qr = new wasmModule.QRCodeCore(url, wasmModule.QRErrorCorrectLevel.H);
+        expect(qr.text).toBe(url);
+        expect(qr.moduleCount).toBeGreaterThan(0);
+        
+        const svg = qr.toSVG();
+        expect(typeof svg).toBe('string');
+        expect(svg).toContain('<svg');
+        expect(svg).toContain('</svg>');
+      }
+    });
+
+    itIfWasm('should generate styled QR codes for test URLs', () => {
+      for (const url of testUrls) {
+        const roundedSvg = wasmModule.generateRoundedQRCode(url, 256, 8);
+        expect(typeof roundedSvg).toBe('string');
+        expect(roundedSvg).toContain('<svg');
+
+        const gradientSvg = wasmModule.generateGradientQRCode(url, 256, '#667eea', '#764ba2');
+        expect(typeof gradientSvg).toBe('string');
+        expect(gradientSvg).toContain('<svg');
+      }
+    });
+
+    itIfWasm('should generate consistent module counts for test URLs', () => {
+      for (const url of testUrls) {
+        const qr1 = new wasmModule.QRCodeCore(url, wasmModule.QRErrorCorrectLevel.H);
+        const qr2 = new wasmModule.QRCodeCore(url, wasmModule.QRErrorCorrectLevel.H);
+        
+        // Same input should produce same module count
+        expect(qr1.moduleCount).toBe(qr2.moduleCount);
+      }
+    });
+
+    itIfWasm('should handle URL with ASCII characters correctly', () => {
+      const url = 'http://127.0.0.1:8080/106p.zip';
+      const qr = new wasmModule.QRCodeCore(url, wasmModule.QRErrorCorrectLevel.H);
+      
+      expect(qr.text).toBe(url);
+      expect(qr.moduleCount).toBeGreaterThanOrEqual(21);
+      expect(qr.moduleCount).toBeLessThanOrEqual(41);
+    });
+
+    itIfWasm('should handle URL with percent-encoded characters correctly', () => {
+      const url = 'http://127.0.0.1:8080/%E9%80%89%E7%89%87.zip';
+      const qr = new wasmModule.QRCodeCore(url, wasmModule.QRErrorCorrectLevel.H);
+      
+      expect(qr.text).toBe(url);
+      expect(qr.moduleCount).toBeGreaterThanOrEqual(21);
+      expect(qr.moduleCount).toBeLessThanOrEqual(41);
+    });
+
+    itIfWasm('should batch generate QR codes for test URLs', () => {
+      const results = wasmModule.generateBatchQRCodes(testUrls, { correctLevel: wasmModule.QRErrorCorrectLevel.H });
+      expect(Array.isArray(results)).toBe(true);
+      expect(results.length).toBe(2);
+      results.forEach(svg => {
+        expect(typeof svg).toBe('string');
+        expect(svg).toContain('<svg');
+        expect(svg).toContain('</svg>');
+      });
+    });
+
+    itIfWasm('should async generate QR codes for test URLs', async () => {
+      for (const url of testUrls) {
+        const svg = await wasmModule.generateQRCodeAsync(url, { size: 256, correctLevel: wasmModule.QRErrorCorrectLevel.H });
+        expect(typeof svg).toBe('string');
+        expect(svg).toContain('<svg');
+        expect(svg).toContain('</svg>');
+      }
+    });
+  });
 });

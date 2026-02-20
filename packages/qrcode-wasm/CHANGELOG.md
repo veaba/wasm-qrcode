@@ -1,5 +1,11 @@
 # @veaba/qrcode-wasm
 
+## 0.1.1
+
+### Patch Changes
+
+- fix: as same as qrcode-js-shared
+
 ## 0.1.0
 
 ### Minor Changes

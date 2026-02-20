@@ -78,25 +78,9 @@ pub fn get_type_number(s_text: &str, n_correct_level: QRErrorCorrectLevel) -> i3
 
 /// 获取 UTF-8 长度
 fn get_utf8_length(s_text: &str) -> i32 {
-    let mut count = 0;
-    for ch in s_text.chars() {
-        let code = ch as u32;
-        if code > 0x10000 {
-            count += 4;
-        } else if code > 0x800 {
-            count += 3;
-        } else if code > 0x80 {
-            count += 2;
-        } else {
-            count += 1;
-        }
-    }
-    // 如果有 UTF-8 多字节字符，需要额外加上 BOM 的长度
-    if count != s_text.len() as i32 {
-        count + 3
-    } else {
-        count
-    }
+    // 使用与 JS TextEncoder 一致的方式计算 UTF-8 字节长度
+    // 不添加 BOM，与 qrcode-js-shared 保持一致
+    s_text.len() as i32
 }
 
 /// QRCode 选项
